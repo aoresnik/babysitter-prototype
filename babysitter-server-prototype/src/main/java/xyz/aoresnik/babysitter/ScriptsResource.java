@@ -1,6 +1,5 @@
 package xyz.aoresnik.babysitter;
 
-import io.quarkus.logging.Log;
 import org.jboss.logging.Logger;
 
 import javax.inject.Inject;
@@ -10,8 +9,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -34,8 +33,8 @@ public class ScriptsResource {
     );
 
     @GET
-    @Produces(MediaType.TEXT_PLAIN)
-    public String hello() {
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<String> hello() {
         String currentPath = null;
         try {
             currentPath = new File(".").getCanonicalPath();
@@ -45,6 +44,7 @@ public class ScriptsResource {
         }
         File scriptsDir = SCRIPTS_DIR.toFile();
         File[] files = scriptsDir.listFiles(file -> file.getName().endsWith(".sh"));
-        return Arrays.stream(files).map(File::getName).collect(Collectors.joining("\n"));
+        List<String> filenamesList = Arrays.stream(files).map(File::getName).collect(Collectors.toList());
+        return filenamesList;
     }
 }

@@ -5,6 +5,8 @@ import {TableModule} from 'primeng/table';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { AppCommandsListPaneComponent } from './app-commands-list-pane/app-commands-list-pane.component';
+import { HttpClientModule } from '@angular/common/http';
+
 
 @NgModule({
   declarations: [
@@ -14,7 +16,8 @@ import { AppCommandsListPaneComponent } from './app-commands-list-pane/app-comma
   imports: [
     BrowserModule,
     AppRoutingModule,
-    TableModule
+    TableModule,
+    HttpClientModule
   ],
   providers: [],
   bootstrap: [AppComponent]

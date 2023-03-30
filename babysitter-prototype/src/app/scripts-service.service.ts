@@ -1,4 +1,7 @@
 import { Injectable } from '@angular/core';
+import {from, Observable, of} from 'rxjs';
+import {catchError, tap} from 'rxjs/operators';
+import {HttpClient, HttpHeaders} from "@angular/common/http";
 
 @Injectable({
   providedIn: 'root'
@@ -14,11 +17,11 @@ export class ScriptsServiceService {
     headers: new HttpHeaders({'Content-Type': 'application/json'})
   };
 
-  getScripts(): Observable<string[]> {
-    return this.http.get(`${ serverRootUrl }/api/v1/scripts`, this.httpOptions).pipe(
+  getScripts(): Observable<any> {
+    return this.http.get(`${ this.serverRootUrl }/api/v1/scripts`, this.httpOptions ).pipe(
       tap(res => console.log('Loaded list of scripts')),
       catchError(this.handleError<any>('saveNewState'))
-    ).map(res => res.split('\n'));
+    );
   }
 
 
