@@ -11,6 +11,10 @@ export class AppCommandsListPaneComponent {
 
   scriptsList: string[] = [];
 
+  scriptRun: string = "";
+
+  scriptResult: string = "";
+
   constructor(private scriptsService: ScriptsServiceService) {
   }
 
@@ -23,5 +27,12 @@ export class AppCommandsListPaneComponent {
 
   runScript(script: string) {
     console.log(`Running script ${ script }`);
+    this.scriptsService.runScript(script).subscribe(res => {
+      const result: string[] = res;
+      const resultText = result.join("\n");
+      console.log(`Result of the script: ${res}`);
+      this.scriptRun = script;
+      this.scriptResult = resultText;
+    });
   }
 }

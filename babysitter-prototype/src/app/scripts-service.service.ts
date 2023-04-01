@@ -24,6 +24,12 @@ export class ScriptsServiceService {
     );
   }
 
+  runScript(script: string): Observable<any> {
+    return this.http.post(`${ this.serverRootUrl }/api/v1/scripts/${script}/run`, this.httpOptions ).pipe(
+      tap(res => console.log(`Run script ${ script }`)),
+      catchError(this.handleError('saveNewState'))
+    );
+  }
 
   /**
    * Handle Http operation that failed.

@@ -1,1 +1,9 @@
 <li *ngFor="let script of scriptsList; index as i">{{ script }} <a href="#" (click)="runScript(script); false">run</a></li>
+
+<div>Script that was run: {{scriptRun}}</div>
+<div>The result of the script:
+  <br/>
+  <pre>
+  {{scriptResult}}
+  </pre>
+</div>
