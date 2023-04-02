@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import {ScriptsServiceService} from "../scripts-service.service";
+import {ScriptError, ScriptResult, ScriptsServiceService} from "../scripts-service.service";
 
 @Component({
   selector: 'app-app-commands-list-pane',
@@ -15,6 +15,8 @@ export class AppCommandsListPaneComponent {
 
   scriptResult: string = "";
 
+  scriptError: string = "";
+
   constructor(private scriptsService: ScriptsServiceService) {
   }
 
@@ -28,11 +30,20 @@ export class AppCommandsListPaneComponent {
   runScript(script: string) {
     console.log(`Running script ${ script }`);
     this.scriptsService.runScript(script).subscribe(res => {
-      const result: string[] = res;
-      const resultText = result.join("\n");
-      console.log(`Result of the script: ${res}`);
-      this.scriptRun = script;
-      this.scriptResult = resultText;
+      if (res instanceof ScriptResult) {
+        const result: ScriptResult = res;
+        const resultText = result.lines.join("\n");
+        console.log(`Result of the script: ${res}`);
+        this.scriptRun = script;
+        this.scriptResult = resultText;
+        this.scriptError = "";
+      } else if (res instanceof ScriptError) {
+        const error: ScriptError = res;
+        console.log(`Error while executing script: ${error.errorMsg}`);
+        this.scriptRun = script;
+        this.scriptResult = "<not run>";
+        this.scriptError = error.errorMsg;
+      }
     });
   }
 }

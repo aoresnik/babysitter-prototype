@@ -3,3 +3,9 @@ pre.terminal {
   color: white;
   background-color: black;
 }
+
+div.error {
+  color: black;
+  background-color: yellow;
+  border: 1px black;
+}

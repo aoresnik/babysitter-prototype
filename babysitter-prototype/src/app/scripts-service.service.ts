@@ -1,7 +1,27 @@
 import { Injectable } from '@angular/core';
 import {from, Observable, of} from 'rxjs';
-import {catchError, tap} from 'rxjs/operators';
+import {catchError, tap, map} from 'rxjs/operators';
 import {HttpClient, HttpHeaders} from "@angular/common/http";
+
+// TODO: stderr, stout, timestamp?
+export class ScriptResult
+{
+
+  constructor(lines: string[]) {
+    this.lines = lines;
+  }
+
+  lines: string[];
+}
+
+export class ScriptError
+{
+  constructor(errorMsg: string) {
+    this.errorMsg = errorMsg;
+  }
+
+  errorMsg: string;
+}
 
 @Injectable({
   providedIn: 'root'
@@ -17,17 +37,23 @@ export class ScriptsServiceService {
     headers: new HttpHeaders({'Content-Type': 'application/json'})
   };
 
-  getScripts(): Observable<any> {
-    return this.http.get(`${ this.serverRootUrl }/api/v1/scripts`, this.httpOptions ).pipe(
+  getScripts(): Observable<string[]> {
+    return this.http.get<string[]>(`${ this.serverRootUrl }/api/v1/scripts`, this.httpOptions ).pipe(
       tap(res => console.log('Loaded list of scripts')),
       catchError(this.handleError<any>('saveNewState'))
     );
   }
 
-  runScript(script: string): Observable<any> {
-    return this.http.post(`${ this.serverRootUrl }/api/v1/scripts/${script}/run`, this.httpOptions ).pipe(
+  runScript(script: string): Observable<ScriptResult | ScriptError> {
+    return this.http.post<string[]>(`${ this.serverRootUrl }/api/v1/scripts/${script}/run`, this.httpOptions ).pipe(
       tap(res => console.log(`Run script ${ script }`)),
-      catchError(this.handleError('saveNewState'))
+      map(res => {
+        return new ScriptResult(res);
+      }),
+      catchError(err => {
+        console.log(err);
+        return of(new ScriptError(err.error.details));
+      })
     );
   }
 
