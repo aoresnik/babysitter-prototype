@@ -2,10 +2,11 @@
 pre.terminal {
   color: white;
   background-color: black;
+  margin: 0px;
 }
 
-div.error {
+div.error-pane {
   color: black;
   background-color: yellow;
-  border: 1px black;
+  border: 1px black solid;
 }

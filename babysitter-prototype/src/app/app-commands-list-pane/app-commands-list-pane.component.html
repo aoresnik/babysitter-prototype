@@ -2,8 +2,8 @@
 
 <div>Script that was run: {{scriptRun}}</div>
 <div>
-  <p>The result of the script:</p>
-  <div class="error" *ngIf="scriptError != null" style="padding: 0px">{{ scriptError }}</div>
+  <div>The result of the script:</div>
+  <div class="error-pane" *ngIf="scriptError != null">{{ scriptError }}</div>
   <pre class="terminal" style="padding: 0px">
   {{scriptResult}}
   </pre>
