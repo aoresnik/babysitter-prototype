@@ -11,9 +11,12 @@
 <div>
   <div>The result of the script:</div>
   <div class="error-pane" *ngIf="scriptError != null">{{ scriptError }}</div>
+  <!--
   <pre class="terminal" style="padding: 0px">
   {{scriptResult}}
   </pre>
+  -->
+  <ng-terminal #term></ng-terminal>
 </div>
 
 </div>

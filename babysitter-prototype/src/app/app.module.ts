@@ -6,7 +6,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { AppCommandsListPaneComponent } from './app-commands-list-pane/app-commands-list-pane.component';
 import { HttpClientModule } from '@angular/common/http';
-
+import { NgTerminalModule } from 'ng-terminal';
 
 @NgModule({
   declarations: [
@@ -14,6 +14,7 @@ import { HttpClientModule } from '@angular/common/http';
     AppCommandsListPaneComponent
   ],
   imports: [
+    NgTerminalModule,
     BrowserModule,
     AppRoutingModule,
     TableModule,
