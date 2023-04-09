@@ -51,8 +51,7 @@ export class AppCommandsListPaneComponent {
     console.log(`Running script ${ script }`);
     this.scriptsService.runScript(script).subscribe(res => {
       if (res instanceof ScriptResult) {
-        const result: ScriptResult = res;
-        const resultText = result.lines.join("\n");
+        const resultText = res.lines.join("\n");
         console.log(`Result of the script: ${res}`);
         this.scriptRun = script;
         this.scriptResult = resultText;
