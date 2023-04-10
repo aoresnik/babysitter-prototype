@@ -1,6 +1,7 @@
 package xyz.aoresnik.babysitter;
 
 import org.jboss.logging.Logger;
+import xyz.aoresnik.babysitter.script.ScriptExecution;
 
 import javax.inject.Inject;
 import javax.ws.rs.*;
@@ -53,28 +54,13 @@ public class ScriptsResource {
     @Produces(MediaType.APPLICATION_JSON)
     public List<String> run(@PathParam("scriptName") String scriptName) {
         log.info(String.format("Running script %s", scriptName));
-        File scriptsDir = SCRIPTS_DIR.toFile();
+        ScriptExecution scriptExecution = new ScriptExecution(scriptName);
+        // TODO: just trigger here, return immediately
+        scriptExecution.start();
+        scriptExecution.waitFor();
 
-        try {
-            ProcessBuilder pb = new ProcessBuilder(new File(scriptsDir, scriptName).getCanonicalPath());
-
-            File stdoutLog = File.createTempFile("stdout-log-", "txt");
-            Map<String, String> env = pb.environment();
-            pb.directory(scriptsDir);
-            pb.redirectErrorStream(true);
-            pb.redirectOutput(ProcessBuilder.Redirect.appendTo(stdoutLog));
-            Process p = pb.start();
-            try {
-                p.waitFor();
-            } catch (InterruptedException e) {
-            }
-            List<String> result = Files.readAllLines(stdoutLog.toPath());
-            log.debug("Result: " + result);
-            stdoutLog.delete();
-            return result;
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        // TODO: return the lines as they are printed from ScriptRunSession
+        return scriptExecution.getResult();
     }
 
 }
