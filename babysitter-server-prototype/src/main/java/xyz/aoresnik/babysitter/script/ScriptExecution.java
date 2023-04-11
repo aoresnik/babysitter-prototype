@@ -16,8 +16,7 @@ import static xyz.aoresnik.babysitter.ScriptsResource.SCRIPTS_DIR;
  */
 public class ScriptExecution {
 
-    @Inject
-    Logger log;
+    Logger log = Logger.getLogger(ScriptExecution.class);
 
     private final String scriptName;
 

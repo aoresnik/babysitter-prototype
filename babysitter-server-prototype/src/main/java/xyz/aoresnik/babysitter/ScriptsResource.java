@@ -1,17 +1,18 @@
 package xyz.aoresnik.babysitter;
 
+import io.vertx.core.Vertx;
+import io.vertx.core.WorkerExecutor;
 import org.jboss.logging.Logger;
 import xyz.aoresnik.babysitter.script.ScriptExecution;
 
+import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -23,6 +24,11 @@ public class ScriptsResource {
     @Inject
     Logger log;
 
+    @Inject
+    Vertx vertx;
+
+    WorkerExecutor executor;
+
     public static final java.nio.file.Path SCRIPTS_DIR = java.nio.file.Path.of(
             // PROBLEM: quarkus runs the program in build/classes/java/main, this is simple workaround
             "..",
@@ -33,9 +39,30 @@ public class ScriptsResource {
             "scripts"
     );
 
+    @PostConstruct
+    void init() {
+        this.executor = vertx.createSharedWorkerExecutor("my-worker", 10);
+    }
+
+    void testAsyncExecution() {
+        executor.<String>executeBlocking(promise -> {
+            // TODO: run script in this thread
+            // TODO: show that it's waiting for free thread if no thread is free
+            log.info("Thread: " + Thread.currentThread());
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+            }
+            promise.complete("Async exec test done");
+        }, asyncResult -> {
+            // TODO: notify the websockets sessions listening to this result
+            log.info("Result of async operation %s".format(asyncResult.result())); // Done
+        });
+    }
+
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public List<String> hello() {
+    public List<String> getScripts() {
         String currentPath = null;
         try {
             currentPath = new File(".").getCanonicalPath();
@@ -58,6 +85,8 @@ public class ScriptsResource {
         // TODO: just trigger here, return immediately
         scriptExecution.start();
         scriptExecution.waitFor();
+
+        testAsyncExecution();
 
         // TODO: return the lines as they are printed from ScriptRunSession
         return scriptExecution.getResult();
