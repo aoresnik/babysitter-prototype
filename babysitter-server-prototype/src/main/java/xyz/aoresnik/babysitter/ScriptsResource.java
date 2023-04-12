@@ -56,7 +56,7 @@ public class ScriptsResource {
             promise.complete("Async exec test done");
         }, asyncResult -> {
             // TODO: notify the websockets sessions listening to this result
-            log.info("Result of async operation %s".format(asyncResult.result())); // Done
+            log.info(String.format("Result of async operation %s", asyncResult.result())); // Done
         });
     }
 
