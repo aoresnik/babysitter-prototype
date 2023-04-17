@@ -1,5 +1,6 @@
 package xyz.aoresnik.babysitter;
 
+import io.quarkus.scheduler.Scheduled;
 import org.jboss.logging.Logger;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -30,6 +31,11 @@ public class ScriptRunSession {
     public void onOpen(Session session, @PathParam("scriptName") String scriptName, @PathParam("sessionId") String sessionId) {
         sessions.put(scriptName, session);
         log.debug("Connected terminal for script " + scriptName);
+        session.getAsyncRemote().sendObject("Test", result ->  {
+            if (result.getException() != null) {
+                log.error("Unable to send message: " + result.getException());
+            }
+        });
     }
 
     @OnClose
@@ -49,11 +55,20 @@ public class ScriptRunSession {
         log.debug("Received message: " + message);
     }
 
+    @Scheduled(every = "5s")
+    void increment() {
+        if (sessions != null) {
+            broadcast("Test");
+        }
+    }
+
     private void broadcast(String message) {
+        log.info("Broadcasting message: " + message);
         sessions.values().forEach(s -> {
+            log.debug("Sending message to session ID: " + s.getId());
             s.getAsyncRemote().sendObject(message, result ->  {
                 if (result.getException() != null) {
-                    System.out.println("Unable to send message: " + result.getException());
+                    log.error("Unable to send message: " + result.getException());
                 }
             });
         });

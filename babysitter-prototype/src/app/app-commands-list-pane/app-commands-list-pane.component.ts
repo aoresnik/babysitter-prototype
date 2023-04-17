@@ -1,6 +1,7 @@
 import {Component, ViewChild} from '@angular/core';
 import {ScriptError, ScriptResult, ScriptsServiceService} from "../scripts-service.service";
 import {NgTerminal} from "ng-terminal";
+import {ScriptRunSessionService} from "../script-run-session.service";
 
 @Component({
   selector: 'app-app-commands-list-pane',
@@ -20,7 +21,10 @@ export class AppCommandsListPaneComponent {
 
   @ViewChild('term', {static: false}) terminal!: NgTerminal;
 
-  constructor(private scriptsService: ScriptsServiceService) {
+  constructor(private scriptsService: ScriptsServiceService, private scriptRunSessionService: ScriptRunSessionService) {
+    scriptRunSessionService.messages.subscribe(msg => {
+      console.log("Response from websocket: " + msg);
+    });
 
   }
 
@@ -33,17 +37,18 @@ export class AppCommandsListPaneComponent {
 
   ngAfterViewInit(){
     this.terminal.onData().subscribe((input) => {
-      if (input === '\r') { // Carriage Return (When Enter is pressed)
-        this.terminal.write('prompt>');
-      } else if (input === '\u007f') { // Delete (When Backspace is pressed)
-        if (this.terminal.underlying.buffer.active.cursorX > 2) {
-          this.terminal.write('\b \b');
-        }
-      } else if (input === '\u0003') { // End of Text (When Ctrl and C are pressed)
-        this.terminal.write('^C');
-        this.terminal.write('prompt>');
-      }else
-        this.terminal.write(input);
+      // TODO: sending of input
+      // if (input === '\r') { // Carriage Return (When Enter is pressed)
+      //   this.terminal.write('prompt>');
+      // } else if (input === '\u007f') { // Delete (When Backspace is pressed)
+      //   if (this.terminal.underlying.buffer.active.cursorX > 2) {
+      //     this.terminal.write('\b \b');
+      //   }
+      // } else if (input === '\u0003') { // End of Text (When Ctrl and C are pressed)
+      //   this.terminal.write('^C');
+      //   this.terminal.write('prompt>');
+      // }else
+      //   this.terminal.write(input);
     });
   }
 
