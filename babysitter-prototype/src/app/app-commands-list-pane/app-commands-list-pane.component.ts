@@ -3,6 +3,17 @@ import {ScriptError, ScriptResult, ScriptsServiceService} from "../scripts-servi
 import {NgTerminal} from "ng-terminal";
 import {ScriptRunSessionService} from "../script-run-session.service";
 
+export class ScriptRun {
+  constructor(scriptName: string, scriptRunSessionId: string, date: Date = new Date() ) {
+    this.scriptName = scriptName;
+    this.scriptRunSessionId = scriptRunSessionId;
+    this.date = date;
+  }
+  date: Date;
+  scriptName: string;
+  scriptRunSessionId: string;
+}
+
 @Component({
   selector: 'app-app-commands-list-pane',
   templateUrl: './app-commands-list-pane.component.html',
@@ -18,6 +29,9 @@ export class AppCommandsListPaneComponent {
   scriptResult: string = "";
 
   scriptError: string = "";
+
+  runsList: ScriptRun[] = [];
+
 
   @ViewChild('term', {static: false}) terminal!: NgTerminal;
 
@@ -64,6 +78,7 @@ export class AppCommandsListPaneComponent {
         this.terminal.underlying.options.convertEol = true;
         this.terminal.write(resultText);
         this.scriptError = "";
+        this.runsList.push(new ScriptRun(script, "TODO: get session ID"));
       } else if (res instanceof ScriptError) {
         const error: ScriptError = res;
         console.log(`Error while executing script: ${error.errorMsg}`);
@@ -71,7 +86,12 @@ export class AppCommandsListPaneComponent {
         this.terminal.underlying.reset();
         this.scriptResult = "<not run>";
         this.scriptError = error.errorMsg;
+        this.runsList.push(new ScriptRun(script, "TODO: get session ID"));
       }
     });
+  }
+
+  showRun(run: ScriptRun) {
+    console.log("TODO: Show console of run " + run.scriptRunSessionId + " of script " + run.scriptName);
   }
 }

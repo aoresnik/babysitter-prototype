@@ -3,6 +3,8 @@ import {Observable, Subject} from "rxjs";
 import { map } from 'rxjs/operators';
 import {WebsocketTestService} from "./websocket-test.service";
 
+const CHAT_URL = "ws://localhost:8080/api/v1/scripts/1/session/1/websocket";
+
 @Injectable({
   providedIn: 'root'
 })

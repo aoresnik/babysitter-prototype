@@ -7,9 +7,15 @@
 
 <br/>
 
-<div style="font-weight: bold">Script that was run: <span style="background-color: #eff3f6">{{scriptRun}}</span></div>
 <div>
-  <div>The result of the script:</div>
+  <div style="font-weight: bold">Script runs:</div>
+  <div *ngFor="let run of runsList; index as i"><span style="background-color: #eff3f6">at {{ run.date }}: {{ run.scriptName }} session ID: {{ run.scriptRunSessionId }}</span>&nbsp;<a href="#" (click)="showRun(run); false">show console</a></div>
+</div>
+
+<br/>
+
+  <div style="font-weight: bold">Script run console: <span style="background-color: #eff3f6">{{scriptRun}}</span></div>
+<div>
   <div class="error-pane" *ngIf="scriptError != null">{{ scriptError }}</div>
   <!--
   <pre class="terminal" style="padding: 0px">
