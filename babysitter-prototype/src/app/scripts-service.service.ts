@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import {from, Observable, of} from 'rxjs';
 import {catchError, tap, map} from 'rxjs/operators';
 import {HttpClient, HttpHeaders} from "@angular/common/http";
+import {WebsocketTestService} from "./websocket-test.service";
 
 // TODO: stderr, stout, timestamp?
 export class ScriptResult
@@ -30,7 +31,7 @@ export class ScriptsServiceService {
 
   serverRootUrl: string = "http://localhost:8080"
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private scriptRunWSService: WebsocketTestService) {
   }
 
   httpOptions = {
@@ -53,6 +54,19 @@ export class ScriptsServiceService {
       catchError(err => {
         console.log(err);
         return of(new ScriptError(err.error.details));
+      })
+    );
+  }
+
+  runScriptAsync(script: string): Observable<string> {
+    return this.http.post<string>(`${ this.serverRootUrl }/api/v1/scripts/${script}/run-async`, this.httpOptions ).pipe(
+      tap(res => console.log(`Run script ${ script }`)),
+      map(res => {
+        return res;
+      }),
+      catchError(err => {
+        console.log(err);
+        return of('');
       })
     );
   }

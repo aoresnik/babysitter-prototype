@@ -1,5 +1,6 @@
 package xyz.aoresnik.babysitter;
 
+import com.fasterxml.jackson.databind.util.JSONWrappedObject;
 import io.vertx.core.Vertx;
 import io.vertx.core.WorkerExecutor;
 import org.jboss.logging.Logger;
@@ -9,6 +10,7 @@ import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
@@ -27,6 +29,9 @@ public class ScriptsResource {
     @Inject
     Vertx vertx;
 
+    @Inject
+    ScriptRunSessions scriptRunSessions;
+
     WorkerExecutor executor;
 
     public static final java.nio.file.Path SCRIPTS_DIR = java.nio.file.Path.of(
@@ -44,7 +49,7 @@ public class ScriptsResource {
         this.executor = vertx.createSharedWorkerExecutor("my-worker", 10);
     }
 
-    void testAsyncExecution() {
+    void runSync() {
         executor.<String>executeBlocking(promise -> {
             // TODO: run script in this thread
             // TODO: show that it's waiting for free thread if no thread is free
@@ -76,6 +81,23 @@ public class ScriptsResource {
         return filenamesList;
     }
 
+    /**
+     * Returns the script session ID
+     * TODO: not yet implemented, stub
+     * @param scriptName
+     * @return
+     */
+    @Path("/{scriptName}/run-async")
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    public String runAsync(@PathParam("scriptName") String scriptName) {
+        log.info(String.format("Running script %s async", scriptName));
+        ScriptRunSessions.ScriptRunSession scriptRunSession = scriptRunSessions.getScriptRunSession(scriptName);
+        log.warn("TODO: actually run script in executor");
+        // Explicitly wrap as JSON string (I don't know yet why it's not done automatically)
+        return "\"" + scriptRunSession.getSessionId() + "\"";
+    }
+
     @Path("/{scriptName}/run")
     @POST
     @Produces(MediaType.APPLICATION_JSON)
@@ -86,7 +108,7 @@ public class ScriptsResource {
         scriptExecution.start();
         scriptExecution.waitFor();
 
-        testAsyncExecution();
+        runSync();
 
         // TODO: return the lines as they are printed from ScriptRunSession
         return scriptExecution.getResult();

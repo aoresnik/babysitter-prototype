@@ -16,6 +16,10 @@ dependencies {
     implementation 'io.quarkus:quarkus-resteasy-reactive-jackson'
     implementation 'io.quarkus:quarkus-websockets'
     implementation 'io.quarkus:quarkus-scheduler'
+    implementation 'org.eclipse.microprofile.config:microprofile-config-api:2.0'
+
+    compileOnly 'org.projectlombok:lombok:1.18.24'
+
     testImplementation 'io.quarkus:quarkus-junit5'
     testImplementation 'io.rest-assured:rest-assured'
 }

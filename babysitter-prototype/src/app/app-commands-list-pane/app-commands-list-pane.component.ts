@@ -68,6 +68,11 @@ export class AppCommandsListPaneComponent {
 
   runScript(script: string) {
     console.log(`Running script ${ script }`);
+    this.scriptsService.runScriptAsync(script).subscribe(res => {
+      let runSessionId = res;
+      console.log(`Script run session ID: ${runSessionId}`);
+
+    });
     this.scriptsService.runScript(script).subscribe(res => {
       if (res instanceof ScriptResult) {
         const resultText = res.lines.join("\n");
