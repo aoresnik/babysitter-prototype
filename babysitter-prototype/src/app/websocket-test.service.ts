@@ -6,14 +6,11 @@ import {Observable, Observer, Subject} from "rxjs";
   providedIn: 'root'
 })
 export class WebsocketTestService {
-  private subject?: Subject<MessageEvent>;
 
   public connect(url: string): Subject<MessageEvent> {
-    if (!this.subject) {
-      this.subject = this.create(url);
+      let subject = this.create(url);
       console.log("Successfully connected: " + url);
-    }
-    return this.subject;
+      return subject;
   }
 
   // Based on: https://tutorialedge.net/typescript/angular/angular-websockets-tutorial/

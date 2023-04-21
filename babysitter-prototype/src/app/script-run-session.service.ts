@@ -9,14 +9,16 @@ const CHAT_URL = "ws://localhost:8080/api/v1/scripts/1/session/1/websocket";
   providedIn: 'root'
 })
 export class ScriptRunSessionService {
-  public messages: Subject<string>;
+  constructor(private wsService: WebsocketTestService) {
+  }
 
-  constructor(wsService: WebsocketTestService) {
-    this.messages = <Subject<string>>wsService.connect(CHAT_URL).pipe(map(
+  messagesForSession(scriptName: string, scriptRunSessionId: string): Subject<string> {
+    let result = <Subject<string>>this.wsService.connect(`ws://localhost:8080/api/v1/scripts/${scriptName}/session/${scriptRunSessionId}/websocket`).pipe(map(
       (response: MessageEvent): string => {
         //let data = JSON.parse(response.data);
         return response.data;
       }
     ));
+    return result;
   }
 }

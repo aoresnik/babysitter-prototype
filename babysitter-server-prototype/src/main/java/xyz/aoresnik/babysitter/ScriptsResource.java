@@ -1,6 +1,5 @@
 package xyz.aoresnik.babysitter;
 
-import com.fasterxml.jackson.databind.util.JSONWrappedObject;
 import io.vertx.core.Vertx;
 import io.vertx.core.WorkerExecutor;
 import org.jboss.logging.Logger;
@@ -10,7 +9,6 @@ import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
@@ -92,10 +90,15 @@ public class ScriptsResource {
     @Produces(MediaType.APPLICATION_JSON)
     public String runAsync(@PathParam("scriptName") String scriptName) {
         log.info(String.format("Running script %s async", scriptName));
-        ScriptRunSessions.ScriptRunSession scriptRunSession = scriptRunSessions.getScriptRunSession(scriptName);
+        // TODO: just trigger here, return immediately
+        ScriptExecution scriptExecution = new ScriptExecution(scriptName);
+        scriptExecution.start();
+        scriptExecution.waitFor();
         log.warn("TODO: actually run script in executor");
+
         // Explicitly wrap as JSON string (I don't know yet why it's not done automatically)
-        return "\"" + scriptRunSession.getSessionId() + "\"";
+        ScriptRunSessions.ScriptRunSession scriptRunSession = scriptRunSessions.createForActiveExecution(scriptName, scriptExecution);
+        return "\"" + scriptRunSession.getScriptExecution().getSessionId() + "\"";
     }
 
     @Path("/{scriptName}/run")

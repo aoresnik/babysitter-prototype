@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import static xyz.aoresnik.babysitter.ScriptsResource.SCRIPTS_DIR;
 
@@ -16,15 +17,26 @@ import static xyz.aoresnik.babysitter.ScriptsResource.SCRIPTS_DIR;
  */
 public class ScriptExecution {
 
+    private final String sessionId;
+
     Logger log = Logger.getLogger(ScriptExecution.class);
 
     private final String scriptName;
 
     private List<String> result;
 
+    public List<String> getResult() {
+        return result;
+    }
+
+    public String getSessionId() {
+        return sessionId;
+    }
+
     public ScriptExecution(String scriptName) {
 
         this.scriptName = scriptName;
+        this.sessionId = UUID.randomUUID().toString();
     }
 
     public void start() {
@@ -32,8 +44,7 @@ public class ScriptExecution {
 
         try {
             ProcessBuilder pb = new ProcessBuilder(new File(scriptsDir, scriptName).getCanonicalPath());
-
-            File stdoutLog = File.createTempFile("stdout-log-", "txt");
+            File stdoutLog = getStdoutFile();
             Map<String, String> env = pb.environment();
             pb.directory(scriptsDir);
             pb.redirectErrorStream(true);
@@ -52,11 +63,11 @@ public class ScriptExecution {
         }
     }
 
-    public void waitFor() {
-        // For now, entire execution is in start
+    private File getStdoutFile() {
+        return new File(System.getProperty("java.io.tmpdir"), "stdout-" + sessionId + ".log");
     }
 
-    public List<String> getResult() {
-        return result;
+    public void waitFor() {
+        // For now, entire execution is in start
     }
 }
