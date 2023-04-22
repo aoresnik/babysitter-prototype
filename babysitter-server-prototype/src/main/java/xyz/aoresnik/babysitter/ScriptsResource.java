@@ -47,10 +47,11 @@ public class ScriptsResource {
         this.executor = vertx.createSharedWorkerExecutor("my-worker", 10);
     }
 
-    void runSync() {
+    /**
+     * Test method for tinkering with running in executor.
+     */
+    private void testRunInExecutor() {
         executor.<String>executeBlocking(promise -> {
-            // TODO: run script in this thread
-            // TODO: show that it's waiting for free thread if no thread is free
             log.info("Thread: " + Thread.currentThread());
             try {
                 Thread.sleep(1000);
@@ -58,8 +59,21 @@ public class ScriptsResource {
             }
             promise.complete("Async exec test done");
         }, asyncResult -> {
-            // TODO: notify the websockets sessions listening to this result
             log.info(String.format("Result of async operation %s", asyncResult.result())); // Done
+        });
+    }
+
+    private void runAsyncInExecutor(ScriptExecution scriptExecution) {
+        executor.<String>executeBlocking(promise -> {
+            // TODO: run script in this thread
+            // TODO: show that it's waiting for free thread if no thread is free
+            log.info(String.format("Running script execution ID: %s in thread: %s", scriptExecution.getSessionId(), Thread.currentThread()));
+            scriptExecution.start();
+            scriptExecution.waitFor();
+            promise.complete("Script execution done");
+        }, asyncResult -> {
+            // TODO: notify the websockets sessions listening to this result
+            log.info(String.format("Result of async script run %s", asyncResult.result())); // Done
         });
     }
 
@@ -91,10 +105,13 @@ public class ScriptsResource {
     public String runAsync(@PathParam("scriptName") String scriptName) {
         log.info(String.format("Running script %s async", scriptName));
         // TODO: just trigger here, return immediately
-        ScriptExecution scriptExecution = new ScriptExecution(scriptName);
-        scriptExecution.start();
-        scriptExecution.waitFor();
-        log.warn("TODO: actually run script in executor");
+        ScriptExecution scriptExecution = null;
+        try {
+            scriptExecution = new ScriptExecution(scriptName);
+        } catch (IOException e) {
+            throw new RuntimeException("Internal error while attempting to run script", e);
+        }
+        runAsyncInExecutor(scriptExecution);
 
         // Explicitly wrap as JSON string (I don't know yet why it's not done automatically)
         ScriptRunSessions.ScriptRunSession scriptRunSession = scriptRunSessions.createForActiveExecution(scriptName, scriptExecution);
@@ -106,12 +123,17 @@ public class ScriptsResource {
     @Produces(MediaType.APPLICATION_JSON)
     public List<String> run(@PathParam("scriptName") String scriptName) {
         log.info(String.format("Running script %s", scriptName));
-        ScriptExecution scriptExecution = new ScriptExecution(scriptName);
+        ScriptExecution scriptExecution = null;
+        try {
+            scriptExecution = new ScriptExecution(scriptName);
+        } catch (IOException e) {
+            throw new RuntimeException("Internal error while attempting to run script", e);
+        }
         // TODO: just trigger here, return immediately
         scriptExecution.start();
         scriptExecution.waitFor();
 
-        runSync();
+        testRunInExecutor();
 
         // TODO: return the lines as they are printed from ScriptRunSession
         return scriptExecution.getResult();

@@ -6,6 +6,7 @@ import javax.inject.Inject;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -23,7 +24,7 @@ public class ScriptExecution {
 
     private final String scriptName;
 
-    private List<String> result;
+    private List<String> result = new ArrayList<>();
 
     public List<String> getResult() {
         return result;
@@ -33,10 +34,10 @@ public class ScriptExecution {
         return sessionId;
     }
 
-    public ScriptExecution(String scriptName) {
-
+    public ScriptExecution(String scriptName) throws IOException {
         this.scriptName = scriptName;
         this.sessionId = UUID.randomUUID().toString();
+        getStdoutFile().createNewFile();
     }
 
     public void start() {
