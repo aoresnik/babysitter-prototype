@@ -102,7 +102,7 @@ export class AppCommandsListPaneComponent {
       console.log("Response from websocket: " + msg);
       this.terminal.underlying.reset();
       this.terminal.underlying.options.convertEol = true;
-      this.terminal.write(msg);
+      this.terminal.write(atob(msg.initialConsoleData));
     });
   }
 }

@@ -12,11 +12,11 @@ export class ScriptRunSessionService {
   constructor(private wsService: WebsocketTestService) {
   }
 
-  messagesForSession(scriptName: string, scriptRunSessionId: string): Subject<string> {
+  messagesForSession(scriptName: string, scriptRunSessionId: string): Subject<any> {
     let result = <Subject<string>>this.wsService.connect(`ws://localhost:8080/api/v1/scripts/${scriptName}/session/${scriptRunSessionId}/websocket`).pipe(map(
-      (response: MessageEvent): string => {
-        //let data = JSON.parse(response.data);
-        return response.data;
+      (response: MessageEvent): any => {
+        let data = JSON.parse(response.data);
+        return data;
       }
     ));
     return result;

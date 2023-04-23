@@ -1,18 +1,26 @@
 package xyz.aoresnik.babysitter;
 
+import com.fasterxml.jackson.core.exc.StreamReadException;
+import com.fasterxml.jackson.databind.DatabindException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.quarkus.scheduler.Scheduled;
 import org.jboss.logging.Logger;
+import xyz.aoresnik.babysitter.data.ScriptExecutionInitialStateData;
 import xyz.aoresnik.babysitter.script.ScriptExecution;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import javax.websocket.OnClose;
-import javax.websocket.OnError;
-import javax.websocket.OnMessage;
-import javax.websocket.OnOpen;
+import javax.websocket.*;
 import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
-import javax.websocket.Session;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
+import java.io.IOException;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
@@ -20,7 +28,7 @@ import java.util.stream.Collectors;
 /**
  * Based on https://quarkus.io/guides/websockets
  */
-@ServerEndpoint("/api/v1/scripts/{scriptName}/session/{sessionId}/websocket")
+@ServerEndpoint(value = "/api/v1/scripts/{scriptName}/session/{sessionId}/websocket", encoders = {ScriptRunSessions.EncoderDecoder.class}, decoders = {ScriptRunSessions.EncoderDecoder.class})
 @ApplicationScoped
 public class ScriptRunSessions {
 
@@ -68,7 +76,9 @@ public class ScriptRunSessions {
         ScriptRunSession scriptRunSession = sessions.get(sessionId);
         scriptRunSession.setWebsocketSession(session);
         log.debug("Connected terminal for script " + scriptName + " with session ID: " + sessionId);
-        session.getAsyncRemote().sendObject(scriptRunSession.getScriptExecution().getResult().stream().collect(Collectors.joining("\n")), result ->  {
+        String resultText = scriptRunSession.getScriptExecution().getResult().stream().collect(Collectors.joining("\n"));
+        ScriptExecutionInitialStateData initialStateData    = new ScriptExecutionInitialStateData(true, true, 0, resultText.getBytes(StandardCharsets.UTF_8));
+        session.getAsyncRemote().sendObject(initialStateData, result ->  {
             if (result.getException() != null) {
                 log.error("Unable to send message: " + result.getException());
             }
@@ -115,4 +125,49 @@ public class ScriptRunSessions {
         });
     }
 
+    public static class EncoderDecoder implements javax.websocket.Encoder.Text<ScriptExecutionInitialStateData>, javax.websocket.Decoder.Text<ScriptExecutionInitialStateData> {
+        ObjectMapper mapper;
+
+        public EncoderDecoder() {
+        }
+
+        @Override
+        public void init(EndpointConfig config) {
+            mapper = new ObjectMapper();
+        }
+
+        @Override
+        public String encode(ScriptExecutionInitialStateData object) throws EncodeException {
+            try {
+                StringWriter sw = new StringWriter();
+                mapper.writeValue(sw, object);
+                return sw.toString();
+            } catch (IOException e) {
+                throw new RuntimeException("Unable to serialize to JSON", e);
+            }
+        }
+
+        @Override
+        public ScriptExecutionInitialStateData decode(String s) throws DecodeException {
+            try {
+                return mapper.readValue(new StringReader(s), ScriptExecutionInitialStateData.class);
+            } catch (StreamReadException e) {
+                throw new RuntimeException(e);
+            } catch (DatabindException e) {
+                throw new RuntimeException(e);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        @Override
+        public boolean willDecode(String s) {
+            return s != null;
+        }
+
+        @Override
+        public void destroy() {
+
+        }
+    }
 }

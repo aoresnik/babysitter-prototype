@@ -14,11 +14,16 @@ dependencies {
     implementation 'io.quarkus:quarkus-arc'
     implementation 'io.quarkus:quarkus-resteasy-reactive'
     implementation 'io.quarkus:quarkus-resteasy-reactive-jackson'
+    implementation 'io.quarkus:quarkus-jaxb'
     implementation 'io.quarkus:quarkus-websockets'
     implementation 'io.quarkus:quarkus-scheduler'
     implementation 'org.eclipse.microprofile.config:microprofile-config-api:2.0'
 
-    compileOnly 'org.projectlombok:lombok:1.18.24'
+    // TODO: Lombok version in variable
+    compileOnly 'org.projectlombok:lombok:1.18.26'
+    annotationProcessor 'org.projectlombok:lombok:1.18.26'
+    testCompileOnly 'org.projectlombok:lombok:1.18.26'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.26'
 
     testImplementation 'io.quarkus:quarkus-junit5'
     testImplementation 'io.rest-assured:rest-assured'
