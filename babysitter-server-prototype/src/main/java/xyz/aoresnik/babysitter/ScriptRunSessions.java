@@ -88,7 +88,6 @@ public class ScriptRunSessions {
     @OnClose
     public void onClose(Session session, @PathParam("scriptName") String scriptName, @PathParam("sessionId") String sessionId) {
         sessions.remove(scriptName);
-        broadcast("Disconnected terminal for script " + scriptName);
     }
 
     @OnError
@@ -100,29 +99,6 @@ public class ScriptRunSessions {
     @OnMessage
     public void onMessage(String message, @PathParam("scriptName") String scriptName, @PathParam("sessionId") String sessionId) {
         log.debug("Received message: " + message);
-    }
-
-    @Scheduled(every = "5s")
-    void increment() {
-//        if (sessions != null) {
-//            broadcast("Test");
-//        }
-    }
-
-    private void broadcast(String message) {
-        log.info("Broadcasting message: " + message);
-        sessions.values().forEach(s -> {
-            if (s.getWebsocketSession() != null) {
-                log.debug("Sending message to script run session ID: " + s.getScriptExecution().getSessionId() + " session ID: " + s.getWebsocketSession().getId());
-                s.getWebsocketSession().getAsyncRemote().sendObject(message, result -> {
-                    if (result.getException() != null) {
-                        log.error("Unable to send message: " + result.getException());
-                    }
-                });
-            } else {
-                log.warn("No websocket session for script run session ID: " + s.getScriptExecution().getSessionId());
-            }
-        });
     }
 
     public static class EncoderDecoder implements javax.websocket.Encoder.Text<ScriptExecutionInitialStateData>, javax.websocket.Decoder.Text<ScriptExecutionInitialStateData> {
