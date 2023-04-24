@@ -65,7 +65,6 @@ public class ScriptsResource {
 
     private void runAsyncInExecutor(ScriptExecution scriptExecution) {
         executor.<String>executeBlocking(promise -> {
-            // TODO: run script in this thread
             // TODO: show that it's waiting for free thread if no thread is free
             log.info(String.format("Running script execution ID: %s in thread: %s", scriptExecution.getSessionId(), Thread.currentThread()));
             scriptExecution.start();
@@ -73,6 +72,7 @@ public class ScriptsResource {
             promise.complete("Script execution done");
         }, asyncResult -> {
             // TODO: notify the websockets sessions listening to this result
+            // TODO: store the error result
             log.info(String.format("Result of async script run %s", asyncResult.result())); // Done
         });
     }

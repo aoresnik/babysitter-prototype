@@ -76,8 +76,9 @@ public class ScriptRunSessions {
         ScriptRunSession scriptRunSession = sessions.get(sessionId);
         scriptRunSession.setWebsocketSession(session);
         log.debug("Connected terminal for script " + scriptName + " with session ID: " + sessionId);
-        String resultText = scriptRunSession.getScriptExecution().getResult().stream().collect(Collectors.joining("\n"));
-        ScriptExecutionInitialStateData initialStateData    = new ScriptExecutionInitialStateData(true, true, 0, resultText.getBytes(StandardCharsets.UTF_8));
+        ScriptExecution scriptExecution = scriptRunSession.getScriptExecution();
+        String resultText = scriptExecution.getResult().stream().collect(Collectors.joining("\n"));
+        ScriptExecutionInitialStateData initialStateData    = new ScriptExecutionInitialStateData(true, true, scriptExecution.getExitCode(), scriptExecution.getErrorText(), resultText.getBytes(StandardCharsets.UTF_8));
         session.getAsyncRemote().sendObject(initialStateData, result ->  {
             if (result.getException() != null) {
                 log.error("Unable to send message: " + result.getException());

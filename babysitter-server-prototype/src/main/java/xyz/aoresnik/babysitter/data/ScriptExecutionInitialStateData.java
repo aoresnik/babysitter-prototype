@@ -15,7 +15,9 @@ public class ScriptExecutionInitialStateData {
 
     private boolean scriptCompleted;
 
-    private int scriptResult;
+    private Integer exitCode;
+
+    private String errorText;
 
     private byte[] initialConsoleData;
 }

@@ -103,6 +103,11 @@ export class AppCommandsListPaneComponent {
       this.terminal.underlying.reset();
       this.terminal.underlying.options.convertEol = true;
       this.terminal.write(atob(msg.initialConsoleData));
+      if (msg.errorText) {
+        this.scriptError = msg.errorText;
+      } else {
+        this.scriptError = "";
+      }
     });
   }
 }

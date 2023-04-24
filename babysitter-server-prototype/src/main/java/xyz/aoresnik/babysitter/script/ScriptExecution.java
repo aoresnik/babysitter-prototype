@@ -1,5 +1,6 @@
 package xyz.aoresnik.babysitter.script;
 
+import lombok.Getter;
 import org.jboss.logging.Logger;
 
 import javax.inject.Inject;
@@ -18,21 +19,22 @@ import static xyz.aoresnik.babysitter.ScriptsResource.SCRIPTS_DIR;
  */
 public class ScriptExecution {
 
+    @Getter
     private final String sessionId;
 
     Logger log = Logger.getLogger(ScriptExecution.class);
 
+    @Getter
     private final String scriptName;
 
+    @Getter
     private List<String> result = new ArrayList<>();
 
-    public List<String> getResult() {
-        return result;
-    }
+    @Getter
+    private String errorText;
 
-    public String getSessionId() {
-        return sessionId;
-    }
+    @Getter
+    private Integer exitCode;
 
     public ScriptExecution(String scriptName) throws IOException {
         this.scriptName = scriptName;
@@ -52,7 +54,7 @@ public class ScriptExecution {
             pb.redirectOutput(ProcessBuilder.Redirect.appendTo(stdoutLog));
             Process p = pb.start();
             try {
-                p.waitFor();
+                this.exitCode = p.waitFor();
             } catch (InterruptedException e) {
             }
             List<String> result = Files.readAllLines(stdoutLog.toPath());
@@ -60,7 +62,9 @@ public class ScriptExecution {
             stdoutLog.delete();
             this.result = result;
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            log.error("Error running script", e);
+            errorText = e.getMessage();
+
         }
     }
 
