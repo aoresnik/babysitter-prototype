@@ -3,11 +3,9 @@ package xyz.aoresnik.babysitter.script;
 import lombok.Getter;
 import org.jboss.logging.Logger;
 
-import javax.inject.Inject;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -26,9 +24,6 @@ public class ScriptExecution {
 
     @Getter
     private final String scriptName;
-
-    @Getter
-    private List<String> result = new ArrayList<>();
 
     @Getter
     private String errorText;
@@ -52,20 +47,28 @@ public class ScriptExecution {
             pb.directory(scriptsDir);
             pb.redirectErrorStream(true);
             pb.redirectOutput(ProcessBuilder.Redirect.appendTo(stdoutLog));
+
             Process p = pb.start();
             try {
                 this.exitCode = p.waitFor();
             } catch (InterruptedException e) {
             }
-            List<String> result = Files.readAllLines(stdoutLog.toPath());
-            log.debug("Result: " + result);
-            stdoutLog.delete();
-            this.result = result;
         } catch (IOException e) {
             log.error("Error running script", e);
             errorText = e.getMessage();
 
         }
+    }
+
+    public List<String> getResult() {
+        List<String> result = null;
+        try {
+            result = Files.readAllLines(getStdoutFile().toPath());
+        } catch (IOException e) {
+            throw new RuntimeException("Unable to read result from file", e);
+        }
+        log.debug("Result: " + result);
+        return result;
     }
 
     private File getStdoutFile() {

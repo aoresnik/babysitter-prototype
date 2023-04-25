@@ -3,7 +3,6 @@ package xyz.aoresnik.babysitter;
 import com.fasterxml.jackson.core.exc.StreamReadException;
 import com.fasterxml.jackson.databind.DatabindException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.quarkus.scheduler.Scheduled;
 import org.jboss.logging.Logger;
 import xyz.aoresnik.babysitter.data.ScriptExecutionInitialStateData;
 import xyz.aoresnik.babysitter.script.ScriptExecution;
@@ -13,10 +12,6 @@ import javax.inject.Inject;
 import javax.websocket.*;
 import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -78,7 +73,14 @@ public class ScriptRunSessions {
         log.debug("Connected terminal for script " + scriptName + " with session ID: " + sessionId);
         ScriptExecution scriptExecution = scriptRunSession.getScriptExecution();
         String resultText = scriptExecution.getResult().stream().collect(Collectors.joining("\n"));
-        ScriptExecutionInitialStateData initialStateData    = new ScriptExecutionInitialStateData(true, true, scriptExecution.getExitCode(), scriptExecution.getErrorText(), resultText.getBytes(StandardCharsets.UTF_8));
+        ScriptExecutionInitialStateData initialStateData = new ScriptExecutionInitialStateData();
+
+        initialStateData.setScriptRun(true);
+        initialStateData.setScriptCompleted(true);
+        initialStateData.setExitCode(scriptExecution.getExitCode());
+        initialStateData.setErrorText(scriptExecution.getErrorText());
+        initialStateData.setInitialConsoleData(resultText.getBytes(StandardCharsets.UTF_8));
+
         session.getAsyncRemote().sendObject(initialStateData, result ->  {
             if (result.getException() != null) {
                 log.error("Unable to send message: " + result.getException());

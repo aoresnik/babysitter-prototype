@@ -1,4 +1,13 @@
 package xyz.aoresnik.babysitter.data;
 
-public class ScriptExecutionUpdateData {
+import lombok.Data;
+
+import javax.xml.bind.annotation.XmlRootElement;
+
+@Data
+@XmlRootElement
+public class ScriptExecutionUpdateData extends ScriptExecutionData {
+
+    private byte[] incrementalConsoleData;
+
 }
