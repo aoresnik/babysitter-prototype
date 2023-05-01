@@ -3,6 +3,7 @@ package xyz.aoresnik.babysitter;
 import io.vertx.core.Vertx;
 import io.vertx.core.WorkerExecutor;
 import org.jboss.logging.Logger;
+import xyz.aoresnik.babysitter.script.ActiveScriptExecutions;
 import xyz.aoresnik.babysitter.script.ScriptExecution;
 
 import javax.annotation.PostConstruct;
@@ -29,6 +30,9 @@ public class ScriptsResource {
 
     @Inject
     ScriptRunSessions scriptRunSessions;
+
+    @Inject
+    ActiveScriptExecutions activeScriptExecutions;
 
     WorkerExecutor executor;
 
@@ -67,8 +71,13 @@ public class ScriptsResource {
         executor.<String>executeBlocking(promise -> {
             // TODO: show that it's waiting for free thread if no thread is free
             log.info(String.format("Running script execution ID: %s in thread: %s", scriptExecution.getSessionId(), Thread.currentThread()));
-            scriptExecution.start();
-            scriptExecution.waitFor();
+            try {
+                activeScriptExecutions.addScriptExecution(scriptExecution);
+                scriptExecution.start();
+                scriptExecution.waitFor();
+            } finally {
+                activeScriptExecutions.removeScriptExecution(scriptExecution.getSessionId());
+            }
             promise.complete("Script execution done");
         }, asyncResult -> {
             // TODO: notify the websockets sessions listening to this result
