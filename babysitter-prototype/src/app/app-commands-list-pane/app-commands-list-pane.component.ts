@@ -2,6 +2,7 @@ import {Component, ViewChild} from '@angular/core';
 import {ScriptError, ScriptResult, ScriptsServiceService} from "../scripts-service.service";
 import {NgTerminal} from "ng-terminal";
 import {ScriptRunSessionService} from "../script-run-session.service";
+import {Subject} from "rxjs";
 
 export class ScriptRun {
   constructor(scriptName: string, scriptRunSessionId: string, date: Date = new Date() ) {
@@ -32,7 +33,11 @@ export class AppCommandsListPaneComponent {
 
   runsList: ScriptRun[] = [];
 
+  activeRun?: ScriptRun;
+
   @ViewChild('term', {static: false}) terminal!: NgTerminal;
+
+  private messages?: Subject<any>;
 
   constructor(private scriptsService: ScriptsServiceService, private scriptRunSessionService: ScriptRunSessionService) {
 
@@ -59,6 +64,11 @@ export class AppCommandsListPaneComponent {
       //   this.terminal.write('prompt>');
       // }else
       //   this.terminal.write(input);
+      if (this.activeRun && this.messages) {
+        this.messages.next({inputData: input});
+      } else {
+        console.log("No active run, ignoring input");
+      }
     });
   }
 
@@ -98,7 +108,9 @@ export class AppCommandsListPaneComponent {
 
   showRun(run: ScriptRun) {
     console.log("TODO: Show console of run " + run.scriptRunSessionId + " of script " + run.scriptName);
-    this.scriptRunSessionService.messagesForSession(run.scriptName, run.scriptRunSessionId).subscribe(msg => {
+    this.activeRun = run;
+    this.messages = this.scriptRunSessionService.messagesForSession(run.scriptName, run.scriptRunSessionId);
+    this.messages.subscribe(msg => {
       console.log("Response from websocket: " + msg);
       if (msg.initialConsoleData !== undefined) {
         this.terminal.underlying.reset();

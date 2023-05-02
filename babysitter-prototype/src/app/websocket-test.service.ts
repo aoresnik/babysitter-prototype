@@ -8,7 +8,7 @@ import {Observable, Observer, Subject} from "rxjs";
 export class WebsocketTestService {
 
   public connect(url: string): Subject<MessageEvent> {
-      let subject = this.create(url);
+      let subject= this.create(url);
       console.log("Successfully connected: " + url);
       return subject;
   }
