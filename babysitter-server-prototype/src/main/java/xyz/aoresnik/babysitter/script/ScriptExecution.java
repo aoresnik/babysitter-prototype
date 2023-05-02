@@ -5,6 +5,8 @@ import org.jboss.logging.Logger;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.util.List;
 import java.util.Map;
@@ -35,21 +37,37 @@ public class ScriptExecution {
         this.scriptName = scriptName;
         this.sessionId = UUID.randomUUID().toString();
         getStdoutFile().createNewFile();
+
+
     }
 
     public void start() {
-        File scriptsDir = SCRIPTS_DIR.toFile();
-
         try {
+
+            File scriptsDir = SCRIPTS_DIR.toFile();
             ProcessBuilder pb = new ProcessBuilder(new File(scriptsDir, scriptName).getCanonicalPath());
             File stdoutLog = getStdoutFile();
             Map<String, String> env = pb.environment();
             pb.directory(scriptsDir);
             pb.redirectErrorStream(true);
-            pb.redirectOutput(ProcessBuilder.Redirect.appendTo(stdoutLog));
+
+            // Don't redirect to file - read directly so that we can notify UI
+            //pb.redirectOutput(ProcessBuilder.Redirect.appendTo(stdoutLog));
+            OutputStream processStdoutFile = Files.newOutputStream(stdoutLog.toPath());
 
             Process p = pb.start();
+            // STDERR was redirected to STDOUT
+            InputStream processStdoutAndStdErr = p.getInputStream();
             try {
+                byte[] buffer = new byte[1024];
+                while (p.isAlive())
+                {
+                    int nRead = processStdoutAndStdErr.read(buffer);
+                    log.debug("Read " + nRead + " bytes from process stdout/stderr");
+
+                    processStdoutFile.write(buffer, 0, nRead);
+                }
+
                 this.exitCode = p.waitFor();
             } catch (InterruptedException e) {
             }

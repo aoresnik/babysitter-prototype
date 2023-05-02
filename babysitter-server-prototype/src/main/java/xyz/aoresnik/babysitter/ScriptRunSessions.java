@@ -32,7 +32,7 @@ public class ScriptRunSessions {
 
     Map<String, ScriptRunSession> sessions = new ConcurrentHashMap<>();
 
-    class ScriptRunSession {
+    static class ScriptRunSession {
         String scriptName;
         private final ScriptExecution scriptExecution;
         Session websocketSession;

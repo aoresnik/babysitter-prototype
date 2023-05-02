@@ -72,7 +72,6 @@ public class ScriptsResource {
             // TODO: show that it's waiting for free thread if no thread is free
             log.info(String.format("Running script execution ID: %s in thread: %s", scriptExecution.getSessionId(), Thread.currentThread()));
             try {
-                activeScriptExecutions.addScriptExecution(scriptExecution);
                 scriptExecution.start();
                 scriptExecution.waitFor();
             } finally {
@@ -121,6 +120,8 @@ public class ScriptsResource {
             throw new RuntimeException("Internal error while attempting to run script", e);
         }
         runAsyncInExecutor(scriptExecution);
+
+        activeScriptExecutions.addScriptExecution(scriptExecution);
 
         // Explicitly wrap as JSON string (I don't know yet why it's not done automatically)
         ScriptRunSessions.ScriptRunSession scriptRunSession = scriptRunSessions.createForActiveExecution(scriptName, scriptExecution);
