@@ -5,11 +5,13 @@ import org.jboss.logging.Logger;
 import xyz.aoresnik.babysitter.data.ScriptExecutionData;
 import xyz.aoresnik.babysitter.data.ScriptExecutionInitialStateData;
 import xyz.aoresnik.babysitter.data.ScriptExecutionUpdateData;
+import xyz.aoresnik.babysitter.data.ScriptInputData;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.*;
 import java.util.function.Consumer;
@@ -34,6 +36,8 @@ public class ScriptExecution {
 
     @Getter
     private Integer exitCode;
+
+    OutputStream processStdin;
 
     private Set<Consumer<ScriptExecutionData>> listeners = new HashSet<>();
 
@@ -88,6 +92,7 @@ public class ScriptExecution {
             Process p = pb.start();
             // STDERR was redirected to STDOUT
             InputStream processStdoutAndStdErr = p.getInputStream();
+            processStdin = p.getOutputStream();
             try {
                 byte[] buffer = new byte[1024];
                 while (p.isAlive())
@@ -138,5 +143,18 @@ public class ScriptExecution {
 
     public void waitFor() {
         // For now, entire execution is in start
+    }
+
+    public void sendInput(ScriptInputData message) {
+        if (processStdin != null) {
+            try {
+                processStdin.write(Base64.getDecoder().decode(message.getInputData()));
+                processStdin.flush();
+            } catch (IOException e) {
+                throw new RuntimeException("Unable to send input to process", e);
+            }
+        } else {
+            log.info("Process STDIN is not yet available, ignoring input");
+        }
     }
 }

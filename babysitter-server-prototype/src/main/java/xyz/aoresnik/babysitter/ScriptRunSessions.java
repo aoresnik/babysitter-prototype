@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.jboss.logging.Logger;
 import xyz.aoresnik.babysitter.data.ScriptExecutionData;
 import xyz.aoresnik.babysitter.data.ScriptExecutionInitialStateData;
+import xyz.aoresnik.babysitter.data.ScriptInputData;
 import xyz.aoresnik.babysitter.script.ScriptExecution;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -121,12 +122,17 @@ public class ScriptRunSessions {
     }
 
     @OnMessage
-    public void onMessage(String message, @PathParam("scriptName") String scriptName, @PathParam("sessionId") String sessionId) {
+    public void onMessage(ScriptInputData message, @PathParam("scriptName") String scriptName, @PathParam("sessionId") String sessionId) {
         log.debug("Received message: " + message);
+        ScriptRunSession scriptRunSession = sessions.get(sessionId);
+        ScriptExecution scriptExecution = scriptRunSession.getScriptExecution();
+        scriptExecution.sendInput(message);
     }
 
-    public static class EncoderDecoder implements javax.websocket.Encoder.Text<ScriptExecutionInitialStateData>, javax.websocket.Decoder.Text<ScriptExecutionInitialStateData> {
+    public static class EncoderDecoder implements javax.websocket.Encoder.Text<ScriptExecutionInitialStateData>, javax.websocket.Decoder.Text<ScriptInputData> {
         ObjectMapper mapper;
+
+        Logger log = Logger.getLogger(EncoderDecoder.class);
 
         public EncoderDecoder() {
         }
@@ -148,9 +154,10 @@ public class ScriptRunSessions {
         }
 
         @Override
-        public ScriptExecutionInitialStateData decode(String s) throws DecodeException {
+        public ScriptInputData decode(String s) throws DecodeException {
             try {
-                return mapper.readValue(new StringReader(s), ScriptExecutionInitialStateData.class);
+                log.debug("Decoding " + s);
+                return mapper.readValue(new StringReader(s), ScriptInputData.class);
             } catch (StreamReadException e) {
                 throw new RuntimeException(e);
             } catch (DatabindException e) {

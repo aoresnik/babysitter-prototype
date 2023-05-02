@@ -65,7 +65,18 @@ export class AppCommandsListPaneComponent {
       // }else
       //   this.terminal.write(input);
       if (this.activeRun && this.messages) {
-        this.messages.next({inputData: input});
+        if (input === '\r') { // Carriage Return (When Enter is pressed)
+           this.terminal.write('\n');
+        } else if (input === '\u007f') { // Delete (When Backspace is pressed)
+           if (this.terminal.underlying.buffer.active.cursorX > 2) {
+             this.terminal.write('\b \b');
+          }
+        } else if (input === '\u0003') { // End of Text (When Ctrl and C are pressed)
+          this.terminal.write('^C');
+          this.terminal.write('prompt>');
+        }else
+          this.terminal.write(input);
+        this.messages.next({inputData: btoa(input)});
       } else {
         console.log("No active run, ignoring input");
       }
@@ -113,6 +124,7 @@ export class AppCommandsListPaneComponent {
     this.messages.subscribe(msg => {
       console.log("Response from websocket: " + msg);
       if (msg.initialConsoleData !== undefined) {
+        // Documentation of terminal class of this.terminal.underlying http://xtermjs.org/docs/api/terminal/classes/terminal/
         this.terminal.underlying.reset();
         this.terminal.underlying.options.convertEol = true;
         this.terminal.write(atob(msg.initialConsoleData));
