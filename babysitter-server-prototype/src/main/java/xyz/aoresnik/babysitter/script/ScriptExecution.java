@@ -3,6 +3,7 @@ package xyz.aoresnik.babysitter.script;
 import lombok.Getter;
 import org.jboss.logging.Logger;
 import xyz.aoresnik.babysitter.data.ScriptExecutionData;
+import xyz.aoresnik.babysitter.data.ScriptExecutionInitialStateData;
 import xyz.aoresnik.babysitter.data.ScriptExecutionUpdateData;
 
 import java.io.File;
@@ -42,14 +43,32 @@ public class ScriptExecution {
         getStdoutFile().createNewFile();
     }
 
-    public void addListener(Consumer<ScriptExecutionData> listener) {
-        listeners.add(listener);
-        // TODO: send previous console output, sync with updates, prevent skipped or duplicated
-        //OutputStream processStdoutLog = Files.newOutputStream(stdoutLog.toPath());
+    /**
+     * Registers the listener for execution status and console output updates and returns the initial state.
+     * It's guaranteed that the initial state and updates will contain entire console output.
+     * @param listener
+     * @return
+     */
+    public ScriptExecutionInitialStateData registerListener(Consumer<ScriptExecutionData> listener) {
+        synchronized (listeners) {
+            listeners.add(listener);
+            byte[] resultText = getResult();
+            ScriptExecutionInitialStateData initialStateData = new ScriptExecutionInitialStateData();
+
+            initialStateData.setScriptRun(true);
+            initialStateData.setScriptCompleted(true);
+            initialStateData.setExitCode(getExitCode());
+            initialStateData.setErrorText(getErrorText());
+            initialStateData.setInitialConsoleData(resultText);
+
+            return initialStateData;
+        }
     }
 
     public void removeListener(Consumer<ScriptExecutionData> listener) {
-        listeners.remove(listener);
+        synchronized (listeners) {
+            listeners.remove(listener);
+        }
     }
 
     public void start() {
@@ -86,8 +105,10 @@ public class ScriptExecution {
                     updateData.setErrorText(getErrorText());
                     updateData.setIncrementalConsoleData(Arrays.copyOf(buffer, nRead));
 
-                    for (Consumer<ScriptExecutionData> listener : listeners) {
-                        listener.accept(updateData);
+                    synchronized (listeners) {
+                        for (Consumer<ScriptExecutionData> listener : listeners) {
+                            listener.accept(updateData);
+                        }
                     }
                 }
 
@@ -97,7 +118,6 @@ public class ScriptExecution {
         } catch (IOException e) {
             log.error("Error running script", e);
             errorText = e.getMessage();
-
         }
     }
 

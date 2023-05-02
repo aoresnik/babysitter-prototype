@@ -16,11 +16,9 @@ import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 /**
  * Based on https://quarkus.io/guides/websockets
@@ -77,22 +75,7 @@ public class ScriptRunSessions {
         scriptRunSession.setWebsocketSession(session);
         log.debug("Connected terminal for script " + scriptName + " with session ID: " + sessionId);
         ScriptExecution scriptExecution = scriptRunSession.getScriptExecution();
-        byte[] resultText = scriptExecution.getResult();
-        ScriptExecutionInitialStateData initialStateData = new ScriptExecutionInitialStateData();
 
-        initialStateData.setScriptRun(true);
-        initialStateData.setScriptCompleted(true);
-        initialStateData.setExitCode(scriptExecution.getExitCode());
-        initialStateData.setErrorText(scriptExecution.getErrorText());
-        initialStateData.setInitialConsoleData(resultText);
-
-        session.getAsyncRemote().sendObject(initialStateData, result ->  {
-            if (result.getException() != null) {
-                log.error("Unable to send message: " + result.getException());
-            }
-        });
-
-        // TODO: this is not correct, some data may be skipped
         Consumer<ScriptExecutionData> listener = new Consumer<ScriptExecutionData>() {
             @Override
             public void accept(ScriptExecutionData scriptExecutionData) {
@@ -112,7 +95,12 @@ public class ScriptRunSessions {
             }
         };
         scriptRunSession.listener = listener;
-        scriptExecution.addListener(listener);
+        ScriptExecutionInitialStateData initialStateData = scriptExecution.registerListener(listener);
+        session.getAsyncRemote().sendObject(initialStateData, result ->  {
+            if (result.getException() != null) {
+                log.error("Unable to send message: " + result.getException());
+            }
+        });
     }
 
     @OnClose
