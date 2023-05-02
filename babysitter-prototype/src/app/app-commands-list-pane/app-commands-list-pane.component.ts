@@ -100,9 +100,13 @@ export class AppCommandsListPaneComponent {
     console.log("TODO: Show console of run " + run.scriptRunSessionId + " of script " + run.scriptName);
     this.scriptRunSessionService.messagesForSession(run.scriptName, run.scriptRunSessionId).subscribe(msg => {
       console.log("Response from websocket: " + msg);
-      this.terminal.underlying.reset();
-      this.terminal.underlying.options.convertEol = true;
-      this.terminal.write(atob(msg.initialConsoleData));
+      if (msg.initialConsoleData) {
+        this.terminal.underlying.reset();
+        this.terminal.underlying.options.convertEol = true;
+        this.terminal.write(atob(msg.initialConsoleData));
+      } else if (msg.incrementalConsoleData) {
+        this.terminal.write(atob(msg.incrementalConsoleData));
+      }
       if (msg.errorText) {
         this.scriptError = msg.errorText;
       } else {

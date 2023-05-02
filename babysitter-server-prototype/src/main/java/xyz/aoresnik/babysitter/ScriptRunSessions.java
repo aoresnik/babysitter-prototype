@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.exc.StreamReadException;
 import com.fasterxml.jackson.databind.DatabindException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.jboss.logging.Logger;
+import xyz.aoresnik.babysitter.data.ScriptExecutionData;
 import xyz.aoresnik.babysitter.data.ScriptExecutionInitialStateData;
 import xyz.aoresnik.babysitter.script.ScriptExecution;
 
@@ -18,6 +19,7 @@ import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 /**
@@ -36,6 +38,8 @@ public class ScriptRunSessions {
         String scriptName;
         private final ScriptExecution scriptExecution;
         Session websocketSession;
+
+        Consumer<ScriptExecutionData> listener;
 
         public ScriptRunSession(String scriptName, ScriptExecution scriptExecution) {
             this.scriptName = scriptName;
@@ -57,6 +61,7 @@ public class ScriptRunSessions {
         public void setWebsocketSession(Session websocketSession) {
             this.websocketSession = websocketSession;
         }
+
     }
 
     public ScriptRunSession createForActiveExecution(String scriptName, ScriptExecution scriptExecution) {
@@ -72,24 +77,52 @@ public class ScriptRunSessions {
         scriptRunSession.setWebsocketSession(session);
         log.debug("Connected terminal for script " + scriptName + " with session ID: " + sessionId);
         ScriptExecution scriptExecution = scriptRunSession.getScriptExecution();
-        String resultText = scriptExecution.getResult().stream().collect(Collectors.joining("\n"));
+        byte[] resultText = scriptExecution.getResult();
         ScriptExecutionInitialStateData initialStateData = new ScriptExecutionInitialStateData();
 
         initialStateData.setScriptRun(true);
         initialStateData.setScriptCompleted(true);
         initialStateData.setExitCode(scriptExecution.getExitCode());
         initialStateData.setErrorText(scriptExecution.getErrorText());
-        initialStateData.setInitialConsoleData(resultText.getBytes(StandardCharsets.UTF_8));
+        initialStateData.setInitialConsoleData(resultText);
 
         session.getAsyncRemote().sendObject(initialStateData, result ->  {
             if (result.getException() != null) {
                 log.error("Unable to send message: " + result.getException());
             }
         });
+
+        // TODO: this is not correct, some data may be skipped
+        Consumer<ScriptExecutionData> listener = new Consumer<ScriptExecutionData>() {
+            @Override
+            public void accept(ScriptExecutionData scriptExecutionData) {
+                try {
+                    StringWriter writer = new StringWriter();
+                    ObjectMapper mapper = new ObjectMapper();
+                    mapper.writeValue(writer, scriptExecutionData);
+                    String json = writer.toString();
+                    session.getAsyncRemote().sendText(json, result ->  {
+                        if (result.getException() != null) {
+                            log.error("Unable to send message: " + result.getException());
+                        }
+                    });
+                } catch (IOException e) {
+                    log.error("Unable to serialize script execution data: " + e);
+                }
+            }
+        };
+        scriptRunSession.listener = listener;
+        scriptExecution.addListener(listener);
     }
 
     @OnClose
     public void onClose(Session session, @PathParam("scriptName") String scriptName, @PathParam("sessionId") String sessionId) {
+        ScriptRunSession scriptRunSession = sessions.get(sessionId);
+        ScriptExecution scriptExecution = scriptRunSession.getScriptExecution();
+        if (scriptExecution != null)
+        {
+            scriptExecution.removeListener(scriptRunSession.listener);
+        }
         sessions.remove(scriptName);
     }
 

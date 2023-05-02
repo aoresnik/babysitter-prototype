@@ -12,6 +12,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -146,7 +147,7 @@ public class ScriptsResource {
         testRunInExecutor();
 
         // TODO: return the lines as they are printed from ScriptRunSession
-        return scriptExecution.getResult();
+        return Arrays.asList(new String(scriptExecution.getResult(), StandardCharsets.UTF_8).split("\n"));
     }
 
 }
