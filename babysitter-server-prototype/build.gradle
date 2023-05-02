@@ -7,6 +7,10 @@ plugins {
 repositories {
     mavenCentral()
     mavenLocal()
+    // Workaround, see https://github.com/JetBrains/pty4j/issues/130#issuecomment-1344090293
+    maven {
+        url "https://packages.jetbrains.team/maven/p/ij/intellij-dependencies"
+    }
 }
 
 dependencies {
@@ -18,6 +22,7 @@ dependencies {
     implementation 'io.quarkus:quarkus-websockets'
     implementation 'io.quarkus:quarkus-scheduler'
     implementation 'org.eclipse.microprofile.config:microprofile-config-api:2.0'
+    implementation 'org.jetbrains.pty4j:pty4j:0.12.11'
 
     // TODO: Lombok version in variable
     compileOnly 'org.projectlombok:lombok:1.18.26'

@@ -52,30 +52,18 @@ export class AppCommandsListPaneComponent {
 
   ngAfterViewInit(){
     this.terminal.onData().subscribe((input) => {
-      // TODO: sending of input
-      // if (input === '\r') { // Carriage Return (When Enter is pressed)
-      //   this.terminal.write('prompt>');
-      // } else if (input === '\u007f') { // Delete (When Backspace is pressed)
-      //   if (this.terminal.underlying.buffer.active.cursorX > 2) {
-      //     this.terminal.write('\b \b');
-      //   }
-      // } else if (input === '\u0003') { // End of Text (When Ctrl and C are pressed)
-      //   this.terminal.write('^C');
-      //   this.terminal.write('prompt>');
-      // }else
-      //   this.terminal.write(input);
       if (this.activeRun && this.messages) {
-        if (input === '\r') { // Carriage Return (When Enter is pressed)
-           this.terminal.write('\n');
-        } else if (input === '\u007f') { // Delete (When Backspace is pressed)
-           if (this.terminal.underlying.buffer.active.cursorX > 2) {
-             this.terminal.write('\b \b');
-          }
-        } else if (input === '\u0003') { // End of Text (When Ctrl and C are pressed)
-          this.terminal.write('^C');
-          this.terminal.write('prompt>');
-        }else
-          this.terminal.write(input);
+        // if (input === '\r') { // Carriage Return (When Enter is pressed)
+        //   this.terminal.write('prompt>');
+        // } else if (input === '\u007f') { // Delete (When Backspace is pressed)
+        //   if (this.terminal.underlying.buffer.active.cursorX > 2) {
+        //     this.terminal.write('\b \b');
+        //   }
+        // } else if (input === '\u0003') { // End of Text (When Ctrl and C are pressed)
+        //   this.terminal.write('^C');
+        //   this.terminal.write('prompt>');
+        // }else
+        //   this.terminal.write(input);
         this.messages.next({inputData: btoa(input)});
       } else {
         console.log("No active run, ignoring input");

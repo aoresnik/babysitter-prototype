@@ -1,5 +1,7 @@
 package xyz.aoresnik.babysitter.script;
 
+import com.pty4j.PtyProcess;
+import com.pty4j.PtyProcessBuilder;
 import lombok.Getter;
 import org.jboss.logging.Logger;
 import xyz.aoresnik.babysitter.data.ScriptExecutionData;
@@ -79,17 +81,18 @@ public class ScriptExecution {
         try {
 
             File scriptsDir = SCRIPTS_DIR.toFile();
-            ProcessBuilder pb = new ProcessBuilder(new File(scriptsDir, scriptName).getCanonicalPath());
+            //ProcessBuilder pb = new ProcessBuilder(new File(scriptsDir, scriptName).getCanonicalPath());
+            PtyProcessBuilder pb = new PtyProcessBuilder().setCommand(new String[] {new File(scriptsDir, scriptName).getCanonicalPath()});
             File stdoutLog = getStdoutFile();
-            Map<String, String> env = pb.environment();
-            pb.directory(scriptsDir);
-            pb.redirectErrorStream(true);
+            //Map<String, String> env = pb.environment();
+            pb.setDirectory(scriptsDir.getCanonicalPath());
+            pb.setRedirectErrorStream(true);
 
             // Don't redirect to file - read directly so that we can notify UI
             //pb.redirectOutput(ProcessBuilder.Redirect.appendTo(stdoutLog));
             OutputStream processStdoutLog = Files.newOutputStream(stdoutLog.toPath());
 
-            Process p = pb.start();
+            PtyProcess p = pb.start();
             // STDERR was redirected to STDOUT
             InputStream processStdoutAndStdErr = p.getInputStream();
             processStdin = p.getOutputStream();
