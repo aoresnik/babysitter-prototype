@@ -141,6 +141,7 @@ public class ScriptExecution {
                         updateData.setIncrementalConsoleData(Arrays.copyOf(buffer, nRead));
 
                         synchronized (listeners) {
+                            log.debug(String.format("Notifying %d listeners", listeners.size()));
                             for (Consumer<ScriptExecutionData> listener : listeners) {
                                 listener.accept(updateData);
                             }

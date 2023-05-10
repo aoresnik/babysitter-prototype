@@ -3,6 +3,7 @@ import {ScriptError, ScriptResult, ScriptsServiceService} from "../scripts-servi
 import {NgTerminal} from "ng-terminal";
 import {ScriptRunSessionService} from "../script-run-session.service";
 import {Subject} from "rxjs";
+import {ScriptWebsocketConnection} from "../websocket-test.service";
 
 export class ScriptRun {
   constructor(scriptName: string, scriptRunSessionId: string, date: Date = new Date() ) {
@@ -41,7 +42,7 @@ export class AppCommandsListPaneComponent {
 
   @ViewChild('term', {static: false}) terminal!: NgTerminal;
 
-  private messages?: Subject<any>;
+  private messages?: ScriptWebsocketConnection;
 
   constructor(private scriptsService: ScriptsServiceService, private scriptRunSessionService: ScriptRunSessionService) {
 
@@ -68,7 +69,7 @@ export class AppCommandsListPaneComponent {
         //   this.terminal.write('prompt>');
         // }else
         //   this.terminal.write(input);
-        this.messages.next({inputData: btoa(input)});
+        this.messages.subject.next({inputData: btoa(input)});
       } else {
         console.log("No active run, ignoring input");
       }
@@ -110,10 +111,17 @@ export class AppCommandsListPaneComponent {
   }
 
   showRun(run: ScriptRun) {
-    console.log("TODO: Show console of run " + run.scriptRunSessionId + " of script " + run.scriptName);
+    console.log("Show console of run " + run.scriptRunSessionId + " of script " + run.scriptName);
     this.activeRun = run;
+    // TODO: disconnect from previous session - this simply doesn't work
+    if (this.messages) {
+      console.log("Unsubscribing from previous session");
+      this.messages.ws.close();
+    }
+
     this.messages = this.scriptRunSessionService.messagesForSession(run.scriptName, run.scriptRunSessionId);
-    this.messages.subscribe(msg => {
+    this.messages.subject.subscribe(response => {
+      let msg = JSON.parse(response.data);
       console.log("Response from websocket: " + msg);
       if (msg.initialConsoleData !== undefined) {
         // Documentation of terminal class of this.terminal.underlying http://xtermjs.org/docs/api/terminal/classes/terminal/

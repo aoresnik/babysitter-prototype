@@ -1,37 +1,42 @@
 import { Injectable } from '@angular/core';
 import {Observable, Observer, Subject} from "rxjs";
 
+export class ScriptWebsocketConnection {
+  ws: WebSocket;
 
+  subject: Subject<any>;
+
+  constructor(public url: string) {
+    this.ws = new WebSocket(url);
+    console.log("Successfully connected: " + url);
+
+    let observable = Observable.create((obs: Observer<MessageEvent>) => {
+      this.ws.onmessage = obs.next.bind(obs);
+      this.ws.onerror = obs.error.bind(obs);
+      this.ws.onclose = obs.complete.bind(obs);
+      return this.ws.close.bind(this.ws);
+    });
+    let observer = {
+      next: (data: Object) => {
+        console.log("next");
+        if (this.ws.readyState === WebSocket.OPEN) {
+          this.ws.send(JSON.stringify(data));
+        }
+      },
+    };
+    this.subject = Subject.create(observer, observable);
+  }
+}
+
+/**
+ * Based on: https://tutorialedge.net/typescript/angular/angular-websockets-tutorial/
+ */
 @Injectable({
   providedIn: 'root'
 })
 export class WebsocketTestService {
 
-  public connect(url: string): Subject<MessageEvent> {
-      let subject= this.create(url);
-      console.log("Successfully connected: " + url);
-      return subject;
+  public connect(url: string): ScriptWebsocketConnection {
+    return new ScriptWebsocketConnection(url);
   }
-
-  // Based on: https://tutorialedge.net/typescript/angular/angular-websockets-tutorial/
-  private create(url: string): Subject<MessageEvent> {
-    let ws = new WebSocket(url);
-
-    let observable = Observable.create((obs: Observer<MessageEvent>) => {
-      ws.onmessage = obs.next.bind(obs);
-      ws.onerror = obs.error.bind(obs);
-      ws.onclose = obs.complete.bind(obs);
-      return ws.close.bind(ws);
-    });
-    let observer = {
-      next: (data: Object) => {
-        console.log("next");
-        if (ws.readyState === WebSocket.OPEN) {
-          ws.send(JSON.stringify(data));
-        }
-      },
-    };
-    return Subject.create(observer, observable);
-  }
-
 }
