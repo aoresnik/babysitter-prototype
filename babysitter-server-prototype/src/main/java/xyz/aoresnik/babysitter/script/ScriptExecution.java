@@ -124,7 +124,7 @@ public class ScriptExecution {
             processStdin = p.getOutputStream();
             try {
                 byte[] buffer = new byte[1024];
-                while (p.isAlive())
+                while (true)
                 {
                     int nRead = processStdoutAndStdErr.read(buffer);
                     if (nRead >= 0) {
@@ -147,7 +147,8 @@ public class ScriptExecution {
                             }
                         }
                     } else {
-                        log.debug("Read EOF from process stdout/stderr");
+                        log.debug("Read EOF from process stdout/stderr - stopping");
+                        break;
                     }
                 }
 
