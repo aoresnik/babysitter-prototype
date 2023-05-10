@@ -13,7 +13,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.*;
 import java.util.function.Consumer;
@@ -35,6 +34,10 @@ public class ScriptExecution {
 
     @Getter
     private String errorText;
+
+    private boolean scriptRun = false;
+
+    private boolean scriptCompleted = false;
 
     @Getter
     private Integer exitCode;
@@ -61,9 +64,10 @@ public class ScriptExecution {
             byte[] resultText = getResult();
             ScriptExecutionInitialStateData initialStateData = new ScriptExecutionInitialStateData();
 
-            initialStateData.setScriptRun(true);
-            initialStateData.setScriptCompleted(true);
-            initialStateData.setExitCode(getExitCode());
+            // TODO: return correct state
+            initialStateData.setScriptRun(scriptRun);
+            initialStateData.setScriptCompleted(scriptCompleted);
+            initialStateData.setExitCode(exitCode);
             initialStateData.setErrorText(getErrorText());
             initialStateData.setInitialConsoleData(resultText);
 
@@ -82,6 +86,10 @@ public class ScriptExecution {
 
             File scriptsDir = SCRIPTS_DIR.toFile();
             //ProcessBuilder pb = new ProcessBuilder(new File(scriptsDir, scriptName).getCanonicalPath());
+
+            // PROBLEM with JPty - it doesn't show detailed errors, it returns "Exec_tty error:Unknown reason"
+            // instead of "not executable", as vanilla ProcessBuilder does
+
             PtyProcessBuilder pb = new PtyProcessBuilder().setCommand(new String[] {new File(scriptsDir, scriptName).getCanonicalPath()});
             File stdoutLog = getStdoutFile();
             //Map<String, String> env = pb.environment();
@@ -93,6 +101,24 @@ public class ScriptExecution {
             OutputStream processStdoutLog = Files.newOutputStream(stdoutLog.toPath());
 
             PtyProcess p = pb.start();
+
+            scriptRun = true;
+
+            {
+                ScriptExecutionUpdateData updateData = new ScriptExecutionUpdateData();
+                updateData.setScriptRun(scriptRun);
+                updateData.setScriptCompleted(scriptCompleted);
+                updateData.setExitCode(null);
+                updateData.setErrorText("");
+                updateData.setIncrementalConsoleData(null);
+
+                synchronized (listeners) {
+                    for (Consumer<ScriptExecutionData> listener : listeners) {
+                        listener.accept(updateData);
+                    }
+                }
+            }
+
             // STDERR was redirected to STDOUT
             InputStream processStdoutAndStdErr = p.getInputStream();
             processStdin = p.getOutputStream();
@@ -101,17 +127,39 @@ public class ScriptExecution {
                 while (p.isAlive())
                 {
                     int nRead = processStdoutAndStdErr.read(buffer);
-                    log.debug("Read " + nRead + " bytes from process stdout/stderr");
+                    if (nRead >= 0) {
+                        log.debug("Read " + nRead + " bytes from process stdout/stderr");
 
-                    processStdoutLog.write(buffer, 0, nRead);
-                    processStdoutLog.flush();
+                        processStdoutLog.write(buffer, 0, nRead);
+                        processStdoutLog.flush();
 
+                        ScriptExecutionUpdateData updateData = new ScriptExecutionUpdateData();
+                        updateData.setScriptRun(scriptRun);
+                        updateData.setScriptCompleted(scriptCompleted);
+                        updateData.setExitCode(null);
+                        updateData.setErrorText(getErrorText());
+                        updateData.setIncrementalConsoleData(Arrays.copyOf(buffer, nRead));
+
+                        synchronized (listeners) {
+                            for (Consumer<ScriptExecutionData> listener : listeners) {
+                                listener.accept(updateData);
+                            }
+                        }
+                    } else {
+                        log.debug("Read EOF from process stdout/stderr");
+                    }
+                }
+
+                this.scriptCompleted = true;
+                this.exitCode = p.waitFor();
+
+                {
                     ScriptExecutionUpdateData updateData = new ScriptExecutionUpdateData();
-                    updateData.setScriptRun(true);
-                    updateData.setScriptCompleted(true);
+                    updateData.setScriptRun(scriptRun);
+                    updateData.setScriptCompleted(scriptCompleted);
                     updateData.setExitCode(getExitCode());
                     updateData.setErrorText(getErrorText());
-                    updateData.setIncrementalConsoleData(Arrays.copyOf(buffer, nRead));
+                    updateData.setIncrementalConsoleData(null);
 
                     synchronized (listeners) {
                         for (Consumer<ScriptExecutionData> listener : listeners) {
@@ -120,8 +168,9 @@ public class ScriptExecution {
                     }
                 }
 
-                this.exitCode = p.waitFor();
             } catch (InterruptedException e) {
+                log.info("Detected interrupt exception, stopping process");
+                p.destroy();
             }
         } catch (IOException e) {
             log.error("Error running script", e);

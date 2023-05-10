@@ -14,7 +14,7 @@
 
 <br/>
 
-  <div style="font-weight: bold">Script run console: <span style="background-color: #eff3f6">{{scriptRun}}</span></div>
+  <div style="font-weight: bold">Script run console: <span style="background-color: #eff3f6"> Started: {{scriptRun}} Completed {{scriptCompleted}} <span *ngIf="scriptCompleted">Exit code: {{exitCode}}</span></span></div>
 <div>
   <div class="error-pane" *ngIf="scriptError != null">{{ scriptError }}</div>
   <!--

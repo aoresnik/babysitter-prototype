@@ -31,6 +31,10 @@ export class AppCommandsListPaneComponent {
 
   scriptError: string = "";
 
+  scriptCompleted?: boolean;
+
+  exitCode?: number;
+
   runsList: ScriptRun[] = [];
 
   activeRun?: ScriptRun;
@@ -116,8 +120,17 @@ export class AppCommandsListPaneComponent {
         this.terminal.underlying.reset();
         this.terminal.underlying.options.convertEol = true;
         this.terminal.write(atob(msg.initialConsoleData));
-      } else if (msg.incrementalConsoleData !== undefined) {
+      } else if (msg.incrementalConsoleData !== undefined && msg.incrementalConsoleData) {
         this.terminal.write(atob(msg.incrementalConsoleData));
+      }
+      if (msg.scriptRun !== undefined) {
+        this.scriptRun = msg.scriptRun;
+      }
+      if (msg.scriptCompleted !== undefined) {
+        this.scriptCompleted = msg.scriptCompleted;
+      }
+      if (msg.exitCode !== undefined) {
+        this.exitCode = msg.exitCode;
       }
       if (msg.errorText) {
         this.scriptError = msg.errorText;
