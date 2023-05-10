@@ -96,6 +96,10 @@ public class ScriptExecution {
             pb.setDirectory(scriptsDir.getCanonicalPath());
             pb.setRedirectErrorStream(true);
 
+            Map<String, String> env = new HashMap<>();
+            env.put("TERM", "xterm-256color");
+            pb.setEnvironment(env);
+
             // Don't redirect to file - read directly so that we can notify UI
             //pb.redirectOutput(ProcessBuilder.Redirect.appendTo(stdoutLog));
             OutputStream processStdoutLog = Files.newOutputStream(stdoutLog.toPath());
