@@ -11,6 +11,6 @@ export class ScriptRunSessionService {
   }
 
   messagesForSession(scriptName: string, scriptRunSessionId: string): ScriptWebsocketConnection {
-    return this.wsService.connect(`ws://localhost:8080/api/v1/scripts/${scriptName}/session/${scriptRunSessionId}/websocket`);
+    return this.wsService.connect(`ws://localhost:8080/api/v1/scripts/session/${scriptRunSessionId}/websocket`);
   }
 }

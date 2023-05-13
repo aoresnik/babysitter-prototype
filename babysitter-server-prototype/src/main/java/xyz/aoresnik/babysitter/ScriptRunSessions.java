@@ -24,7 +24,7 @@ import java.util.function.Consumer;
 /**
  * Based on https://quarkus.io/guides/websockets
  */
-@ServerEndpoint(value = "/api/v1/scripts/{scriptName}/session/{sessionId}/websocket", encoders = {ScriptRunSessions.EncoderDecoder.class}, decoders = {ScriptRunSessions.EncoderDecoder.class})
+@ServerEndpoint(value = "/api/v1/scripts/session/{sessionId}/websocket", encoders = {ScriptRunSessions.EncoderDecoder.class}, decoders = {ScriptRunSessions.EncoderDecoder.class})
 @ApplicationScoped
 public class ScriptRunSessions {
 
@@ -71,10 +71,10 @@ public class ScriptRunSessions {
     }
 
     @OnOpen
-    public void onOpen(Session session, @PathParam("scriptName") String scriptName, @PathParam("sessionId") String sessionId) {
+    public void onOpen(Session session, @PathParam("sessionId") String sessionId) {
         ScriptRunSession scriptRunSession = sessions.get(sessionId);
         scriptRunSession.setWebsocketSession(session);
-        log.debug("Connected terminal for script " + scriptName + " with session ID: " + sessionId);
+        log.debug("Connected terminal for script execution session ID: " + sessionId);
         ScriptExecution scriptExecution = scriptRunSession.getScriptExecution();
 
         Consumer<ScriptExecutionData> listener = new Consumer<ScriptExecutionData>() {
@@ -105,24 +105,24 @@ public class ScriptRunSessions {
     }
 
     @OnClose
-    public void onClose(Session session, @PathParam("scriptName") String scriptName, @PathParam("sessionId") String sessionId) {
+    public void onClose(Session session, @PathParam("sessionId") String sessionId) {
         ScriptRunSession scriptRunSession = sessions.get(sessionId);
         ScriptExecution scriptExecution = scriptRunSession.getScriptExecution();
         if (scriptExecution != null)
         {
             scriptExecution.removeListener(scriptRunSession.listener);
         }
-        sessions.remove(scriptName);
+        sessions.remove(sessionId);
     }
 
     @OnError
-    public void onError(Session session, @PathParam("scriptName") String scriptName, Throwable throwable) {
-        sessions.remove(scriptName);
-        log.debug("Terminal for " + scriptName + " left on error: " + throwable);
+    public void onError(Session session, Throwable throwable, @PathParam("sessionId") String sessionId) {
+        sessions.remove(sessionId);
+        log.debug("Terminal for execution session ID " + sessionId + " left on error: " + throwable);
     }
 
     @OnMessage
-    public void onMessage(ScriptInputData message, @PathParam("scriptName") String scriptName, @PathParam("sessionId") String sessionId) {
+    public void onMessage(ScriptInputData message, @PathParam("sessionId") String sessionId) {
         log.debug("Received message: " + message);
         ScriptRunSession scriptRunSession = sessions.get(sessionId);
         ScriptExecution scriptExecution = scriptRunSession.getScriptExecution();
