@@ -84,36 +84,12 @@ export class AppCommandsListPaneComponent {
       let scriptRun = new ScriptRun(script.scriptId, runSessionId);
       this.runsList.push(scriptRun);
       this.showRun(scriptRun);
-      // TODO: errors, like in the sync case
-
     });
-    // this.scriptsService.runScript(script).subscribe(res => {
-    //   if (res instanceof ScriptResult) {
-    //     const resultText = res.lines.join("\n");
-    //     console.log(`Result of the script: ${res}`);
-    //     this.scriptRun = script;
-    //     this.scriptResult = resultText;
-    //     this.terminal.underlying.reset();
-    //     this.terminal.underlying.options.convertEol = true;
-    //     this.terminal.write(resultText);
-    //     this.scriptError = "";
-    //     this.runsList.push(new ScriptRun(script, "TODO: get session ID"));
-    //   } else if (res instanceof ScriptError) {
-    //     const error: ScriptError = res;
-    //     console.log(`Error while executing script: ${error.errorMsg}`);
-    //     this.scriptRun = script;
-    //     this.terminal.underlying.reset();
-    //     this.scriptResult = "<not run>";
-    //     this.scriptError = error.errorMsg;
-    //     this.runsList.push(new ScriptRun(script, "TODO: get session ID"));
-    //   }
-    // });
   }
 
   showRun(run: ScriptRun) {
     console.log("Show console of run " + run.scriptRunSessionId + " of script " + run.scriptName);
     this.activeRun = run;
-    // TODO: disconnect from previous session - this simply doesn't work
     if (this.messages) {
       console.log("Unsubscribing from previous session");
       this.messages.ws.close();
