@@ -151,25 +151,4 @@ public class ScriptsResource {
         return "\"" + scriptRunSession.getScriptExecution().getSessionId() + "\"";
     }
 
-//    @Path("/{scriptName}/run")
-//    @POST
-//    @Produces(MediaType.APPLICATION_JSON)
-//    public List<String> run(@PathParam("scriptName") String scriptName) {
-//        log.info(String.format("Running script %s", scriptName));
-//        ScriptExecution scriptExecution = null;
-//        try {
-//            scriptExecution = new ScriptExecution(scriptSource, scriptName);
-//        } catch (IOException e) {
-//            throw new RuntimeException("Internal error while attempting to run script", e);
-//        }
-//        // TODO: just trigger here, return immediately
-//        scriptExecution.start();
-//        scriptExecution.waitFor();
-//
-//        testRunInExecutor();
-//
-//        // TODO: return the lines as they are printed from ScriptRunSession
-//        return Arrays.asList(new String(scriptExecution.getResult(), StandardCharsets.UTF_8).split("\n"));
-//    }
-
 }

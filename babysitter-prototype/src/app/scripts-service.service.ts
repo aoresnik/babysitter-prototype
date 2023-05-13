@@ -45,19 +45,6 @@ export class ScriptsServiceService {
     );
   }
 
-  runScript(script: string): Observable<ScriptResult | ScriptError> {
-    return this.http.post<string[]>(`${ this.serverRootUrl }/api/v1/scripts/${script}/run`, this.httpOptions ).pipe(
-      tap(res => console.log(`Run script ${ script }`)),
-      map(res => {
-        return new ScriptResult(res);
-      }),
-      catchError(err => {
-        console.log(err);
-        return of(new ScriptError(err.error.details));
-      })
-    );
-  }
-
   runScriptAsync(scriptSourceId: number, script: string): Observable<string> {
     return this.http.post<string>(`${ this.serverRootUrl }/api/v1/scripts/${scriptSourceId}/${script}/run-async`, this.httpOptions ).pipe(
       tap(res => console.log(`Run script ${ script }`)),
