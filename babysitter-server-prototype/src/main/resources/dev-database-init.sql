@@ -20,5 +20,8 @@ create table SCRIPT_SOURCE_SERVER_DIR(
 
 insert into SCRIPT_SOURCE (NAME) values ('Local dir on server');
 
-insert into SCRIPT_SOURCE_SERVER_DIR (SCRIPT_SOURCE_ID, DIR_NAME) values (select ID from SCRIPT_SOURCE where NAME='Local dir on server', '/home/user/scripts');
+-- TODO: add support for ${server_root} in dir name
+insert into SCRIPT_SOURCE_SERVER_DIR (SCRIPT_SOURCE_ID, DIR_NAME) values (select ID from SCRIPT_SOURCE where NAME='Local dir on server', '../../../../babysitter/scripts');
+
+
 

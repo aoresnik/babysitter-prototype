@@ -41,8 +41,9 @@ public class DevInitConfiguration {
         try (Connection connection = defaultDataSource.getConnection()) {
             try (Statement statement = connection.createStatement()) {
                 log.debug("Executing initialization SQL");
-                boolean execute = connection.createStatement().execute(contents);
+                boolean execute = statement.execute(contents);
             }
+            connection.commit();
         } catch (SQLException e) {
             throw new RuntimeException("Unable to open database", e);
         }
