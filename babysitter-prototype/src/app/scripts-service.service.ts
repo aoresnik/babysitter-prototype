@@ -38,7 +38,7 @@ export class ScriptsServiceService {
     headers: new HttpHeaders({'Content-Type': 'application/json'})
   };
 
-  getScripts(): Observable<string[]> {
+  getScripts(): Observable<any[]> {
     return this.http.get<string[]>(`${ this.serverRootUrl }/api/v1/scripts`, this.httpOptions ).pipe(
       tap(res => console.log('Loaded list of scripts')),
       catchError(this.handleError<any>('saveNewState'))
@@ -58,8 +58,8 @@ export class ScriptsServiceService {
     );
   }
 
-  runScriptAsync(script: string): Observable<string> {
-    return this.http.post<string>(`${ this.serverRootUrl }/api/v1/scripts/${script}/run-async`, this.httpOptions ).pipe(
+  runScriptAsync(scriptSourceId: number, script: string): Observable<string> {
+    return this.http.post<string>(`${ this.serverRootUrl }/api/v1/scripts/${scriptSourceId}/${script}/run-async`, this.httpOptions ).pipe(
       tap(res => console.log(`Run script ${ script }`)),
       map(res => {
         return res;

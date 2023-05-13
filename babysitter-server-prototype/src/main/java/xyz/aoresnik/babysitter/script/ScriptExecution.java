@@ -8,6 +8,7 @@ import xyz.aoresnik.babysitter.data.ScriptExecutionData;
 import xyz.aoresnik.babysitter.data.ScriptExecutionInitialStateData;
 import xyz.aoresnik.babysitter.data.ScriptExecutionUpdateData;
 import xyz.aoresnik.babysitter.data.ScriptInputData;
+import xyz.aoresnik.babysitter.entity.ScriptSource;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,8 +17,6 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.util.*;
 import java.util.function.Consumer;
-
-import static xyz.aoresnik.babysitter.ScriptsResource.SCRIPTS_DIR;
 
 /**
  * TODO: simple synchronous implementation, implement async
@@ -29,6 +28,7 @@ public class ScriptExecution {
 
     Logger log = Logger.getLogger(ScriptExecution.class);
 
+    private final ScriptSource scriptSource;
     @Getter
     private final String scriptName;
 
@@ -46,7 +46,8 @@ public class ScriptExecution {
 
     private Set<Consumer<ScriptExecutionData>> listeners = new HashSet<>();
 
-    public ScriptExecution(String scriptName) throws IOException {
+    public ScriptExecution(ScriptSource scriptSource, String scriptName) throws IOException {
+        this.scriptSource = scriptSource;
         this.scriptName = scriptName;
         this.sessionId = UUID.randomUUID().toString();
         getStdoutFile().createNewFile();
@@ -84,7 +85,7 @@ public class ScriptExecution {
     public void start() {
         try {
 
-            File scriptsDir = SCRIPTS_DIR.toFile();
+            File scriptsDir = new File(scriptSource.getScriptSourceServerDir().getDirname());
             //ProcessBuilder pb = new ProcessBuilder(new File(scriptsDir, scriptName).getCanonicalPath());
 
             // PROBLEM with JPty - it doesn't show detailed errors, it returns "Exec_tty error:Unknown reason"

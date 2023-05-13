@@ -24,7 +24,7 @@ export class ScriptRun {
 export class AppCommandsListPaneComponent {
   commands: any;
 
-  scriptsList: string[] = [];
+  scriptsList: any[] = [];
 
   scriptRun: string = "";
 
@@ -76,12 +76,12 @@ export class AppCommandsListPaneComponent {
     });
   }
 
-  runScript(script: string) {
+  runScript(script: any) {
     console.log(`Running script ${ script }`);
-    this.scriptsService.runScriptAsync(script).subscribe(res => {
+    this.scriptsService.runScriptAsync(script.scriptSourceId, script.scriptId).subscribe(res => {
       let runSessionId = res;
       console.log(`Script run session ID: ${runSessionId}`);
-      let scriptRun = new ScriptRun(script, runSessionId);
+      let scriptRun = new ScriptRun(script.scriptId, runSessionId);
       this.runsList.push(scriptRun);
       this.showRun(scriptRun);
       // TODO: errors, like in the sync case
