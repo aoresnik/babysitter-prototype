@@ -1,0 +1,2 @@
+# Ignore SSH config files for the dev environment - these are dynamically created after Vagnrant is up
+*.dev.ssh-config

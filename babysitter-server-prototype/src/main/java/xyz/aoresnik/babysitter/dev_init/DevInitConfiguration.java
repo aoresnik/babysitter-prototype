@@ -4,10 +4,12 @@ import io.agroal.api.AgroalDataSource;
 import io.quarkus.runtime.ShutdownEvent;
 import io.quarkus.runtime.StartupEvent;
 import org.jboss.logging.Logger;
+import xyz.aoresnik.babysitter.entity.ScriptSourceSSHDir;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,6 +17,7 @@ import java.io.InputStreamReader;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @ApplicationScoped
@@ -25,6 +28,9 @@ public class DevInitConfiguration {
 
     @Inject
     AgroalDataSource defaultDataSource;
+
+    @Inject
+    EntityManager em;
 
     void onStart(@Observes StartupEvent ev) {
         log.info("The application is starting: initializing the dev environment database");
@@ -43,9 +49,13 @@ public class DevInitConfiguration {
                 log.debug("Executing initialization SQL");
                 boolean execute = statement.execute(contents);
             }
-            connection.commit();
         } catch (SQLException e) {
             throw new RuntimeException("Unable to open database", e);
+        }
+
+        List<ScriptSourceSSHDir> selectSssdFromScriptSourceSSHDirSssd = em.createQuery("select sssd from ScriptSourceSSHDir sssd").getResultList();
+        for (ScriptSourceSSHDir sssd : selectSssdFromScriptSourceSSHDirSssd) {
+            log.info("Found ScriptSourceSSHDir: " + sssd);
         }
     }
 
