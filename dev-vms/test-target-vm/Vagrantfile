@@ -1,0 +1,21 @@
+Vagrant.configure("2") do |config|
+  config.vm.provision "shell", inline: "echo Hello"
+
+  config.vm.box = "debian/buster64"
+  config.vm.hostname = "test-target-vm"
+
+  config.vm.provider :libvirt do |domain|
+      domain.uri = 'qemu:///system'
+  end
+
+  config.vm.provision "file", source: "../babysitter-server-prototype.key.pub", destination: "~/"
+  config.vm.provision "shell", inline: <<-SHELL
+    apt install tmux -y
+SHELL
+
+  config.vm.provision "shell", inline: <<-SHELL
+    cat /home/vagrant/babysitter-server-prototype.key.pub >> /home/vagrant/.ssh/authorized_keys
+SHELL
+
+end
+
