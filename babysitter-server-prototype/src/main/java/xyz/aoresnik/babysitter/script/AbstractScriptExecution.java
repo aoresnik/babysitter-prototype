@@ -43,11 +43,15 @@ public class AbstractScriptExecution {
 
     private Set<Consumer<ScriptExecutionData>> listeners = new HashSet<>();
 
-    public AbstractScriptExecution(ScriptSource scriptSource, String scriptName) throws IOException {
+    public AbstractScriptExecution(ScriptSource scriptSource, String scriptName) {
         this.scriptSource = scriptSource;
         this.scriptName = scriptName;
         this.sessionId = UUID.randomUUID().toString();
-        getStdoutFile().createNewFile();
+        try {
+            getStdoutFile().createNewFile();
+        } catch (IOException e) {
+            throw new RuntimeException("Unable to create STDOUT file", e);
+        }
     }
 
     /**
@@ -79,6 +83,10 @@ public class AbstractScriptExecution {
         }
     }
 
+    /**
+     * Must run the script in current thread (it's called from appropriate workers).
+     * Output must be sent to listeners.
+     */
     public void start() {
         try {
 
@@ -106,20 +114,7 @@ public class AbstractScriptExecution {
 
             scriptRun = true;
 
-            {
-                ScriptExecutionUpdateData updateData = new ScriptExecutionUpdateData();
-                updateData.setScriptRun(scriptRun);
-                updateData.setScriptCompleted(scriptCompleted);
-                updateData.setExitCode(null);
-                updateData.setErrorText("");
-                updateData.setIncrementalConsoleData(null);
-
-                synchronized (listeners) {
-                    for (Consumer<ScriptExecutionData> listener : listeners) {
-                        listener.accept(updateData);
-                    }
-                }
-            }
+            notifyConsoleChangeListeners("", null);
 
             // STDERR was redirected to STDOUT
             InputStream processStdoutAndStdErr = p.getInputStream();
@@ -135,19 +130,7 @@ public class AbstractScriptExecution {
                         processStdoutLog.write(buffer, 0, nRead);
                         processStdoutLog.flush();
 
-                        ScriptExecutionUpdateData updateData = new ScriptExecutionUpdateData();
-                        updateData.setScriptRun(scriptRun);
-                        updateData.setScriptCompleted(scriptCompleted);
-                        updateData.setExitCode(null);
-                        updateData.setErrorText(getErrorText());
-                        updateData.setIncrementalConsoleData(Arrays.copyOf(buffer, nRead));
-
-                        synchronized (listeners) {
-                            log.debug(String.format("Notifying %d listeners", listeners.size()));
-                            for (Consumer<ScriptExecutionData> listener : listeners) {
-                                listener.accept(updateData);
-                            }
-                        }
+                        notifyConsoleChangeListeners(getErrorText(), Arrays.copyOf(buffer, nRead));
                     } else {
                         log.debug("Read EOF from process stdout/stderr - stopping");
                         break;
@@ -157,20 +140,7 @@ public class AbstractScriptExecution {
                 this.scriptCompleted = true;
                 this.exitCode = p.waitFor();
 
-                {
-                    ScriptExecutionUpdateData updateData = new ScriptExecutionUpdateData();
-                    updateData.setScriptRun(scriptRun);
-                    updateData.setScriptCompleted(scriptCompleted);
-                    updateData.setExitCode(getExitCode());
-                    updateData.setErrorText(getErrorText());
-                    updateData.setIncrementalConsoleData(null);
-
-                    synchronized (listeners) {
-                        for (Consumer<ScriptExecutionData> listener : listeners) {
-                            listener.accept(updateData);
-                        }
-                    }
-                }
+                notifyConsoleChangeListeners(getErrorText(), null);
 
             } catch (InterruptedException e) {
                 log.info("Detected interrupt exception, stopping process");
@@ -179,6 +149,22 @@ public class AbstractScriptExecution {
         } catch (IOException e) {
             log.error("Error running script", e);
             errorText = e.getMessage();
+        }
+    }
+
+    private void notifyConsoleChangeListeners(String errorText1, byte[] incrementalConsoleData) {
+        ScriptExecutionUpdateData updateData = new ScriptExecutionUpdateData();
+        updateData.setScriptRun(scriptRun);
+        updateData.setScriptCompleted(scriptCompleted);
+        updateData.setExitCode(null);
+        updateData.setErrorText(errorText1);
+        updateData.setIncrementalConsoleData(incrementalConsoleData);
+
+        synchronized (listeners) {
+            log.debug(String.format("Notifying %d listeners", listeners.size()));
+            for (Consumer<ScriptExecutionData> listener : listeners) {
+                listener.accept(updateData);
+            }
         }
     }
 

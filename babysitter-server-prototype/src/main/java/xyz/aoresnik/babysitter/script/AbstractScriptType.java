@@ -23,11 +23,5 @@ abstract public class AbstractScriptType {
 
     abstract public List<String> getScripts();
 
-    public AbstractScriptExecution createScriptExecution(String scriptName) {
-        try {
-            return new AbstractScriptExecution(scriptSource, scriptName);
-        } catch (IOException e) {
-            throw new RuntimeException("Internal error while attempting to run script", e);
-        }
-    }
+    abstract public AbstractScriptExecution createScriptExecution(String scriptName);
 }

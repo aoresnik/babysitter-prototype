@@ -36,4 +36,15 @@ public class ScriptTypeLocal extends AbstractScriptType {
         return filenamesList;
     }
 
+    @Override
+    public AbstractScriptExecution createScriptExecution(String scriptName)  {
+        return new LocalScriptTypeExecution(getScriptSource(), scriptName);
+    }
+
+    class LocalScriptTypeExecution extends AbstractScriptExecution {
+
+        public LocalScriptTypeExecution(ScriptSource scriptSource, String scriptName) {
+            super(scriptSource, scriptName);
+        }
+    }
 }

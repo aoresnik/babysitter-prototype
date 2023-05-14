@@ -19,4 +19,9 @@ public class ScriptTypeSSH extends AbstractScriptType {
         log.error("SSH script source script enumeration not yet implemented");
         return new ArrayList<>();
     }
+
+    @Override
+    public AbstractScriptExecution createScriptExecution(String scriptName) {
+        throw new RuntimeException("SSH script source script execution not yet implemented");
+    }
 }
