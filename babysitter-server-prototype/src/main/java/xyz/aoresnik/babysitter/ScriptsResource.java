@@ -5,8 +5,10 @@ import io.vertx.core.WorkerExecutor;
 import org.jboss.logging.Logger;
 import xyz.aoresnik.babysitter.data.ScriptData;
 import xyz.aoresnik.babysitter.entity.ScriptSource;
+import xyz.aoresnik.babysitter.script.AbstractScriptType;
 import xyz.aoresnik.babysitter.script.ActiveScriptExecutions;
 import xyz.aoresnik.babysitter.script.ScriptExecution;
+import xyz.aoresnik.babysitter.script.ScriptTypes;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -15,7 +17,6 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -93,31 +94,16 @@ public class ScriptsResource {
 
         for (ScriptSource scriptSource : scriptSources) {
             log.info(String.format("Detecting scripts in source: %s", scriptSource));
+            AbstractScriptType scriptType = ScriptTypes.forScriptSource(scriptSource);
 
-            if (scriptSource.getScriptSourceServerDir() != null) {
-                String currentPath = null;
-                try {
-                    currentPath = new File(".").getCanonicalPath();
-                    log.info("Current dir: " + currentPath + " NOTE: Quarkus runs in classes/java/main, so the scripts are in ../../..");
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-                String dirName = scriptSource.getScriptSourceServerDir().getDirname();
-                log.debug(String.format("Reading scripts from dir: %s", dirName));
-                File scriptsDir = new File(currentPath, dirName);
-                File[] files = scriptsDir.listFiles(file -> file.getName().endsWith(".sh"));
-                if (files == null) {
-                    throw new RuntimeException("Invalid scripts dir in configuration: " + scriptsDir);
-                }
-                List<String> filenamesList = Arrays.stream(files).map(File::getName).collect(Collectors.toList());
+            List<String> scriptIds = scriptType.getScripts();
 
-                filenamesList.forEach(filename -> {
+            scriptIds.forEach(filename -> {
                     ScriptData scriptData = new ScriptData();
                     scriptData.setScriptSourceId(scriptSource.getId());
                     scriptData.setScriptId(filename);
                     result.add(scriptData);
                 });
-            }
         }
 
         return result;

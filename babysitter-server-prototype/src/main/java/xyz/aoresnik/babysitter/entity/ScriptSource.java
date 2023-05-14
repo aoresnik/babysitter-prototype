@@ -14,8 +14,11 @@ public class ScriptSource {
     @Column(name = "NAME")
     private String name;
 
-    @OneToOne(mappedBy = "scriptSource")
+    @OneToOne(mappedBy = "scriptSource", optional = true)
     private ScriptSourceServerDir scriptSourceServerDir;
+
+    @OneToOne(mappedBy = "scriptSource", optional = true)
+    private ScriptSourceSSHDir scriptSourceSSHDir;
 
     public Long getId() {
         return id;
@@ -39,6 +42,14 @@ public class ScriptSource {
 
     public void setScriptSourceServerDir(ScriptSourceServerDir scriptSourceServerDir) {
         this.scriptSourceServerDir = scriptSourceServerDir;
+    }
+
+    public ScriptSourceSSHDir getScriptSourceSSHDir() {
+        return scriptSourceSSHDir;
+    }
+
+    public void setScriptSourceSSHDir(ScriptSourceSSHDir scriptSourceSSHDir) {
+        this.scriptSourceSSHDir = scriptSourceSSHDir;
     }
 
     @Override

@@ -23,10 +23,10 @@ import java.util.function.Consumer;
  */
 public class ScriptExecution {
 
+    Logger log = Logger.getLogger(ScriptExecution.class);
+
     @Getter
     private final String sessionId;
-
-    Logger log = Logger.getLogger(ScriptExecution.class);
 
     private final ScriptSource scriptSource;
     @Getter
