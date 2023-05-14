@@ -7,7 +7,7 @@ import org.jboss.logging.Logger;
 import xyz.aoresnik.babysitter.data.ScriptExecutionData;
 import xyz.aoresnik.babysitter.data.ScriptExecutionInitialStateData;
 import xyz.aoresnik.babysitter.data.ScriptInputData;
-import xyz.aoresnik.babysitter.script.ScriptExecution;
+import xyz.aoresnik.babysitter.script.AbstractScriptExecution;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -35,12 +35,12 @@ public class ScriptRunSessions {
 
     static class ScriptRunSession {
         String scriptName;
-        private final ScriptExecution scriptExecution;
+        private final AbstractScriptExecution scriptExecution;
         Session websocketSession;
 
         Consumer<ScriptExecutionData> listener;
 
-        public ScriptRunSession(String scriptName, ScriptExecution scriptExecution) {
+        public ScriptRunSession(String scriptName, AbstractScriptExecution scriptExecution) {
             this.scriptName = scriptName;
             this.scriptExecution = scriptExecution;
         }
@@ -49,7 +49,7 @@ public class ScriptRunSessions {
             return scriptName;
         }
 
-        public ScriptExecution getScriptExecution() {
+        public AbstractScriptExecution getScriptExecution() {
             return scriptExecution;
         }
 
@@ -63,7 +63,7 @@ public class ScriptRunSessions {
 
     }
 
-    public ScriptRunSession createForActiveExecution(String scriptName, ScriptExecution scriptExecution) {
+    public ScriptRunSession createForActiveExecution(String scriptName, AbstractScriptExecution scriptExecution) {
         ScriptRunSession scriptRunSession = new ScriptRunSession(scriptName, scriptExecution);
         sessions.put(scriptExecution.getSessionId(), scriptRunSession);
         log.debug("Created new script run session for script " + scriptName + " with session run ID: " + scriptExecution.getSessionId());
@@ -75,7 +75,7 @@ public class ScriptRunSessions {
         ScriptRunSession scriptRunSession = sessions.get(sessionId);
         scriptRunSession.setWebsocketSession(session);
         log.debug("Connected terminal for script execution session ID: " + sessionId);
-        ScriptExecution scriptExecution = scriptRunSession.getScriptExecution();
+        AbstractScriptExecution scriptExecution = scriptRunSession.getScriptExecution();
 
         Consumer<ScriptExecutionData> listener = new Consumer<ScriptExecutionData>() {
             @Override
@@ -107,7 +107,7 @@ public class ScriptRunSessions {
     @OnClose
     public void onClose(Session session, @PathParam("sessionId") String sessionId) {
         ScriptRunSession scriptRunSession = sessions.get(sessionId);
-        ScriptExecution scriptExecution = scriptRunSession.getScriptExecution();
+        AbstractScriptExecution scriptExecution = scriptRunSession.getScriptExecution();
         if (scriptExecution != null)
         {
             scriptExecution.removeListener(scriptRunSession.listener);
@@ -125,7 +125,7 @@ public class ScriptRunSessions {
     public void onMessage(ScriptInputData message, @PathParam("sessionId") String sessionId) {
         log.debug("Received message: " + message);
         ScriptRunSession scriptRunSession = sessions.get(sessionId);
-        ScriptExecution scriptExecution = scriptRunSession.getScriptExecution();
+        AbstractScriptExecution scriptExecution = scriptRunSession.getScriptExecution();
         scriptExecution.sendInput(message);
     }
 

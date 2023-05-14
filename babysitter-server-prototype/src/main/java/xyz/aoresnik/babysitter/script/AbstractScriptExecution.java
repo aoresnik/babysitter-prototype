@@ -18,12 +18,9 @@ import java.nio.file.Files;
 import java.util.*;
 import java.util.function.Consumer;
 
-/**
- * TODO: simple synchronous implementation, implement async
- */
-public class ScriptExecution {
+public class AbstractScriptExecution {
 
-    Logger log = Logger.getLogger(ScriptExecution.class);
+    Logger log = Logger.getLogger(AbstractScriptExecution.class);
 
     @Getter
     private final String sessionId;
@@ -46,7 +43,7 @@ public class ScriptExecution {
 
     private Set<Consumer<ScriptExecutionData>> listeners = new HashSet<>();
 
-    public ScriptExecution(ScriptSource scriptSource, String scriptName) throws IOException {
+    public AbstractScriptExecution(ScriptSource scriptSource, String scriptName) throws IOException {
         this.scriptSource = scriptSource;
         this.scriptName = scriptName;
         this.sessionId = UUID.randomUUID().toString();

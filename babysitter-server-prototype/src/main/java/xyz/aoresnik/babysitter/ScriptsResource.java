@@ -7,7 +7,7 @@ import xyz.aoresnik.babysitter.data.ScriptData;
 import xyz.aoresnik.babysitter.entity.ScriptSource;
 import xyz.aoresnik.babysitter.script.AbstractScriptType;
 import xyz.aoresnik.babysitter.script.ActiveScriptExecutions;
-import xyz.aoresnik.babysitter.script.ScriptExecution;
+import xyz.aoresnik.babysitter.script.AbstractScriptExecution;
 import xyz.aoresnik.babysitter.script.ScriptTypes;
 
 import javax.annotation.PostConstruct;
@@ -15,12 +15,8 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  *
@@ -66,7 +62,7 @@ public class ScriptsResource {
         });
     }
 
-    private void runAsyncInExecutor(ScriptExecution scriptExecution) {
+    private void runAsyncInExecutor(AbstractScriptExecution scriptExecution) {
         executor.<String>executeBlocking(promise -> {
             // TODO: show that it's waiting for free thread if no thread is free
             log.info(String.format("Running script execution ID: %s in thread: %s", scriptExecution.getSessionId(), Thread.currentThread()));
@@ -121,13 +117,11 @@ public class ScriptsResource {
         ScriptSource scriptSource = em.find(ScriptSource.class, scriptSourceId);
 
         log.info(String.format("Running script %s from script source ID=%d, NAME=%s async", scriptName, scriptSource.getId(), scriptSource.getName()));
+
+        AbstractScriptType scriptType = ScriptTypes.forScriptSource(scriptSource);
+
         // Just trigger here, return immediately
-        ScriptExecution scriptExecution = null;
-        try {
-            scriptExecution = new ScriptExecution(scriptSource, scriptName);
-        } catch (IOException e) {
-            throw new RuntimeException("Internal error while attempting to run script", e);
-        }
+        AbstractScriptExecution scriptExecution = scriptType.createScriptExecution(scriptName);
         runAsyncInExecutor(scriptExecution);
 
         activeScriptExecutions.addScriptExecution(scriptExecution);

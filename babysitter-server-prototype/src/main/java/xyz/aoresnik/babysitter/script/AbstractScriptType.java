@@ -3,11 +3,8 @@ package xyz.aoresnik.babysitter.script;
 import org.jboss.logging.Logger;
 import xyz.aoresnik.babysitter.entity.ScriptSource;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 abstract public class AbstractScriptType {
 
@@ -25,4 +22,12 @@ abstract public class AbstractScriptType {
     }
 
     abstract public List<String> getScripts();
+
+    public AbstractScriptExecution createScriptExecution(String scriptName) {
+        try {
+            return new AbstractScriptExecution(scriptSource, scriptName);
+        } catch (IOException e) {
+            throw new RuntimeException("Internal error while attempting to run script", e);
+        }
+    }
 }
