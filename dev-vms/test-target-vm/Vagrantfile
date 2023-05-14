@@ -17,5 +17,10 @@ SHELL
     cat /home/vagrant/babysitter-server-prototype.key.pub >> /home/vagrant/.ssh/authorized_keys
 SHELL
 
+config.trigger.after [:up, :provision] do |trigger|
+  trigger.info = "Running ./update-babysitter-server-ssh-config.sh locally..."
+  trigger.run = {path: "./update-babysitter-server-ssh-config.sh"}
+end
+
 end
 
