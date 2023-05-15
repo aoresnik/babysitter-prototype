@@ -5,9 +5,9 @@ import xyz.aoresnik.babysitter.entity.ScriptSource;
 public class ScriptTypes {
     public static AbstractScriptType forScriptSource(ScriptSource scriptSource) {
         if (scriptSource.getScriptSourceServerDir() != null) {
-            return new ScriptTypeLocal(scriptSource);
+            return new ScriptTypeServerDir(scriptSource);
         } else if (scriptSource.getScriptSourceSSHDir() != null) {
-            return new ScriptTypeSSH(scriptSource);
+            return new ScriptTypeSSHDir(scriptSource);
         } else {
             throw new RuntimeException("Unknown script source type for script source: " + scriptSource.getName() + " ID: " + scriptSource.getId() + ": No detail record present");
         }

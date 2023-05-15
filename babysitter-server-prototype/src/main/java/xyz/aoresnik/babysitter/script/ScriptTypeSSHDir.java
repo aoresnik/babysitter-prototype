@@ -11,11 +11,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class ScriptTypeSSH extends AbstractScriptType {
+public class ScriptTypeSSHDir extends AbstractScriptType {
 
-    private static final Logger log = Logger.getLogger(ScriptTypeLocal.class);
+    private static final Logger log = Logger.getLogger(ScriptTypeServerDir.class);
 
-    public ScriptTypeSSH(ScriptSource scriptSource) {
+    public ScriptTypeSSHDir(ScriptSource scriptSource) {
         super(scriptSource);
     }
 

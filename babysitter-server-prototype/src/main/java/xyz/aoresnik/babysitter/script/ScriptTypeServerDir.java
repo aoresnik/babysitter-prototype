@@ -9,11 +9,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class ScriptTypeLocal extends AbstractScriptType {
+public class ScriptTypeServerDir extends AbstractScriptType {
 
-    private static final Logger log = Logger.getLogger(ScriptTypeLocal.class);
+    private static final Logger log = Logger.getLogger(ScriptTypeServerDir.class);
 
-    public ScriptTypeLocal(ScriptSource scriptSource) {
+    public ScriptTypeServerDir(ScriptSource scriptSource) {
         super(scriptSource);
     }
 
