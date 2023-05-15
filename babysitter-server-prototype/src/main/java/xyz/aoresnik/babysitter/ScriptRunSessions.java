@@ -11,6 +11,7 @@ import xyz.aoresnik.babysitter.script.AbstractScriptExecution;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.inject.Singleton;
 import javax.websocket.*;
 import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
@@ -31,6 +32,9 @@ public class ScriptRunSessions {
     @Inject
     Logger log;
 
+    /**
+     * TODO: persistent somewhere
+     */
     Map<String, ScriptRunSession> sessions = new ConcurrentHashMap<>();
 
     static class ScriptRunSession {
@@ -112,13 +116,11 @@ public class ScriptRunSessions {
         {
             scriptExecution.removeListener(scriptRunSession.listener);
         }
-        sessions.remove(sessionId);
     }
 
     @OnError
     public void onError(Session session, Throwable throwable, @PathParam("sessionId") String sessionId) {
-        sessions.remove(sessionId);
-        log.debug("Terminal for execution session ID " + sessionId + " left on error: " + throwable);
+        log.debug("Terminal for execution session ID " + sessionId + " left on error: ", throwable);
     }
 
     @OnMessage
