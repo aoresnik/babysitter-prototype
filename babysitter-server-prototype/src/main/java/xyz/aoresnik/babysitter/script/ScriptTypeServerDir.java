@@ -1,12 +1,17 @@
 package xyz.aoresnik.babysitter.script;
 
+import com.pty4j.PtyProcess;
+import com.pty4j.PtyProcessBuilder;
 import org.jboss.logging.Logger;
+import xyz.aoresnik.babysitter.data.ScriptInputData;
 import xyz.aoresnik.babysitter.entity.ScriptSource;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class ScriptTypeServerDir extends AbstractScriptType {
@@ -43,8 +48,90 @@ public class ScriptTypeServerDir extends AbstractScriptType {
 
     class LocalScriptTypeExecution extends AbstractScriptExecution {
 
+        private OutputStream processStdin;
+
         public LocalScriptTypeExecution(ScriptSource scriptSource, String scriptName) {
             super(scriptSource, scriptName);
+        }
+
+        @Override
+        public void start() {
+            try {
+
+                File scriptsDir = new File(getScriptSource().getScriptSourceServerDir().getDirname());
+                //ProcessBuilder pb = new ProcessBuilder(new File(scriptsDir, scriptName).getCanonicalPath());
+
+                // PROBLEM with JPty - it doesn't show detailed errors, it returns "Exec_tty error:Unknown reason"
+                // instead of "not executable", as vanilla ProcessBuilder does
+
+                PtyProcessBuilder pb = new PtyProcessBuilder().setCommand(new String[] {new File(scriptsDir, getScriptName()).getCanonicalPath()});
+                File stdoutLog = getStdoutFile();
+                //Map<String, String> env = pb.environment();
+                pb.setDirectory(scriptsDir.getCanonicalPath());
+                pb.setRedirectErrorStream(true);
+
+                Map<String, String> env = new HashMap<>();
+                env.put("TERM", "xterm-256color");
+                pb.setEnvironment(env);
+
+                // Don't redirect to file - read directly so that we can notify UI
+                //pb.redirectOutput(ProcessBuilder.Redirect.appendTo(stdoutLog));
+                OutputStream processStdoutLog = Files.newOutputStream(stdoutLog.toPath());
+
+                PtyProcess p = pb.start();
+
+                setScriptRun(true);
+
+                notifyConsoleChangeListeners("", null);
+
+                // STDERR was redirected to STDOUT
+                InputStream processStdoutAndStdErr = p.getInputStream();
+                processStdin = p.getOutputStream();
+                try {
+                    byte[] buffer = new byte[1024];
+                    while (true)
+                    {
+                        int nRead = processStdoutAndStdErr.read(buffer);
+                        if (nRead >= 0) {
+                            log.debug("Read " + nRead + " bytes from process stdout/stderr");
+
+                            processStdoutLog.write(buffer, 0, nRead);
+                            processStdoutLog.flush();
+
+                            notifyConsoleChangeListeners(getErrorText(), Arrays.copyOf(buffer, nRead));
+                        } else {
+                            log.debug("Read EOF from process stdout/stderr - stopping");
+                            break;
+                        }
+                    }
+
+                    setScriptCompleted(true);
+                    setExitCode(p.waitFor());
+
+                    notifyConsoleChangeListeners(getErrorText(), null);
+
+                } catch (InterruptedException e) {
+                    log.info("Detected interrupt exception, stopping process");
+                    p.destroy();
+                }
+            } catch (IOException e) {
+                log.error("Error running script", e);
+                setErrorText(e.getMessage());
+            }
+        }
+
+        @Override
+        public void sendInput(ScriptInputData message) {
+            if (processStdin != null) {
+                try {
+                    processStdin.write(Base64.getDecoder().decode(message.getInputData()));
+                    processStdin.flush();
+                } catch (IOException e) {
+                    throw new RuntimeException("Unable to send input to process", e);
+                }
+            } else {
+                log.info("Process STDIN is not yet available, ignoring input");
+            }
         }
     }
 }

@@ -18,7 +18,7 @@ import java.nio.file.Files;
 import java.util.*;
 import java.util.function.Consumer;
 
-public class AbstractScriptExecution {
+abstract public class AbstractScriptExecution {
 
     Logger log = Logger.getLogger(AbstractScriptExecution.class);
 
@@ -38,8 +38,6 @@ public class AbstractScriptExecution {
 
     @Getter
     private Integer exitCode;
-
-    OutputStream processStdin;
 
     private Set<Consumer<ScriptExecutionData>> listeners = new HashSet<>();
 
@@ -85,74 +83,12 @@ public class AbstractScriptExecution {
 
     /**
      * Must run the script in current thread (it's called from appropriate workers).
-     * Output must be sent to listeners.
+     * Output (both STDOUT and STDERR) must be sent to listeners and write to the file returned by {@link #getStdoutFile()}
+     * Input is sent in another thread to {@link #sendInput(ScriptInputData)}
      */
-    public void start() {
-        try {
+    abstract public void start();
 
-            File scriptsDir = new File(scriptSource.getScriptSourceServerDir().getDirname());
-            //ProcessBuilder pb = new ProcessBuilder(new File(scriptsDir, scriptName).getCanonicalPath());
-
-            // PROBLEM with JPty - it doesn't show detailed errors, it returns "Exec_tty error:Unknown reason"
-            // instead of "not executable", as vanilla ProcessBuilder does
-
-            PtyProcessBuilder pb = new PtyProcessBuilder().setCommand(new String[] {new File(scriptsDir, scriptName).getCanonicalPath()});
-            File stdoutLog = getStdoutFile();
-            //Map<String, String> env = pb.environment();
-            pb.setDirectory(scriptsDir.getCanonicalPath());
-            pb.setRedirectErrorStream(true);
-
-            Map<String, String> env = new HashMap<>();
-            env.put("TERM", "xterm-256color");
-            pb.setEnvironment(env);
-
-            // Don't redirect to file - read directly so that we can notify UI
-            //pb.redirectOutput(ProcessBuilder.Redirect.appendTo(stdoutLog));
-            OutputStream processStdoutLog = Files.newOutputStream(stdoutLog.toPath());
-
-            PtyProcess p = pb.start();
-
-            scriptRun = true;
-
-            notifyConsoleChangeListeners("", null);
-
-            // STDERR was redirected to STDOUT
-            InputStream processStdoutAndStdErr = p.getInputStream();
-            processStdin = p.getOutputStream();
-            try {
-                byte[] buffer = new byte[1024];
-                while (true)
-                {
-                    int nRead = processStdoutAndStdErr.read(buffer);
-                    if (nRead >= 0) {
-                        log.debug("Read " + nRead + " bytes from process stdout/stderr");
-
-                        processStdoutLog.write(buffer, 0, nRead);
-                        processStdoutLog.flush();
-
-                        notifyConsoleChangeListeners(getErrorText(), Arrays.copyOf(buffer, nRead));
-                    } else {
-                        log.debug("Read EOF from process stdout/stderr - stopping");
-                        break;
-                    }
-                }
-
-                this.scriptCompleted = true;
-                this.exitCode = p.waitFor();
-
-                notifyConsoleChangeListeners(getErrorText(), null);
-
-            } catch (InterruptedException e) {
-                log.info("Detected interrupt exception, stopping process");
-                p.destroy();
-            }
-        } catch (IOException e) {
-            log.error("Error running script", e);
-            errorText = e.getMessage();
-        }
-    }
-
-    private void notifyConsoleChangeListeners(String errorText1, byte[] incrementalConsoleData) {
+    protected void notifyConsoleChangeListeners(String errorText1, byte[] incrementalConsoleData) {
         ScriptExecutionUpdateData updateData = new ScriptExecutionUpdateData();
         updateData.setScriptRun(scriptRun);
         updateData.setScriptCompleted(scriptCompleted);
@@ -179,7 +115,7 @@ public class AbstractScriptExecution {
         return result;
     }
 
-    private File getStdoutFile() {
+    protected File getStdoutFile() {
         return new File(System.getProperty("java.io.tmpdir"), "stdout-" + sessionId + ".log");
     }
 
@@ -187,16 +123,37 @@ public class AbstractScriptExecution {
         // For now, entire execution is in start
     }
 
-    public void sendInput(ScriptInputData message) {
-        if (processStdin != null) {
-            try {
-                processStdin.write(Base64.getDecoder().decode(message.getInputData()));
-                processStdin.flush();
-            } catch (IOException e) {
-                throw new RuntimeException("Unable to send input to process", e);
-            }
-        } else {
-            log.info("Process STDIN is not yet available, ignoring input");
-        }
+    abstract public void sendInput(ScriptInputData message);
+
+    public String getErrorText() {
+        return errorText;
+    }
+
+    protected void setErrorText(String errorText) {
+        this.errorText = errorText;
+    }
+
+    public boolean isScriptRun() {
+        return scriptRun;
+    }
+
+    protected void setScriptRun(boolean scriptRun) {
+        this.scriptRun = scriptRun;
+    }
+
+    public boolean isScriptCompleted() {
+        return scriptCompleted;
+    }
+
+    protected void setScriptCompleted(boolean scriptCompleted) {
+        this.scriptCompleted = scriptCompleted;
+    }
+
+    public Integer getExitCode() {
+        return exitCode;
+    }
+
+    protected void setExitCode(Integer exitCode) {
+        this.exitCode = exitCode;
     }
 }

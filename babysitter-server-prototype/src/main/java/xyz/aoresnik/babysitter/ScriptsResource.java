@@ -123,12 +123,13 @@ public class ScriptsResource {
 
         // Just trigger here, return immediately
         AbstractScriptExecution scriptExecution = scriptType.createScriptExecution(scriptName);
+        ScriptRunSessions.ScriptRunSession scriptRunSession = scriptRunSessions.createForActiveExecution(scriptName, scriptExecution);
+
         runAsyncInExecutor(scriptExecution);
 
         activeScriptExecutions.addScriptExecution(scriptExecution);
 
         // Explicitly wrap as JSON string (I don't know yet why it's not done automatically)
-        ScriptRunSessions.ScriptRunSession scriptRunSession = scriptRunSessions.createForActiveExecution(scriptName, scriptExecution);
         return "\"" + scriptRunSession.getScriptExecution().getSessionId() + "\"";
     }
 

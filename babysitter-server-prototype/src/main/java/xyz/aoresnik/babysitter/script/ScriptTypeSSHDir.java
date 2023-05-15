@@ -23,30 +23,17 @@ public class ScriptTypeSSHDir extends AbstractScriptType {
     public List<String> getScripts() {
         log.error("SSH script source script enumeration for " + getScriptSource());
 
-        // Based on sample code at http://www.jcraft.com/jsch/examples/OpenSSHConfig.java.html
-
-        byte[] sshConfig = getScriptSource().getScriptSourceSSHDir().getSshConfig();
-        if (sshConfig == null) {
+        if (getScriptSource().getScriptSourceSSHDir().getSshConfig() == null)
+        {
             log.warn("SSH Config is null for SCRIPT_SOURCE.ID=" + getScriptSource().getId() + " - ssh commands will not be available");
             return new ArrayList<>();
         }
-        OpenSSHConfig parsedOpenSSHConfig;
-        try {
-            parsedOpenSSHConfig = OpenSSHConfig.parse(new String(sshConfig, StandardCharsets.UTF_8));
-        } catch (IOException e) {
-            throw new RuntimeException("Unable to parse OpenSSH Config for SCRIPT_SOURCE.ID=" + getScriptSource().getId(), e);
-        }
 
-        // Vagrant creates config with "default" for the test VM
-        ConfigRepository.Config defaultConfig = parsedOpenSSHConfig.getConfig("default");
+        // Based on sample code at http://www.jcraft.com/jsch/examples/OpenSSHConfig.java.html
 
         String command1="ls " + getScriptSource().getScriptSourceSSHDir().getDirname();
         try{
-
-            JSch jsch = new JSch();
-            jsch.setConfigRepository(parsedOpenSSHConfig);
-            Session session=jsch.getSession("default");
-            session.setConfig("StrictHostKeyChecking", "no");
+            Session session = createSSHSession();
             session.connect();
             log.debug("SSH session: Connected");
 
@@ -76,6 +63,7 @@ public class ScriptTypeSSHDir extends AbstractScriptType {
             channel.disconnect();
             session.disconnect();
             log.debug("SSH session: DONE");
+
             if (channel.getExitStatus() == 0) {
                 log.info("Returning a list of scripts");
                 return Arrays.asList(output.split("\n"));
@@ -84,10 +72,32 @@ public class ScriptTypeSSHDir extends AbstractScriptType {
                 return new ArrayList<>();
             }
         }catch(Exception e){
-            e.printStackTrace();
+            log.error("Error while trying to run commands over SSH to get a list of script", e);
         }
 
         return new ArrayList<>();
+    }
+
+    private Session createSSHSession() throws JSchException {
+        byte[] sshConfig = getScriptSource().getScriptSourceSSHDir().getSshConfig();
+        if (sshConfig == null) {
+            throw new RuntimeException("SSH Config is null for SCRIPT_SOURCE.ID=" + getScriptSource().getId());
+        }
+        OpenSSHConfig parsedOpenSSHConfig;
+        try {
+            parsedOpenSSHConfig = OpenSSHConfig.parse(new String(sshConfig, StandardCharsets.UTF_8));
+        } catch (IOException e) {
+            throw new RuntimeException("Unable to parse OpenSSH Config for SCRIPT_SOURCE.ID=" + getScriptSource().getId(), e);
+        }
+
+        // Vagrant creates config with "default" for the test VM
+        ConfigRepository.Config defaultConfig = parsedOpenSSHConfig.getConfig("default");
+
+        JSch jsch = new JSch();
+        jsch.setConfigRepository(parsedOpenSSHConfig);
+        Session session=jsch.getSession("default");
+        session.setConfig("StrictHostKeyChecking", "no");
+        return session;
     }
 
     @Override
