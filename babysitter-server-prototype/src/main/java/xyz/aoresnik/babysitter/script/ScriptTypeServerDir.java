@@ -43,14 +43,14 @@ public class ScriptTypeServerDir extends AbstractScriptType {
 
     @Override
     public AbstractScriptExecution createScriptExecution(String scriptName)  {
-        return new LocalScriptTypeExecution(getScriptSource(), scriptName);
+        return new ServerDirScriptTypeExecution(getScriptSource(), scriptName);
     }
 
-    class LocalScriptTypeExecution extends AbstractScriptExecution {
+    class ServerDirScriptTypeExecution extends AbstractScriptExecution {
 
         private OutputStream processStdin;
 
-        public LocalScriptTypeExecution(ScriptSource scriptSource, String scriptName) {
+        public ServerDirScriptTypeExecution(ScriptSource scriptSource, String scriptName) {
             super(scriptSource, scriptName);
         }
 
