@@ -26,6 +26,9 @@ dependencies {
     implementation 'org.eclipse.microprofile.config:microprofile-config-api:2.0'
     implementation 'org.jetbrains.pty4j:pty4j:0.12.11'
 
+    // https://mvnrepository.com/artifact/com.jcraft/jsch
+    implementation group: 'com.jcraft', name: 'jsch', version: '0.1.55'
+
     // TODO: Lombok version in variable
     compileOnly 'org.projectlombok:lombok:1.18.26'
     annotationProcessor 'org.projectlombok:lombok:1.18.26'

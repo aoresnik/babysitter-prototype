@@ -10,6 +10,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.transaction.Transactional;
 import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -31,6 +32,7 @@ public class DevInitConfiguration {
     @Inject
     EntityManager em;
 
+    @Transactional
     void onStart(@Observes StartupEvent ev) {
         log.info("The application is starting: initializing the dev environment database");
 
@@ -67,8 +69,10 @@ public class DevInitConfiguration {
                         String sshConfigFileContents;
                         sshConfigFileContents = reader.lines()
                                 .collect(Collectors.joining(System.lineSeparator()));
-                        log.debug("Read SSH config resource from " + sshConfigFileName);
-                        sssd.setSshConfig(sshConfigFileContents.getBytes(StandardCharsets.UTF_8));
+                        byte[] bytes = sshConfigFileContents.getBytes(StandardCharsets.UTF_8);
+                        log.debug("Read SSH config resource from " + sshConfigFileName + ", " + bytes.length);
+                        sssd.setSshConfig(bytes);
+                        em.merge(sssd);
                     }
                 } else {
                     log.warn("Unable to find SSH config for connection to dev test-target-vm " + sshConfigFileName + " - scripts execution via SSH will not be available");

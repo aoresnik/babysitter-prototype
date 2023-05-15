@@ -93,6 +93,7 @@ public class ScriptsResource {
             AbstractScriptType scriptType = ScriptTypes.forScriptSource(scriptSource);
 
             List<String> scriptIds = scriptType.getScripts();
+            log.debug("The source enumerated scripts: " + scriptIds);
 
             scriptIds.forEach(filename -> {
                     ScriptData scriptData = new ScriptData();

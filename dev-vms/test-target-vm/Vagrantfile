@@ -8,14 +8,21 @@ Vagrant.configure("2") do |config|
       domain.uri = 'qemu:///system'
   end
 
-  config.vm.provision "file", source: "../babysitter-server-prototype.key.pub", destination: "~/"
+#  config.vm.provision "file", source: "../babysitter-server-prototype.key.pub", destination: "~/"
   config.vm.provision "shell", inline: <<-SHELL
     apt install tmux -y
 SHELL
 
-  config.vm.provision "shell", inline: <<-SHELL
-    cat /home/vagrant/babysitter-server-prototype.key.pub >> /home/vagrant/.ssh/authorized_keys
-SHELL
+# Custom key not needed
+#  config.vm.provision "shell", inline: <<-SHELL
+#    cat ~/babysitter-server-prototype.key.pub >> /home/vagrant/.ssh/authorized_keys
+#SHELL
+
+
+   # See bug https://github.com/nre-learning/antidote-selfmedicate/issues/55
+   # config.vm.provision "file", source: "scripts", destination: "$HOME/scripts"
+   config.vm.synced_folder "scripts", "/home/vagrant/scripts", type: "rsync"
+
 
 config.trigger.after [:up, :provision] do |trigger|
   trigger.info = "Running ./update-babysitter-server-ssh-config.sh locally..."
