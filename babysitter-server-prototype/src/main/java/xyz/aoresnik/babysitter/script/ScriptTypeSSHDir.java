@@ -131,8 +131,6 @@ public class ScriptTypeSSHDir extends AbstractScriptType {
                 ChannelExec channel= (ChannelExec) session.openChannel("exec");
                 channel.setCommand(command1);
                 channel.setInputStream(null);
-                // TODO: redirect to stdout
-                channel.setErrStream(System.err);
                 channel.setPty(true);
 
                 InputStream in=channel.getInputStream();
@@ -172,69 +170,6 @@ public class ScriptTypeSSHDir extends AbstractScriptType {
             }catch(Exception e){
                 log.error("Error while trying to run commands over SSH to get a list of script", e);
             }
-
-//            try {
-//
-//                File scriptsDir = new File(getScriptSource().getScriptSourceServerDir().getDirname());
-//                //ProcessBuilder pb = new ProcessBuilder(new File(scriptsDir, scriptName).getCanonicalPath());
-//
-//                // PROBLEM with JPty - it doesn't show detailed errors, it returns "Exec_tty error:Unknown reason"
-//                // instead of "not executable", as vanilla ProcessBuilder does
-//
-//                PtyProcessBuilder pb = new PtyProcessBuilder().setCommand(new String[] {new File(scriptsDir, getScriptName()).getCanonicalPath()});
-//                File stdoutLog = getStdoutFile();
-//                //Map<String, String> env = pb.environment();
-//                pb.setDirectory(scriptsDir.getCanonicalPath());
-//                pb.setRedirectErrorStream(true);
-//
-//                Map<String, String> env = new HashMap<>();
-//                env.put("TERM", "xterm-256color");
-//                pb.setEnvironment(env);
-//
-//                // Don't redirect to file - read directly so that we can notify UI
-//                //pb.redirectOutput(ProcessBuilder.Redirect.appendTo(stdoutLog));
-//                OutputStream processStdoutLog = Files.newOutputStream(stdoutLog.toPath());
-//
-//                PtyProcess p = pb.start();
-//
-//                setScriptRun(true);
-//
-//                notifyConsoleChangeListeners("", null);
-//
-//                // STDERR was redirected to STDOUT
-//                InputStream processStdoutAndStdErr = p.getInputStream();
-//                processStdin = p.getOutputStream();
-//                try {
-//                    byte[] buffer = new byte[1024];
-//                    while (true)
-//                    {
-//                        int nRead = processStdoutAndStdErr.read(buffer);
-//                        if (nRead >= 0) {
-//                            log.debug("Read " + nRead + " bytes from process stdout/stderr");
-//
-//                            processStdoutLog.write(buffer, 0, nRead);
-//                            processStdoutLog.flush();
-//
-//                            notifyConsoleChangeListeners(getErrorText(), Arrays.copyOf(buffer, nRead));
-//                        } else {
-//                            log.debug("Read EOF from process stdout/stderr - stopping");
-//                            break;
-//                        }
-//                    }
-//
-//                    setScriptCompleted(true);
-//                    setExitCode(p.waitFor());
-//
-//                    notifyConsoleChangeListeners(getErrorText(), null);
-//
-//                } catch (InterruptedException e) {
-//                    log.info("Detected interrupt exception, stopping process");
-//                    p.destroy();
-//                }
-//            } catch (IOException e) {
-//                log.error("Error running script", e);
-//                setErrorText(e.getMessage());
-//            }
         }
 
         @Override
