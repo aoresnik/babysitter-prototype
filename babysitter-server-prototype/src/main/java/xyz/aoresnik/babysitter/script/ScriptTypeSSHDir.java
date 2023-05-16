@@ -128,13 +128,15 @@ public class ScriptTypeSSHDir extends AbstractScriptType {
                 session.connect();
                 log.debug("SSH session: Connected");
 
-                Channel channel=session.openChannel("exec");
-                ((ChannelExec)channel).setCommand(command1);
+                ChannelExec channel= (ChannelExec) session.openChannel("exec");
+                channel.setCommand(command1);
                 channel.setInputStream(null);
                 // TODO: redirect to stdout
-                ((ChannelExec)channel).setErrStream(System.err);
+                channel.setErrStream(System.err);
+                channel.setPty(true);
 
                 InputStream in=channel.getInputStream();
+                processStdin = channel.getOutputStream();
                 channel.connect();
                 byte[] tmp=new byte[1024];
                 String output = "";
@@ -237,17 +239,16 @@ public class ScriptTypeSSHDir extends AbstractScriptType {
 
         @Override
         public void sendInput(ScriptInputData message) {
-            log.warn("Script input not yet implemented");
-//            if (processStdin != null) {
-//                try {
-//                    processStdin.write(Base64.getDecoder().decode(message.getInputData()));
-//                    processStdin.flush();
-//                } catch (IOException e) {
-//                    throw new RuntimeException("Unable to send input to process", e);
-//                }
-//            } else {
-//                log.info("Process STDIN is not yet available, ignoring input");
-//            }
+            if (processStdin != null) {
+                try {
+                    processStdin.write(Base64.getDecoder().decode(message.getInputData()));
+                    processStdin.flush();
+                } catch (IOException e) {
+                    throw new RuntimeException("Unable to send input to process", e);
+                }
+            } else {
+                log.info("Process STDIN is not yet available, ignoring input");
+            }
         }
     }
 }
