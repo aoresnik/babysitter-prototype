@@ -122,6 +122,8 @@ public class ScriptTypeSSHDir extends AbstractScriptType {
             String command1=getScriptSource().getScriptSourceSSHDir().getDirname()+"/"+getScriptName();
 
             try{
+                OutputStream processStdoutLog = Files.newOutputStream(getStdoutFile().toPath());
+
                 Session session = createSSHSession();
                 session.connect();
                 log.debug("SSH session: Connected");
@@ -144,6 +146,8 @@ public class ScriptTypeSSHDir extends AbstractScriptType {
                     while(in.available()>0){
                         int i=in.read(tmp, 0, 1024);
                         if(i<0)break;
+                        processStdoutLog.write(tmp, 0, i);
+                        processStdoutLog.flush();
                         String s = new String(tmp, 0, i);
                         output += s;
                         notifyConsoleChangeListeners(getErrorText(), Arrays.copyOf(tmp, i));
