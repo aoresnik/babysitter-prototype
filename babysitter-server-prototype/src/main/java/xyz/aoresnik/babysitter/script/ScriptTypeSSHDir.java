@@ -1,19 +1,19 @@
 package xyz.aoresnik.babysitter.script;
 
 import com.jcraft.jsch.*;
-import com.pty4j.PtyProcess;
-import com.pty4j.PtyProcessBuilder;
 import org.jboss.logging.Logger;
 import xyz.aoresnik.babysitter.data.ScriptInputData;
 import xyz.aoresnik.babysitter.entity.ScriptSource;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Base64;
+import java.util.List;
 
 public class ScriptTypeSSHDir extends AbstractScriptType {
 
@@ -49,13 +49,13 @@ public class ScriptTypeSSHDir extends AbstractScriptType {
             InputStream in=channel.getInputStream();
             channel.connect();
             byte[] tmp=new byte[1024];
-            String output = "";
+            StringBuilder output = new StringBuilder();
             while(true){
                 while(in.available()>0){
                     int i=in.read(tmp, 0, 1024);
                     if(i<0)break;
                     String s = new String(tmp, 0, i);
-                    output += s;
+                    output.append(s);
                     log.debug("SSH session: output> "  + s);
                 }
                 if(channel.isClosed()){
@@ -70,7 +70,7 @@ public class ScriptTypeSSHDir extends AbstractScriptType {
 
             if (channel.getExitStatus() == 0) {
                 log.info("Returning a list of scripts");
-                return Arrays.asList(output.split("\n"));
+                return Arrays.asList(output.toString().split("\n"));
             } else {
                 log.info("Error getting list of scripts - exit code " + channel.getExitStatus());
                 return new ArrayList<>();
