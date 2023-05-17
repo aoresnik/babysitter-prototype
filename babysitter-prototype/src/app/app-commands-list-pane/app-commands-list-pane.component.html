@@ -2,7 +2,7 @@
 
 <div>
 <div style="font-weight: bold">Available scripts:</div>
-  <div *ngFor="let script of scriptsList; index as i"><span style="background-color: #eff3f6">{{ script.scriptId }}</span>&nbsp;<a href="#" (click)="runScript(script); false">run</a></div>
+  <div *ngFor="let script of scriptsList; index as i"><span style="background-color: #eff3f6">({{ script.scriptSourceName }}) {{ script.scriptId }}</span>&nbsp;<a href="#" (click)="runScript(script); false">run</a></div>
 </div>
 
 <br/>

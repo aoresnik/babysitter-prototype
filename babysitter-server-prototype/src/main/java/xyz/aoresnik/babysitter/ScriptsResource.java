@@ -98,6 +98,7 @@ public class ScriptsResource {
             scriptIds.forEach(filename -> {
                     ScriptData scriptData = new ScriptData();
                     scriptData.setScriptSourceId(scriptSource.getId());
+                    scriptData.setScriptSourceName(scriptSource.getName());
                     scriptData.setScriptId(filename);
                     result.add(scriptData);
                 });

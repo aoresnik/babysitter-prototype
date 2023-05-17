@@ -64,7 +64,6 @@ abstract public class AbstractScriptExecution {
             byte[] resultText = getResult();
             ScriptExecutionInitialStateData initialStateData = new ScriptExecutionInitialStateData();
 
-            // TODO: return correct state
             initialStateData.setScriptRun(scriptRun);
             initialStateData.setScriptCompleted(scriptCompleted);
             initialStateData.setExitCode(exitCode);

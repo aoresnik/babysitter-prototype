@@ -11,6 +11,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class ScriptData {
     private Long scriptSourceId;
 
+    private String scriptSourceName;
+
     /**
      * For scripts in script dir contains the directory name.
      */
