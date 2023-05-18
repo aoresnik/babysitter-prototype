@@ -1,8 +1,3 @@
-create table TEST(
-    ID int not null auto_increment,
-    NAME varchar(255) not null,
-    primary key (ID)
-);
 
 create table SCRIPT_SOURCE(
      ID int not null auto_increment,
@@ -27,6 +22,20 @@ create table SCRIPT_SOURCE_SSH_DIR(
      foreign key (SCRIPT_SOURCE_ID) references SCRIPT_SOURCE(ID)
 );
 
+create table SCRIPT_EXECUTION(
+    ID int not null auto_increment,
+    SCRIPT_SOURCE_ID int not null,
+    SCRIPT_ID varchar(255) not null,
+
+    scriptRun int not null,
+    scriptCompleted int not null,
+    exitCode int not null,
+    errorText varchar(1024),
+
+    primary key (ID),
+    foreign key (SCRIPT_SOURCE_ID) references SCRIPT_SOURCE(ID)
+);
+
 insert into SCRIPT_SOURCE (NAME) values ('Local dir on server');
 insert into SCRIPT_SOURCE (NAME) values ('test-target-vm via SSH');
 
@@ -34,4 +43,3 @@ insert into SCRIPT_SOURCE (NAME) values ('test-target-vm via SSH');
 insert into SCRIPT_SOURCE_SERVER_DIR (SCRIPT_SOURCE_ID, DIR_NAME) values (select ID from SCRIPT_SOURCE where NAME='Local dir on server', '../../../../babysitter/scripts');
 
 insert into SCRIPT_SOURCE_SSH_DIR (SCRIPT_SOURCE_ID, DIR_NAME) values (select ID from SCRIPT_SOURCE where NAME='test-target-vm via SSH', 'scripts');
-

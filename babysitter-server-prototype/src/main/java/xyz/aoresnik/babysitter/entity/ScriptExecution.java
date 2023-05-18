@@ -25,7 +25,7 @@ public class ScriptExecution {
     @JoinColumn(name = "SCRIPT_SOURCE_ID")
     private ScriptSource scriptSource;
 
-    @Column
+    @Column(name = "SCRIPT_ID")
     private String scriptId;
 
     public Long getId() {
