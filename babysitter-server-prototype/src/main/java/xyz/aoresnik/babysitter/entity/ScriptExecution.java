@@ -5,8 +5,9 @@ import javax.persistence.*;
 @Entity
 @Table(name = "SCRIPT_EXECUTION")
 public class ScriptExecution {
+    // TODO: migrate to GUID for this and all IDs that are sent via REST (requires Quarkus 3 with JEE 10 and JPA 3.1)
     @Id
-    @GeneratedValue(strategy= GenerationType.AUTO)
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long id;
 
     @Column

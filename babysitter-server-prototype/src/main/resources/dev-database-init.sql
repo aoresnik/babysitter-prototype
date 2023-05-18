@@ -29,8 +29,8 @@ create table SCRIPT_EXECUTION(
 
     scriptRun int not null,
     scriptCompleted int not null,
-    exitCode int not null,
-    errorText varchar(1024),
+    exitCode int null,
+    errorText varchar(1024) null,
 
     primary key (ID),
     foreign key (SCRIPT_SOURCE_ID) references SCRIPT_SOURCE(ID)

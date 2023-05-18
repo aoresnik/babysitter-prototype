@@ -1,21 +1,21 @@
 package xyz.aoresnik.babysitter.script;
 
-import com.pty4j.PtyProcess;
-import com.pty4j.PtyProcessBuilder;
 import lombok.Getter;
 import org.jboss.logging.Logger;
 import xyz.aoresnik.babysitter.data.ScriptExecutionData;
 import xyz.aoresnik.babysitter.data.ScriptExecutionInitialStateData;
 import xyz.aoresnik.babysitter.data.ScriptExecutionUpdateData;
 import xyz.aoresnik.babysitter.data.ScriptInputData;
+import xyz.aoresnik.babysitter.entity.ScriptExecution;
 import xyz.aoresnik.babysitter.entity.ScriptSource;
 
+import javax.persistence.EntityManager;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.nio.file.Files;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
 import java.util.function.Consumer;
 
 abstract public class AbstractScriptExecution {
@@ -23,7 +23,7 @@ abstract public class AbstractScriptExecution {
     Logger log = Logger.getLogger(AbstractScriptExecution.class);
 
     @Getter
-    private final String sessionId;
+    private final String scriptExecutionID;
 
     private final ScriptSource scriptSource;
     @Getter
@@ -44,7 +44,7 @@ abstract public class AbstractScriptExecution {
     public AbstractScriptExecution(ScriptSource scriptSource, String scriptName) {
         this.scriptSource = scriptSource;
         this.scriptName = scriptName;
-        this.sessionId = UUID.randomUUID().toString();
+        this.scriptExecutionID = UUID.randomUUID().toString();
         try {
             getStdoutFile().createNewFile();
         } catch (IOException e) {
@@ -115,7 +115,7 @@ abstract public class AbstractScriptExecution {
     }
 
     protected File getStdoutFile() {
-        return new File(System.getProperty("java.io.tmpdir"), "stdout-" + sessionId + ".log");
+        return new File(System.getProperty("java.io.tmpdir"), "stdout-" + scriptExecutionID + ".log");
     }
 
     public void waitFor() {
@@ -154,5 +154,12 @@ abstract public class AbstractScriptExecution {
 
     protected void setExitCode(Integer exitCode) {
         this.exitCode = exitCode;
+    }
+
+    public void updateEntity(ScriptExecution scriptExecution) {
+        scriptExecution.setScriptCompleted(scriptCompleted);
+        scriptExecution.setScriptRun(scriptRun);
+        scriptExecution.setErrorText(errorText);
+        scriptExecution.setExitCode(exitCode);
     }
 }

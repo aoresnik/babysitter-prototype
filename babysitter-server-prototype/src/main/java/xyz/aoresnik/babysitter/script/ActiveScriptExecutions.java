@@ -15,8 +15,8 @@ public class ActiveScriptExecutions {
     private Map<String, AbstractScriptExecution> scriptExecutions = new ConcurrentHashMap<>();
 
     public void addScriptExecution(AbstractScriptExecution scriptExecution) {
-        log.info("Registering active script execution: " + scriptExecution.getSessionId());
-        scriptExecutions.put(scriptExecution.getSessionId(), scriptExecution);
+        log.info("Registering active script execution: " + scriptExecution.getScriptExecutionID());
+        scriptExecutions.put(scriptExecution.getScriptExecutionID(), scriptExecution);
     }
 
     public void removeScriptExecution(String sessionId) {

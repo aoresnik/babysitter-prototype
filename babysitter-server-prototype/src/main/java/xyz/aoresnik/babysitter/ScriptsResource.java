@@ -4,6 +4,7 @@ import io.vertx.core.Vertx;
 import io.vertx.core.WorkerExecutor;
 import org.jboss.logging.Logger;
 import xyz.aoresnik.babysitter.data.ScriptData;
+import xyz.aoresnik.babysitter.entity.ScriptExecution;
 import xyz.aoresnik.babysitter.entity.ScriptSource;
 import xyz.aoresnik.babysitter.script.AbstractScriptType;
 import xyz.aoresnik.babysitter.script.ActiveScriptExecutions;
@@ -13,6 +14,7 @@ import xyz.aoresnik.babysitter.script.ScriptTypes;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.transaction.Transactional;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.util.ArrayList;
@@ -65,12 +67,12 @@ public class ScriptsResource {
     private void runAsyncInExecutor(AbstractScriptExecution scriptExecution) {
         executor.<String>executeBlocking(promise -> {
             // TODO: show that it's waiting for free thread if no thread is free
-            log.info(String.format("Running script execution ID: %s in thread: %s", scriptExecution.getSessionId(), Thread.currentThread()));
+            log.info(String.format("Running script execution ID: %s in thread: %s", scriptExecution.getScriptExecutionID(), Thread.currentThread()));
             try {
                 scriptExecution.start();
                 scriptExecution.waitFor();
             } finally {
-                activeScriptExecutions.removeScriptExecution(scriptExecution.getSessionId());
+                activeScriptExecutions.removeScriptExecution(scriptExecution.getScriptExecutionID());
             }
             promise.complete("Script execution done");
         }, asyncResult -> {
@@ -115,6 +117,7 @@ public class ScriptsResource {
     @Path("/{scriptSourceId}/{scriptName}/run-async")
     @POST
     @Produces(MediaType.APPLICATION_JSON)
+    @Transactional
     public String runAsync(@PathParam("scriptSourceId") Long scriptSourceId, @PathParam("scriptName") String scriptName) {
         ScriptSource scriptSource = em.find(ScriptSource.class, scriptSourceId);
 
@@ -122,16 +125,24 @@ public class ScriptsResource {
 
         AbstractScriptType scriptType = ScriptTypes.forScriptSource(scriptSource);
 
+        ScriptExecution scriptExecution = new ScriptExecution();
+        scriptExecution.setScriptSource(scriptSource);
+        scriptExecution.setScriptId(scriptName);
+        em.persist(scriptExecution);
+
+        log.debug(String.format("Started execution as SCRIPT_EXECUTION.ID=%d", scriptExecution.getId()));
+
         // Just trigger here, return immediately
-        AbstractScriptExecution scriptExecution = scriptType.createScriptExecution(scriptName);
-        ScriptRunSessions.ScriptRunSession scriptRunSession = scriptRunSessions.createForActiveExecution(scriptName, scriptExecution);
+        AbstractScriptExecution scriptExecutionRunner = scriptType.createScriptExecution(scriptName);
+        scriptExecutionRunner.updateEntity(scriptExecution);
+        ScriptRunSessions.ScriptRunSession scriptRunSession = scriptRunSessions.createForActiveExecution(scriptName, scriptExecutionRunner);
 
-        runAsyncInExecutor(scriptExecution);
+        runAsyncInExecutor(scriptExecutionRunner);
 
-        activeScriptExecutions.addScriptExecution(scriptExecution);
+        activeScriptExecutions.addScriptExecution(scriptExecutionRunner);
 
         // Explicitly wrap as JSON string (I don't know yet why it's not done automatically)
-        return "\"" + scriptRunSession.getScriptExecution().getSessionId() + "\"";
+        return "\"" + scriptRunSession.getScriptExecution().getScriptExecutionID() + "\"";
     }
 
 }

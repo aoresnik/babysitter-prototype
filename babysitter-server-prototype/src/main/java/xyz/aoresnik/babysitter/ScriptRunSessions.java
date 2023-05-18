@@ -11,7 +11,6 @@ import xyz.aoresnik.babysitter.script.AbstractScriptExecution;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import javax.inject.Singleton;
 import javax.websocket.*;
 import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
@@ -69,8 +68,8 @@ public class ScriptRunSessions {
 
     public ScriptRunSession createForActiveExecution(String scriptName, AbstractScriptExecution scriptExecution) {
         ScriptRunSession scriptRunSession = new ScriptRunSession(scriptName, scriptExecution);
-        sessions.put(scriptExecution.getSessionId(), scriptRunSession);
-        log.debug("Created new script run session for script " + scriptName + " with session run ID: " + scriptExecution.getSessionId());
+        sessions.put(scriptExecution.getScriptExecutionID(), scriptRunSession);
+        log.debug("Created new script run session for script " + scriptName + " with session run ID: " + scriptExecution.getScriptExecutionID());
         return scriptRunSession;
     }
 
