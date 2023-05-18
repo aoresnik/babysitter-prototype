@@ -133,7 +133,7 @@ public class ScriptsResource {
         log.debug("Started execution as SCRIPT_EXECUTION.ID=%d".formatted(scriptExecution.getId()));
 
         // Just trigger here, return immediately
-        AbstractScriptExecution scriptExecutionRunner = scriptType.createScriptExecution(scriptName);
+        AbstractScriptExecution scriptExecutionRunner = scriptType.createScriptExecution(scriptName, Long.toString(scriptExecution.getId()));
         scriptExecutionRunner.updateEntity(scriptExecution);
         ScriptRunSessions.ScriptRunSession scriptRunSession = scriptRunSessions.createForActiveExecution(scriptName, scriptExecutionRunner);
 

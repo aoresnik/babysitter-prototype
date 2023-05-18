@@ -3,7 +3,6 @@ package xyz.aoresnik.babysitter.script;
 import org.jboss.logging.Logger;
 import xyz.aoresnik.babysitter.entity.ScriptSource;
 
-import java.io.IOException;
 import java.util.List;
 
 abstract public class AbstractScriptType {
@@ -23,5 +22,5 @@ abstract public class AbstractScriptType {
 
     abstract public List<String> getScripts();
 
-    abstract public AbstractScriptExecution createScriptExecution(String scriptName);
+    abstract public AbstractScriptExecution createScriptExecution(String scriptName, String executionId);
 }

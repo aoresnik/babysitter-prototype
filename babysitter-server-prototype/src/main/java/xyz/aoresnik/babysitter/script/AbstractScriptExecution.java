@@ -9,7 +9,6 @@ import xyz.aoresnik.babysitter.data.ScriptInputData;
 import xyz.aoresnik.babysitter.entity.ScriptExecution;
 import xyz.aoresnik.babysitter.entity.ScriptSource;
 
-import javax.persistence.EntityManager;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -41,10 +40,10 @@ abstract public class AbstractScriptExecution {
 
     private Set<Consumer<ScriptExecutionData>> listeners = new HashSet<>();
 
-    public AbstractScriptExecution(ScriptSource scriptSource, String scriptName) {
+    public AbstractScriptExecution(ScriptSource scriptSource, String scriptName, String executionId) {
         this.scriptSource = scriptSource;
         this.scriptName = scriptName;
-        this.scriptExecutionID = UUID.randomUUID().toString();
+        this.scriptExecutionID = executionId;
         try {
             getStdoutFile().createNewFile();
         } catch (IOException e) {

@@ -105,16 +105,16 @@ public class ScriptTypeSSHDir extends AbstractScriptType {
     }
 
     @Override
-    public AbstractScriptExecution createScriptExecution(String scriptName) {
-        return new SSHDirScriptTypeExecution(getScriptSource(), scriptName);
+    public AbstractScriptExecution createScriptExecution(String scriptName, String scriptExecutionID) {
+        return new SSHDirScriptTypeExecution(getScriptSource(), scriptName, scriptExecutionID);
     }
 
     class SSHDirScriptTypeExecution extends AbstractScriptExecution {
 
         private OutputStream processStdin;
 
-        public SSHDirScriptTypeExecution(ScriptSource scriptSource, String scriptName) {
-            super(scriptSource, scriptName);
+        public SSHDirScriptTypeExecution(ScriptSource scriptSource, String scriptName, String scriptExecutionID) {
+            super(scriptSource, scriptName, scriptExecutionID);
         }
 
         @Override
