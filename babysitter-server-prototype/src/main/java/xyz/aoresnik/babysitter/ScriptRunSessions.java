@@ -22,6 +22,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
 /**
+ * Provides a two-way exchange of data between server and client for active script executions. Sends console updates to
+ * the client and receives input from the client.
+ *
  * Based on https://quarkus.io/guides/websockets
  */
 @ServerEndpoint(value = "/api/v1/scripts/session/{sessionId}/websocket", encoders = {ScriptRunSessions.EncoderDecoder.class}, decoders = {ScriptRunSessions.EncoderDecoder.class})
