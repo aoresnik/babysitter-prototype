@@ -8,7 +8,7 @@ import xyz.aoresnik.babysitter.entity.ScriptExecution;
 import xyz.aoresnik.babysitter.entity.ScriptSource;
 import xyz.aoresnik.babysitter.script.AbstractScriptType;
 import xyz.aoresnik.babysitter.script.ActiveScriptExecutions;
-import xyz.aoresnik.babysitter.script.AbstractScriptExecution;
+import xyz.aoresnik.babysitter.script.AbstractScriptRunner;
 import xyz.aoresnik.babysitter.script.ScriptTypes;
 
 import javax.annotation.PostConstruct;
@@ -67,13 +67,12 @@ public class ScriptsResource {
         });
     }
 
-    private void runAsyncInExecutor(AbstractScriptExecution scriptExecution) {
+    private void runAsyncInExecutor(AbstractScriptRunner scriptExecution) {
         executor.<String>executeBlocking(promise -> {
             // TODO: show that it's waiting for free thread if no thread is free
             log.info(String.format("Running script execution ID: %s in thread: %s", scriptExecution.getScriptExecutionID(), Thread.currentThread()));
             try {
-                scriptExecution.start();
-                scriptExecution.waitFor();
+                scriptExecution.run();
             } finally {
                 activeScriptExecutions.removeScriptExecution(scriptExecution.getScriptExecutionID());
             }
@@ -142,7 +141,7 @@ public class ScriptsResource {
         log.debug("Started execution as SCRIPT_EXECUTION.ID=%d".formatted(scriptExecution.getId()));
 
         // Just trigger here, return immediately
-        AbstractScriptExecution scriptExecutionRunner = scriptType.createScriptExecution(scriptName, Long.toString(scriptExecution.getId()));
+        AbstractScriptRunner scriptExecutionRunner = scriptType.createScriptExecution(scriptName, Long.toString(scriptExecution.getId()));
         scriptExecutionRunner.updateEntity(scriptExecution);
         scriptExecutionRunner.addStatusChangeListener(scriptExecutionRunner1 -> {
             log.debug(String.format("Script execution ID=%s status changed - updating in DB", scriptExecutionRunner1.getScriptExecutionID()));

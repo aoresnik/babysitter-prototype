@@ -22,5 +22,5 @@ abstract public class AbstractScriptType {
 
     abstract public List<String> getScripts();
 
-    abstract public AbstractScriptExecution createScriptExecution(String scriptName, String executionId);
+    abstract public AbstractScriptRunner createScriptExecution(String scriptName, String executionId);
 }

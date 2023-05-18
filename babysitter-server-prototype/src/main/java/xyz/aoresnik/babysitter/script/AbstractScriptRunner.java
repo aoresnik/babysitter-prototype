@@ -1,6 +1,5 @@
 package xyz.aoresnik.babysitter.script;
 
-import com.jcraft.jsch.HostKeyRepository;
 import lombok.Getter;
 import org.jboss.logging.Logger;
 import xyz.aoresnik.babysitter.data.ScriptExecutionData;
@@ -15,12 +14,11 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.UUID;
 import java.util.function.Consumer;
 
-abstract public class AbstractScriptExecution {
+abstract public class AbstractScriptRunner {
 
-    Logger log = Logger.getLogger(AbstractScriptExecution.class);
+    Logger log = Logger.getLogger(AbstractScriptRunner.class);
 
     @Getter
     private final String scriptExecutionID;
@@ -41,9 +39,9 @@ abstract public class AbstractScriptExecution {
 
     private Set<Consumer<ScriptExecutionData>> listeners = new HashSet<>();
 
-    private Set<Consumer<AbstractScriptExecution>> statusChangeListeners = new HashSet<>();
+    private Set<Consumer<AbstractScriptRunner>> statusChangeListeners = new HashSet<>();
 
-    public AbstractScriptExecution(ScriptSource scriptSource, String scriptName, String executionId) {
+    public AbstractScriptRunner(ScriptSource scriptSource, String scriptName, String executionId) {
         this.scriptSource = scriptSource;
         this.scriptName = scriptName;
         this.scriptExecutionID = executionId;
@@ -87,7 +85,7 @@ abstract public class AbstractScriptExecution {
      * Output (both STDOUT and STDERR) must be sent to listeners and write to the file returned by {@link #getStdoutFile()}
      * Input is sent in another thread to {@link #sendInput(ScriptInputData)}
      */
-    abstract public void start();
+    abstract public void run();
 
     protected void notifyConsoleChangeListeners(String errorText1, byte[] incrementalConsoleData) {
         ScriptExecutionUpdateData updateData = new ScriptExecutionUpdateData();
@@ -118,10 +116,6 @@ abstract public class AbstractScriptExecution {
 
     protected File getStdoutFile() {
         return new File(System.getProperty("java.io.tmpdir"), "stdout-" + scriptExecutionID + ".log");
-    }
-
-    public void waitFor() {
-        // For now, entire execution is in start
     }
 
     abstract public void sendInput(ScriptInputData message);
@@ -169,7 +163,7 @@ abstract public class AbstractScriptExecution {
         scriptExecution.setExitCode(exitCode);
     }
 
-    public void addStatusChangeListener(Consumer<AbstractScriptExecution> statusChangeListener) {
+    public void addStatusChangeListener(Consumer<AbstractScriptRunner> statusChangeListener) {
         this.statusChangeListeners.add(statusChangeListener);
     }
 }

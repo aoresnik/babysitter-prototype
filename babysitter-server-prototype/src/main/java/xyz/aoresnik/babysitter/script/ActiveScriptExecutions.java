@@ -12,9 +12,9 @@ public class ActiveScriptExecutions {
     @Inject
     Logger log;
 
-    private Map<String, AbstractScriptExecution> scriptExecutions = new ConcurrentHashMap<>();
+    private Map<String, AbstractScriptRunner> scriptExecutions = new ConcurrentHashMap<>();
 
-    public void addScriptExecution(AbstractScriptExecution scriptExecution) {
+    public void addScriptExecution(AbstractScriptRunner scriptExecution) {
         log.info("Registering active script execution: " + scriptExecution.getScriptExecutionID());
         scriptExecutions.put(scriptExecution.getScriptExecutionID(), scriptExecution);
     }

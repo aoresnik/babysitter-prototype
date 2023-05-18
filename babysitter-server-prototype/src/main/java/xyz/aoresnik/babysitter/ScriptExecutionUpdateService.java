@@ -1,7 +1,7 @@
 package xyz.aoresnik.babysitter;
 
 import xyz.aoresnik.babysitter.entity.ScriptExecution;
-import xyz.aoresnik.babysitter.script.AbstractScriptExecution;
+import xyz.aoresnik.babysitter.script.AbstractScriptRunner;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -14,7 +14,7 @@ public class ScriptExecutionUpdateService {
     EntityManager em;
 
     @Transactional
-    public void updateScriptExecution(AbstractScriptExecution scriptExecutionRunner) {
+    public void updateScriptExecution(AbstractScriptRunner scriptExecutionRunner) {
         ScriptExecution scriptExecution = em.find(ScriptExecution.class, Long.parseLong(scriptExecutionRunner.getScriptExecutionID()));
         scriptExecutionRunner.updateEntity(scriptExecution);
     }
