@@ -58,7 +58,7 @@ abstract public class AbstractScriptRunner {
      * @param listener
      * @return
      */
-    public ScriptExecutionInitialStateData registerListener(Consumer<ScriptExecutionData> listener) {
+    public ScriptExecutionInitialStateData registerConsoleChangeListener(Consumer<ScriptExecutionData> listener) {
         synchronized (listeners) {
             listeners.add(listener);
             byte[] resultText = getResult();
@@ -74,7 +74,7 @@ abstract public class AbstractScriptRunner {
         }
     }
 
-    public void removeListener(Consumer<ScriptExecutionData> listener) {
+    public void removeConsoleChangeListener(Consumer<ScriptExecutionData> listener) {
         synchronized (listeners) {
             listeners.remove(listener);
         }

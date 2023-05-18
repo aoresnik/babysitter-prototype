@@ -99,7 +99,7 @@ public class ScriptRunSessions {
             }
         };
         scriptRunSession.listener = listener;
-        ScriptExecutionInitialStateData initialStateData = scriptExecution.registerListener(listener);
+        ScriptExecutionInitialStateData initialStateData = scriptExecution.registerConsoleChangeListener(listener);
         session.getAsyncRemote().sendObject(initialStateData, result ->  {
             if (result.getException() != null) {
                 log.error("Unable to send message: " + result.getException());
@@ -113,7 +113,7 @@ public class ScriptRunSessions {
         AbstractScriptRunner scriptExecution = scriptRunSession.getScriptExecution();
         if (scriptExecution != null)
         {
-            scriptExecution.removeListener(scriptRunSession.listener);
+            scriptExecution.removeConsoleChangeListener(scriptRunSession.listener);
         }
     }
 
