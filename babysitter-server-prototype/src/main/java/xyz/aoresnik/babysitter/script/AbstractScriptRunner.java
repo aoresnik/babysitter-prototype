@@ -1,6 +1,8 @@
 package xyz.aoresnik.babysitter.script;
 
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.Setter;
 import org.jboss.logging.Logger;
 import xyz.aoresnik.babysitter.data.ScriptExecutionData;
 import xyz.aoresnik.babysitter.data.ScriptExecutionInitialStateData;
@@ -9,6 +11,7 @@ import xyz.aoresnik.babysitter.data.ScriptInputData;
 import xyz.aoresnik.babysitter.entity.ScriptExecution;
 import xyz.aoresnik.babysitter.entity.ScriptSource;
 
+import javax.enterprise.context.SessionScoped;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -28,13 +31,19 @@ abstract public class AbstractScriptRunner {
     private final String scriptName;
 
     @Getter
+    @Setter(AccessLevel.PROTECTED)
     private String errorText;
 
+    @Getter
+    @Setter(AccessLevel.PROTECTED)
     private boolean scriptRun = false;
 
+    @Getter
+    @Setter(AccessLevel.PROTECTED)
     private boolean scriptCompleted = false;
 
     @Getter
+    @Setter(AccessLevel.PROTECTED)
     private Integer exitCode;
 
     private Set<Consumer<ScriptExecutionData>> listeners = new HashSet<>();
@@ -119,38 +128,6 @@ abstract public class AbstractScriptRunner {
     }
 
     abstract public void sendInput(ScriptInputData message);
-
-    public String getErrorText() {
-        return errorText;
-    }
-
-    protected void setErrorText(String errorText) {
-        this.errorText = errorText;
-    }
-
-    public boolean isScriptRun() {
-        return scriptRun;
-    }
-
-    protected void setScriptRun(boolean scriptRun) {
-        this.scriptRun = scriptRun;
-    }
-
-    public boolean isScriptCompleted() {
-        return scriptCompleted;
-    }
-
-    protected void setScriptCompleted(boolean scriptCompleted) {
-        this.scriptCompleted = scriptCompleted;
-    }
-
-    public Integer getExitCode() {
-        return exitCode;
-    }
-
-    protected void setExitCode(Integer exitCode) {
-        this.exitCode = exitCode;
-    }
 
     public void saveStatusChange() {
         statusChangeListeners.forEach(listener -> listener.accept(this));
