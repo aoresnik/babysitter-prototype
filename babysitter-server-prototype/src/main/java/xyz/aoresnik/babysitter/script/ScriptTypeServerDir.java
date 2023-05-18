@@ -81,6 +81,7 @@ public class ScriptTypeServerDir extends AbstractScriptType {
                 PtyProcess p = pb.start();
 
                 setScriptRun(true);
+                saveStatusChange();
 
                 notifyConsoleChangeListeners("", null);
 
@@ -107,6 +108,7 @@ public class ScriptTypeServerDir extends AbstractScriptType {
 
                     setScriptCompleted(true);
                     setExitCode(p.waitFor());
+                    saveStatusChange();
 
                     notifyConsoleChangeListeners(getErrorText(), null);
 
@@ -114,9 +116,11 @@ public class ScriptTypeServerDir extends AbstractScriptType {
                     log.info("Detected interrupt exception, stopping process");
                     p.destroy();
                 }
-            } catch (IOException e) {
+            } catch (Exception e) {
                 log.error("Error running script", e);
                 setErrorText(e.getMessage());
+                saveStatusChange();
+                notifyConsoleChangeListeners(getErrorText(), null);
             }
         }
 

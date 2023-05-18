@@ -38,6 +38,9 @@ public class ScriptsResource {
     @Inject
     ActiveScriptExecutions activeScriptExecutions;
 
+    @Inject
+    ScriptExecutionUpdateService scriptExecutionUpdateService;
+
     WorkerExecutor executor;
 
     @Inject
@@ -106,6 +109,12 @@ public class ScriptsResource {
                 });
         }
 
+        // This is only to check that status update get to the database
+        // TODO: use this to return data to the client
+        em.createQuery("select se from ScriptExecution se", ScriptExecution.class).getResultList().forEach(scriptExecution -> {
+            log.debug("Found script execution: " + scriptExecution);
+        });
+
         return result;
     }
 
@@ -135,6 +144,10 @@ public class ScriptsResource {
         // Just trigger here, return immediately
         AbstractScriptExecution scriptExecutionRunner = scriptType.createScriptExecution(scriptName, Long.toString(scriptExecution.getId()));
         scriptExecutionRunner.updateEntity(scriptExecution);
+        scriptExecutionRunner.addStatusChangeListener(scriptExecutionRunner1 -> {
+            log.debug(String.format("Script execution ID=%s status changed - updating in DB", scriptExecutionRunner1.getScriptExecutionID()));
+            scriptExecutionUpdateService.updateScriptExecution(scriptExecutionRunner1);
+        });
         ScriptRunSessions.ScriptRunSession scriptRunSession = scriptRunSessions.createForActiveExecution(scriptName, scriptExecutionRunner);
 
         runAsyncInExecutor(scriptExecutionRunner);

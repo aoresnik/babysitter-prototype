@@ -140,6 +140,7 @@ public class ScriptTypeSSHDir extends AbstractScriptType {
                 String output = "";
 
                 setScriptRun(true);
+                saveStatusChange();
                 notifyConsoleChangeListeners("", null);
 
                 while(true){
@@ -165,10 +166,14 @@ public class ScriptTypeSSHDir extends AbstractScriptType {
 
                 setScriptCompleted(true);
                 setExitCode(channel.getExitStatus());
+                saveStatusChange();
                 notifyConsoleChangeListeners(getErrorText(), null);
 
             }catch(Exception e){
                 log.error("Error while trying to run commands over SSH to get a list of script", e);
+                setErrorText(e.getMessage());
+                saveStatusChange();
+                notifyConsoleChangeListeners(getErrorText(), null);
             }
         }
 

@@ -1,5 +1,6 @@
 package xyz.aoresnik.babysitter.script;
 
+import com.jcraft.jsch.HostKeyRepository;
 import lombok.Getter;
 import org.jboss.logging.Logger;
 import xyz.aoresnik.babysitter.data.ScriptExecutionData;
@@ -39,6 +40,8 @@ abstract public class AbstractScriptExecution {
     private Integer exitCode;
 
     private Set<Consumer<ScriptExecutionData>> listeners = new HashSet<>();
+
+    private Set<Consumer<AbstractScriptExecution>> statusChangeListeners = new HashSet<>();
 
     public AbstractScriptExecution(ScriptSource scriptSource, String scriptName, String executionId) {
         this.scriptSource = scriptSource;
@@ -155,10 +158,18 @@ abstract public class AbstractScriptExecution {
         this.exitCode = exitCode;
     }
 
+    public void saveStatusChange() {
+        statusChangeListeners.forEach(listener -> listener.accept(this));
+    }
+
     public void updateEntity(ScriptExecution scriptExecution) {
         scriptExecution.setScriptCompleted(scriptCompleted);
         scriptExecution.setScriptRun(scriptRun);
         scriptExecution.setErrorText(errorText);
         scriptExecution.setExitCode(exitCode);
+    }
+
+    public void addStatusChangeListener(Consumer<AbstractScriptExecution> statusChangeListener) {
+        this.statusChangeListeners.add(statusChangeListener);
     }
 }
