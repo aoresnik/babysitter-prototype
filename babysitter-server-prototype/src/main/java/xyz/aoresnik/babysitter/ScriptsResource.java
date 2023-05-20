@@ -147,7 +147,7 @@ public class ScriptsResource {
             log.debug(String.format("Script execution ID=%s status changed - updating in DB", scriptExecutionRunner1.getScriptExecutionID()));
             scriptExecutionService.updateScriptExecution(scriptExecutionRunner1);
         });
-        ScriptRunSessions.ScriptRunSession scriptRunSession = scriptRunSessions.createForActiveExecution(scriptName, scriptExecutionRunner);
+        scriptRunSessions.createForActiveExecution(scriptName, scriptExecutionRunner);
 
         runAsyncInExecutor(scriptExecutionRunner);
 

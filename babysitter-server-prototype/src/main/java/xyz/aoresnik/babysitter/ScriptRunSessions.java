@@ -49,33 +49,20 @@ public class ScriptRunSessions {
     ScriptExecutionService scriptExecutionService;
 
     static class ScriptRunSession {
-        String scriptName;
-        Session websocketSession;
-
         Consumer<ScriptExecutionData> listener;
 
-        public ScriptRunSession(String scriptName) {
-            this.scriptName = scriptName;
-        }
-
-        public void setWebsocketSession(Session websocketSession) {
-            this.websocketSession = websocketSession;
-        }
 
     }
 
-    public ScriptRunSession createForActiveExecution(String scriptName, AbstractScriptRunner scriptRunner) {
-        ScriptRunSession scriptRunSession = new ScriptRunSession(scriptName);
-        sessions.put(scriptRunner.getScriptExecutionID(), scriptRunSession);
+    public void createForActiveExecution(String scriptName, AbstractScriptRunner scriptRunner) {
         activeScriptRunners.addScriptExecution(scriptRunner);
         log.debug("Created new script run session for script " + scriptName + " with session run ID: " + scriptRunner.getScriptExecutionID());
-        return scriptRunSession;
     }
 
     @OnOpen
     public void onOpen(Session session, @PathParam("sessionId") String sessionId) {
-        ScriptRunSession scriptRunSession = sessions.get(sessionId);
-        scriptRunSession.setWebsocketSession(session);
+        ScriptRunSession scriptRunSession = new ScriptRunSession();
+        sessions.put(sessionId, scriptRunSession);
         log.debug("Connected terminal for script execution session ID: " + sessionId);
 
         Consumer<ScriptExecutionData> listener = new Consumer<ScriptExecutionData>() {
