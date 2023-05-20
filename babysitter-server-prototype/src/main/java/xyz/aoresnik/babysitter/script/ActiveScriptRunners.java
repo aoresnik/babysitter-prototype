@@ -8,19 +8,23 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @ApplicationScoped
-public class ActiveScriptExecutions {
+public class ActiveScriptRunners {
     @Inject
     Logger log;
 
-    private Map<String, AbstractScriptRunner> scriptExecutions = new ConcurrentHashMap<>();
+    private Map<String, AbstractScriptRunner> scriptRunners = new ConcurrentHashMap<>();
 
     public void addScriptExecution(AbstractScriptRunner scriptExecution) {
         log.info("Registering active script execution: " + scriptExecution.getScriptExecutionID());
-        scriptExecutions.put(scriptExecution.getScriptExecutionID(), scriptExecution);
+        scriptRunners.put(scriptExecution.getScriptExecutionID(), scriptExecution);
     }
 
     public void removeScriptExecution(String sessionId) {
         log.info("Removing active script execution: " + sessionId);
-        scriptExecutions.remove(sessionId);
+        scriptRunners.remove(sessionId);
+    }
+
+    public AbstractScriptRunner getScriptExecution(String sessionId) {
+        return scriptRunners.get(sessionId);
     }
 }

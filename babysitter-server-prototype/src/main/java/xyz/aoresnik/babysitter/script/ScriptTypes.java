@@ -3,7 +3,7 @@ package xyz.aoresnik.babysitter.script;
 import xyz.aoresnik.babysitter.entity.ScriptSource;
 
 public class ScriptTypes {
-    public static AbstractScriptType forScriptSource(ScriptSource scriptSource) {
+    public static AbstractScriptType newForScriptSource(ScriptSource scriptSource) {
         if (scriptSource.getScriptSourceServerDir() != null) {
             return new ScriptTypeServerDir(scriptSource);
         } else if (scriptSource.getScriptSourceSSHDir() != null) {

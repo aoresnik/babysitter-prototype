@@ -7,7 +7,7 @@ import xyz.aoresnik.babysitter.data.ScriptData;
 import xyz.aoresnik.babysitter.entity.ScriptExecution;
 import xyz.aoresnik.babysitter.entity.ScriptSource;
 import xyz.aoresnik.babysitter.script.AbstractScriptType;
-import xyz.aoresnik.babysitter.script.ActiveScriptExecutions;
+import xyz.aoresnik.babysitter.script.ActiveScriptRunners;
 import xyz.aoresnik.babysitter.script.AbstractScriptRunner;
 import xyz.aoresnik.babysitter.script.ScriptTypes;
 
@@ -36,10 +36,10 @@ public class ScriptsResource {
     ScriptRunSessions scriptRunSessions;
 
     @Inject
-    ActiveScriptExecutions activeScriptExecutions;
+    ActiveScriptRunners activeScriptRunners;
 
     @Inject
-    ScriptExecutionUpdateService scriptExecutionUpdateService;
+    ScriptExecutionService scriptExecutionService;
 
     WorkerExecutor executor;
 
@@ -74,7 +74,7 @@ public class ScriptsResource {
             try {
                 scriptExecution.run();
             } finally {
-                activeScriptExecutions.removeScriptExecution(scriptExecution.getScriptExecutionID());
+                activeScriptRunners.removeScriptExecution(scriptExecution.getScriptExecutionID());
             }
             promise.complete("Script execution done");
         }, asyncResult -> {
@@ -94,7 +94,7 @@ public class ScriptsResource {
 
         for (ScriptSource scriptSource : scriptSources) {
             log.info(String.format("Detecting scripts in source: %s", scriptSource));
-            AbstractScriptType scriptType = ScriptTypes.forScriptSource(scriptSource);
+            AbstractScriptType scriptType = ScriptTypes.newForScriptSource(scriptSource);
 
             List<String> scriptIds = scriptType.getScripts();
             log.debug("The source enumerated scripts: " + scriptIds);
@@ -131,7 +131,7 @@ public class ScriptsResource {
 
         log.info(String.format("Running script %s from script source ID=%d, NAME=%s async", scriptName, scriptSource.getId(), scriptSource.getName()));
 
-        AbstractScriptType scriptType = ScriptTypes.forScriptSource(scriptSource);
+        AbstractScriptType scriptType = ScriptTypes.newForScriptSource(scriptSource);
 
         ScriptExecution scriptExecution = new ScriptExecution();
         scriptExecution.setScriptSource(scriptSource);
@@ -145,16 +145,14 @@ public class ScriptsResource {
         scriptExecutionRunner.updateEntity(scriptExecution);
         scriptExecutionRunner.addStatusChangeListener(scriptExecutionRunner1 -> {
             log.debug(String.format("Script execution ID=%s status changed - updating in DB", scriptExecutionRunner1.getScriptExecutionID()));
-            scriptExecutionUpdateService.updateScriptExecution(scriptExecutionRunner1);
+            scriptExecutionService.updateScriptExecution(scriptExecutionRunner1);
         });
         ScriptRunSessions.ScriptRunSession scriptRunSession = scriptRunSessions.createForActiveExecution(scriptName, scriptExecutionRunner);
 
         runAsyncInExecutor(scriptExecutionRunner);
 
-        activeScriptExecutions.addScriptExecution(scriptExecutionRunner);
-
         // Explicitly wrap as JSON string (I don't know yet why it's not done automatically)
-        return "\"" + scriptRunSession.getScriptExecution().getScriptExecutionID() + "\"";
+        return "\"" + scriptExecutionRunner.getScriptExecutionID() + "\"";
     }
 
 }

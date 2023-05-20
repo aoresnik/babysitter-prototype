@@ -3,6 +3,7 @@ package xyz.aoresnik.babysitter.script;
 import com.jcraft.jsch.*;
 import org.jboss.logging.Logger;
 import xyz.aoresnik.babysitter.data.ScriptInputData;
+import xyz.aoresnik.babysitter.entity.ScriptExecution;
 import xyz.aoresnik.babysitter.entity.ScriptSource;
 
 import java.io.IOException;
@@ -62,7 +63,7 @@ public class ScriptTypeSSHDir extends AbstractScriptType {
                     log.debug("SSH session: exit-status: "+channel.getExitStatus());
                     break;
                 }
-                try{Thread.sleep(1000);}catch(Exception ee){}
+                try{Thread.sleep(300);}catch(Exception ee){}
             }
             channel.disconnect();
             session.disconnect();
@@ -107,6 +108,16 @@ public class ScriptTypeSSHDir extends AbstractScriptType {
     @Override
     public AbstractScriptRunner createScriptExecution(String scriptName, String scriptExecutionID) {
         return new SSHDirScriptTypeRunner(getScriptSource(), scriptName, scriptExecutionID);
+    }
+
+    @Override
+    public AbstractScriptRunner forInactiveScriptExecution(ScriptExecution scriptExecution) {
+        SSHDirScriptTypeRunner result = new SSHDirScriptTypeRunner(getScriptSource(), scriptExecution.getScriptId(), Long.toString(scriptExecution.getId()));
+        result.setScriptCompleted(scriptExecution.isScriptCompleted());
+        result.setScriptRun(scriptExecution.isScriptRun());
+        result.setErrorText(scriptExecution.getErrorText());
+        result.setExitCode(scriptExecution.getExitCode());
+        return result;
     }
 
     class SSHDirScriptTypeRunner extends AbstractScriptRunner {

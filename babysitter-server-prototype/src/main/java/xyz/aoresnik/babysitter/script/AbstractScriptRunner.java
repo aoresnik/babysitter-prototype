@@ -70,17 +70,27 @@ abstract public class AbstractScriptRunner {
     public ScriptExecutionInitialStateData registerConsoleChangeListener(Consumer<ScriptExecutionData> listener) {
         synchronized (listeners) {
             listeners.add(listener);
-            byte[] resultText = getResult();
-            ScriptExecutionInitialStateData initialStateData = new ScriptExecutionInitialStateData();
-
-            initialStateData.setScriptRun(scriptRun);
-            initialStateData.setScriptCompleted(scriptCompleted);
-            initialStateData.setExitCode(exitCode);
-            initialStateData.setErrorText(getErrorText());
-            initialStateData.setInitialConsoleData(resultText);
-
-            return initialStateData;
+            return getScriptExecutionInitialStateData();
         }
+    }
+
+    /**
+     * Note: when registering the listener with {@link #registerConsoleChangeListener(Consumer)}, use the value
+     * returned by that method as the initial state - because it's guaranteed that updates will be incremental with
+     * regard to that initial state.
+     * @return
+     */
+    public ScriptExecutionInitialStateData getScriptExecutionInitialStateData() {
+        byte[] resultText = getResult();
+        ScriptExecutionInitialStateData initialStateData = new ScriptExecutionInitialStateData();
+
+        initialStateData.setScriptRun(scriptRun);
+        initialStateData.setScriptCompleted(scriptCompleted);
+        initialStateData.setExitCode(exitCode);
+        initialStateData.setErrorText(getErrorText());
+        initialStateData.setInitialConsoleData(resultText);
+
+        return initialStateData;
     }
 
     public void removeConsoleChangeListener(Consumer<ScriptExecutionData> listener) {

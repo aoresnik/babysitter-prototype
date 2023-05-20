@@ -4,6 +4,7 @@ import com.pty4j.PtyProcess;
 import com.pty4j.PtyProcessBuilder;
 import org.jboss.logging.Logger;
 import xyz.aoresnik.babysitter.data.ScriptInputData;
+import xyz.aoresnik.babysitter.entity.ScriptExecution;
 import xyz.aoresnik.babysitter.entity.ScriptSource;
 
 import java.io.File;
@@ -46,6 +47,16 @@ public class ScriptTypeServerDir extends AbstractScriptType {
         return new ServerDirScriptTypeRunner(getScriptSource(), scriptName, scriptExecutionID);
     }
 
+    @Override
+    public AbstractScriptRunner forInactiveScriptExecution(ScriptExecution scriptExecution) {
+        ServerDirScriptTypeRunner result = new ServerDirScriptTypeRunner(getScriptSource(), scriptExecution.getScriptId(), Long.toString(scriptExecution.getId()));
+        result.setScriptCompleted(scriptExecution.isScriptCompleted());
+        result.setScriptRun(scriptExecution.isScriptRun());
+        result.setErrorText(scriptExecution.getErrorText());
+        result.setExitCode(scriptExecution.getExitCode());
+        return result;
+    }
+
     class ServerDirScriptTypeRunner extends AbstractScriptRunner {
 
         private OutputStream processStdin;
@@ -56,6 +67,9 @@ public class ScriptTypeServerDir extends AbstractScriptType {
 
         @Override
         public void run() {
+            if (isScriptRun()) {
+                throw new IllegalStateException("Script was already run");
+            }
             try {
 
                 File scriptsDir = new File(getScriptSource().getScriptSourceServerDir().getDirname());

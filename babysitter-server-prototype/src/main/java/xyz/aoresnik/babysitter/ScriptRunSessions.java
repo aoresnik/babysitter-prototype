@@ -7,7 +7,10 @@ import org.jboss.logging.Logger;
 import xyz.aoresnik.babysitter.data.ScriptExecutionData;
 import xyz.aoresnik.babysitter.data.ScriptExecutionInitialStateData;
 import xyz.aoresnik.babysitter.data.ScriptInputData;
+import xyz.aoresnik.babysitter.entity.ScriptExecution;
 import xyz.aoresnik.babysitter.script.AbstractScriptRunner;
+import xyz.aoresnik.babysitter.script.ActiveScriptRunners;
+import xyz.aoresnik.babysitter.script.ScriptTypes;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -39,28 +42,20 @@ public class ScriptRunSessions {
      */
     Map<String, ScriptRunSession> sessions = new ConcurrentHashMap<>();
 
+    @Inject
+    ActiveScriptRunners activeScriptRunners;
+
+    @Inject
+    ScriptExecutionService scriptExecutionService;
+
     static class ScriptRunSession {
         String scriptName;
-        private final AbstractScriptRunner scriptExecution;
         Session websocketSession;
 
         Consumer<ScriptExecutionData> listener;
 
-        public ScriptRunSession(String scriptName, AbstractScriptRunner scriptExecution) {
+        public ScriptRunSession(String scriptName) {
             this.scriptName = scriptName;
-            this.scriptExecution = scriptExecution;
-        }
-
-        public String getScriptName() {
-            return scriptName;
-        }
-
-        public AbstractScriptRunner getScriptExecution() {
-            return scriptExecution;
-        }
-
-        public Session getWebsocketSession() {
-            return websocketSession;
         }
 
         public void setWebsocketSession(Session websocketSession) {
@@ -69,10 +64,11 @@ public class ScriptRunSessions {
 
     }
 
-    public ScriptRunSession createForActiveExecution(String scriptName, AbstractScriptRunner scriptExecution) {
-        ScriptRunSession scriptRunSession = new ScriptRunSession(scriptName, scriptExecution);
-        sessions.put(scriptExecution.getScriptExecutionID(), scriptRunSession);
-        log.debug("Created new script run session for script " + scriptName + " with session run ID: " + scriptExecution.getScriptExecutionID());
+    public ScriptRunSession createForActiveExecution(String scriptName, AbstractScriptRunner scriptRunner) {
+        ScriptRunSession scriptRunSession = new ScriptRunSession(scriptName);
+        sessions.put(scriptRunner.getScriptExecutionID(), scriptRunSession);
+        activeScriptRunners.addScriptExecution(scriptRunner);
+        log.debug("Created new script run session for script " + scriptName + " with session run ID: " + scriptRunner.getScriptExecutionID());
         return scriptRunSession;
     }
 
@@ -81,7 +77,6 @@ public class ScriptRunSessions {
         ScriptRunSession scriptRunSession = sessions.get(sessionId);
         scriptRunSession.setWebsocketSession(session);
         log.debug("Connected terminal for script execution session ID: " + sessionId);
-        AbstractScriptRunner scriptExecution = scriptRunSession.getScriptExecution();
 
         Consumer<ScriptExecutionData> listener = new Consumer<ScriptExecutionData>() {
             @Override
@@ -91,7 +86,7 @@ public class ScriptRunSessions {
                     ObjectMapper mapper = new ObjectMapper();
                     mapper.writeValue(writer, scriptExecutionData);
                     String json = writer.toString();
-                    session.getAsyncRemote().sendText(json, result ->  {
+                    session.getAsyncRemote().sendText(json, result -> {
                         if (result.getException() != null) {
                             log.error("Unable to send message: " + result.getException());
                         }
@@ -102,18 +97,32 @@ public class ScriptRunSessions {
             }
         };
         scriptRunSession.listener = listener;
-        ScriptExecutionInitialStateData initialStateData = scriptExecution.registerConsoleChangeListener(listener);
-        session.getAsyncRemote().sendObject(initialStateData, result ->  {
-            if (result.getException() != null) {
-                log.error("Unable to send message: " + result.getException());
-            }
-        });
+        AbstractScriptRunner scriptRunner = activeScriptRunners.getScriptExecution(sessionId);
+        if (scriptRunner != null) {
+            log.error("For session ID=%s the script runner is still active".formatted(sessionId));
+            ScriptExecutionInitialStateData initialStateData = scriptRunner.registerConsoleChangeListener(listener);
+            session.getAsyncRemote().sendObject(initialStateData, result -> {
+                if (result.getException() != null) {
+                    log.error("Unable to send message: " + result.getException());
+                }
+            });
+        } else {
+            log.error("For session ID=%s the script runner has completed and is inactive - obtaining from database".formatted(sessionId));
+            ScriptExecution scriptExecution = scriptExecutionService.getScriptExecution(sessionId);
+            AbstractScriptRunner scriptRunner1 = ScriptTypes.newForScriptSource(scriptExecution.getScriptSource()).forInactiveScriptExecution(scriptExecution);
+            ScriptExecutionInitialStateData initialStateData = scriptRunner1.getScriptExecutionInitialStateData();
+            session.getAsyncRemote().sendObject(initialStateData, result -> {
+                if (result.getException() != null) {
+                    log.error("Unable to send message: " + result.getException());
+                }
+            });
+        }
     }
 
     @OnClose
     public void onClose(Session session, @PathParam("sessionId") String sessionId) {
         ScriptRunSession scriptRunSession = sessions.get(sessionId);
-        AbstractScriptRunner scriptExecution = scriptRunSession.getScriptExecution();
+        AbstractScriptRunner scriptExecution = activeScriptRunners.getScriptExecution(sessionId);
         if (scriptExecution != null)
         {
             scriptExecution.removeConsoleChangeListener(scriptRunSession.listener);
@@ -129,8 +138,10 @@ public class ScriptRunSessions {
     public void onMessage(ScriptInputData message, @PathParam("sessionId") String sessionId) {
         log.debug("Received message: " + message);
         ScriptRunSession scriptRunSession = sessions.get(sessionId);
-        AbstractScriptRunner scriptExecution = scriptRunSession.getScriptExecution();
-        scriptExecution.sendInput(message);
+        AbstractScriptRunner scriptExecution = activeScriptRunners.getScriptExecution(sessionId);
+        if (scriptExecution != null) {
+            scriptExecution.sendInput(message);
+        }
     }
 
     public static class EncoderDecoder implements javax.websocket.Encoder.Text<ScriptExecutionInitialStateData>, javax.websocket.Decoder.Text<ScriptInputData> {
