@@ -110,7 +110,7 @@ abstract public class AbstractScriptRunner {
         ScriptExecutionUpdateData updateData = new ScriptExecutionUpdateData();
         updateData.setScriptRun(scriptRun);
         updateData.setScriptCompleted(scriptCompleted);
-        updateData.setExitCode(null);
+        updateData.setExitCode(exitCode);
         updateData.setErrorText(errorText1);
         updateData.setIncrementalConsoleData(incrementalConsoleData);
 
