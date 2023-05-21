@@ -305,12 +305,21 @@
 <!-- Toolbar -->
 <div class="toolbar" role="banner">
   <span style="width: 2em;"></span>
-  <a routerLink="" style="color: white;" [routerLinkActive]="['active']">Babysitter for scripts</a>
+  <a routerLink="" style="color: white;" [routerLinkActive]="['active']">Babysitter for commands</a>
 </div>
 
 <div class="content" role="main">
-<!--  <app-app-commands-list-pane></app-app-commands-list-pane>-->
   <router-outlet></router-outlet>
 <div>
 
-
+<div>
+  <br>
+  <br>
+  <br>
+  <br>
+  (TEST for some links - TODO remove when not needed anymore:
+  <p><a routerLink="">base page</a></p>
+  <p><a routerLink="command/10/cmd-test">command - should parse params source 10, script id cmd-test</a></p>
+  <p><a routerLink="command-exec/10/20/30">command execution</a></p>
+  )
+</div>
