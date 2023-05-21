@@ -7,11 +7,15 @@ import { AppComponent } from './app.component';
 import { AppCommandsListPaneComponent } from './app-commands-list-pane/app-commands-list-pane.component';
 import { HttpClientModule } from '@angular/common/http';
 import { NgTerminalModule } from 'ng-terminal';
+import { AppCommandViewComponent } from './app-command-view/app-command-view.component';
+import { AppCommandExecutionViewComponent } from './app-command-execution-view/app-command-execution-view.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    AppCommandsListPaneComponent
+    AppCommandsListPaneComponent,
+    AppCommandViewComponent,
+    AppCommandExecutionViewComponent,
   ],
   imports: [
     NgTerminalModule,
