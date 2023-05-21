@@ -11,7 +11,6 @@ import xyz.aoresnik.babysitter.data.ScriptInputData;
 import xyz.aoresnik.babysitter.entity.ScriptExecution;
 import xyz.aoresnik.babysitter.entity.ScriptSource;
 
-import javax.enterprise.context.SessionScoped;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;

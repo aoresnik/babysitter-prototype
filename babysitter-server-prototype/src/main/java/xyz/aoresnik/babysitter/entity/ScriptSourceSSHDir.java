@@ -1,7 +1,5 @@
 package xyz.aoresnik.babysitter.entity;
 
-import org.hibernate.type.descriptor.sql.LobTypeMappings;
-
 import javax.persistence.*;
 
 @Entity

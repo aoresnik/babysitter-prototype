@@ -1,6 +1,5 @@
 package xyz.aoresnik.babysitter;
 
-import io.smallrye.mutiny.Uni;
 import xyz.aoresnik.babysitter.entity.ScriptExecution;
 import xyz.aoresnik.babysitter.script.AbstractScriptRunner;
 

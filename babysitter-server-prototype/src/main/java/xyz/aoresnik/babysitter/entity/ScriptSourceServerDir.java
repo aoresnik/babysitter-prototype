@@ -1,7 +1,5 @@
 package xyz.aoresnik.babysitter.entity;
 
-import lombok.Data;
-
 import javax.persistence.*;
 
 @Entity
