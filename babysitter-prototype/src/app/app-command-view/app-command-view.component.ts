@@ -2,6 +2,9 @@ import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from "@angular/router";
 import {Observable, switchMap} from "rxjs";
 
+/**
+ * LEGACY - remove if it turns out to be unnecessary
+ */
 @Component({
   selector: 'app-app-command-view',
   templateUrl: './app-command-view.component.html',

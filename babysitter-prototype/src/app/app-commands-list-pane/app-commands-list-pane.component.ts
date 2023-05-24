@@ -16,6 +16,9 @@ export class ScriptRun {
   scriptRunSessionId: string;
 }
 
+/**
+ * NOTE: DE FACTO serves as a kind of test page for widgets and components
+ */
 @Component({
   selector: 'app-app-commands-list-pane',
   templateUrl: './app-commands-list-pane.component.html',
