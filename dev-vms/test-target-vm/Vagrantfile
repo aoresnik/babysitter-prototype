@@ -4,6 +4,7 @@ Vagrant.configure("2") do |config|
   config.vm.box = "debian/buster64"
   config.vm.hostname = "test-target-vm"
 
+  # TODO: should work under VirtualBox also - libvirt is my personal preference and should be configured in my environment only
   config.vm.provider :libvirt do |domain|
       domain.uri = 'qemu:///system'
   end
