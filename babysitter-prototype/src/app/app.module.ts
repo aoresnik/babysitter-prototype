@@ -16,6 +16,7 @@ import { AppCommandPageComponent } from './pages/app-command-page/app-command-pa
 import { AppCommandExecutionPageComponent } from './pages/app-command-execution-page/app-command-execution-page.component';
 import { AppCommandsListPageComponent } from './pages/app-commands-list-page/app-commands-list-page.component';
 import { AppCommandsListPaneComponent } from './components/app-commands-list-pane/app-commands-list-pane.component';
+import { TreeModule } from 'primeng/tree';
 
 @NgModule({
   declarations: [
@@ -36,7 +37,8 @@ import { AppCommandsListPaneComponent } from './components/app-commands-list-pan
     BrowserModule,
     AppRoutingModule,
     TableModule,
-    HttpClientModule
+    HttpClientModule,
+    TreeModule
   ],
   providers: [],
   bootstrap: [AppComponent]
