@@ -14,6 +14,7 @@ import { AppActiveRunsPageComponent } from './app-active-runs-page/app-active-ru
 import { AppHistoryPageComponent } from './app-history-page/app-history-page.component';
 import { AppCommandPageComponent } from './app-command-page/app-command-page.component';
 import { AppCommandExecutionPageComponent } from './app-command-execution-page/app-command-execution-page.component';
+import { AppCommandsListPageComponent } from './app-commands-list-page/app-commands-list-page.component';
 
 @NgModule({
   declarations: [
@@ -26,6 +27,7 @@ import { AppCommandExecutionPageComponent } from './app-command-execution-page/a
     AppHistoryPageComponent,
     AppCommandPageComponent,
     AppCommandExecutionPageComponent,
+    AppCommandsListPageComponent,
   ],
   imports: [
     NgTerminalModule,
