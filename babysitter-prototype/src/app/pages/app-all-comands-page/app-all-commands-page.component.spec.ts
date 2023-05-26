@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { AppAllCoomandsPageComponent } from './app-all-coomands-page.component';
+import { AppAllCommandsPageComponent } from './app-all-commands-page.component';
 
 describe('AppAllCoomandsPageComponent', () => {
-  let component: AppAllCoomandsPageComponent;
-  let fixture: ComponentFixture<AppAllCoomandsPageComponent>;
+  let component: AppAllCommandsPageComponent;
+  let fixture: ComponentFixture<AppAllCommandsPageComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ AppAllCoomandsPageComponent ]
+      declarations: [ AppAllCommandsPageComponent ]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(AppAllCoomandsPageComponent);
+    fixture = TestBed.createComponent(AppAllCommandsPageComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

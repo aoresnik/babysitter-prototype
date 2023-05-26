@@ -9,7 +9,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { NgTerminalModule } from 'ng-terminal';
 import { AppCommandViewComponent } from './components/app-command-view/app-command-view.component';
 import { AppCommandExecutionViewComponent } from './components/app-command-execution-view/app-command-execution-view.component';
-import { AppAllCoomandsPageComponent } from './pages/app-all-coomands-page/app-all-coomands-page.component';
+import { AppAllCommandsPageComponent } from './pages/app-all-comands-page/app-all-commands-page.component';
 import { AppActiveRunsPageComponent } from './pages/app-active-runs-page/app-active-runs-page.component';
 import { AppHistoryPageComponent } from './pages/app-history-page/app-history-page.component';
 import { AppCommandPageComponent } from './pages/app-command-page/app-command-page.component';
@@ -22,7 +22,7 @@ import { AppCommandsListPageComponent } from './pages/app-commands-list-page/app
     AppCommandsListPaneComponent,
     AppCommandViewComponent,
     AppCommandExecutionViewComponent,
-    AppAllCoomandsPageComponent,
+    AppAllCommandsPageComponent,
     AppActiveRunsPageComponent,
     AppHistoryPageComponent,
     AppCommandPageComponent,
