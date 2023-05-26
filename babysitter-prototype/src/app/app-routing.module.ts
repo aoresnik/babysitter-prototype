@@ -3,11 +3,11 @@ import {RouterModule, Routes} from '@angular/router';
 import {AppCommandViewComponent} from "./app-command-view/app-command-view.component";
 import {AppCommandExecutionViewComponent} from "./app-command-execution-view/app-command-execution-view.component";
 import {AppCommandsListPaneComponent} from "./app-commands-list-pane/app-commands-list-pane.component";
-import {AppAllCoomandsPageComponent} from "./app-all-coomands-page/app-all-coomands-page.component";
-import {AppCommandPageComponent} from "./app-command-page/app-command-page.component";
-import {AppActiveRunsPageComponent} from "./app-active-runs-page/app-active-runs-page.component";
-import {AppHistoryPageComponent} from "./app-history-page/app-history-page.component";
-import {AppCommandsListPageComponent} from "./app-commands-list-page/app-commands-list-page.component";
+import {AppAllCoomandsPageComponent} from "./pages/app-all-coomands-page/app-all-coomands-page.component";
+import {AppCommandPageComponent} from "./pages/app-command-page/app-command-page.component";
+import {AppActiveRunsPageComponent} from "./pages/app-active-runs-page/app-active-runs-page.component";
+import {AppHistoryPageComponent} from "./pages/app-history-page/app-history-page.component";
+import {AppCommandsListPageComponent} from "./pages/app-commands-list-page/app-commands-list-page.component";
 
 const routes: Routes = [
   // PRODUCTION pages
