@@ -15,6 +15,7 @@ import { AppHistoryPageComponent } from './pages/app-history-page/app-history-pa
 import { AppCommandPageComponent } from './pages/app-command-page/app-command-page.component';
 import { AppCommandExecutionPageComponent } from './pages/app-command-execution-page/app-command-execution-page.component';
 import { AppCommandsListPageComponent } from './pages/app-commands-list-page/app-commands-list-page.component';
+import { AppCommandsListPaneComponent } from './components/app-commands-list-pane/app-commands-list-pane.component';
 
 @NgModule({
   declarations: [
@@ -28,6 +29,7 @@ import { AppCommandsListPageComponent } from './pages/app-commands-list-page/app
     AppCommandPageComponent,
     AppCommandExecutionPageComponent,
     AppCommandsListPageComponent,
+    AppCommandsListPaneComponent,
   ],
   imports: [
     NgTerminalModule,

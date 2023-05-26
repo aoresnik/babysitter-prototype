@@ -20,7 +20,7 @@ export class ScriptRun {
  * NOTE: DE FACTO serves as a kind of test page for widgets and components
  */
 @Component({
-  selector: 'app-app-commands-list-pane',
+  selector: 'app-all-elements-test-page',
   templateUrl: './app-all-elements-test-page.component.html',
   styleUrls: ['./app-all-elements-test-page.component.css']
 })
