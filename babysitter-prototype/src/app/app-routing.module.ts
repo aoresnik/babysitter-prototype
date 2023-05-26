@@ -1,8 +1,8 @@
 import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
-import {AppCommandViewComponent} from "./app-command-view/app-command-view.component";
-import {AppCommandExecutionViewComponent} from "./app-command-execution-view/app-command-execution-view.component";
-import {AppCommandsListPaneComponent} from "./app-commands-list-pane/app-commands-list-pane.component";
+import {AppCommandViewComponent} from "./components/app-command-view/app-command-view.component";
+import {AppCommandExecutionViewComponent} from "./components/app-command-execution-view/app-command-execution-view.component";
+import {AppCommandsListPaneComponent} from "./components/app-commands-list-pane/app-commands-list-pane.component";
 import {AppAllCoomandsPageComponent} from "./pages/app-all-coomands-page/app-all-coomands-page.component";
 import {AppCommandPageComponent} from "./pages/app-command-page/app-command-page.component";
 import {AppActiveRunsPageComponent} from "./pages/app-active-runs-page/app-active-runs-page.component";
