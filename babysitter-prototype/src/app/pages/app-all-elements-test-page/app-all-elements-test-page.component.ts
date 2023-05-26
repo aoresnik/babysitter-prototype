@@ -21,10 +21,10 @@ export class ScriptRun {
  */
 @Component({
   selector: 'app-app-commands-list-pane',
-  templateUrl: './app-commands-list-pane.component.html',
-  styleUrls: ['./app-commands-list-pane.component.css']
+  templateUrl: './app-all-elements-test-page.component.html',
+  styleUrls: ['./app-all-elements-test-page.component.css']
 })
-export class AppCommandsListPaneComponent {
+export class AppAllElementsTestPageComponent {
   commands: any;
 
   scriptsList: any[] = [];

@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { AppCommandsListPaneComponent } from './app-commands-list-pane.component';
+import { AppAllElementsTestPageComponent } from './app-all-elements-test-page.component';
 
 describe('AppCommandsListPaneComponent', () => {
-  let component: AppCommandsListPaneComponent;
-  let fixture: ComponentFixture<AppCommandsListPaneComponent>;
+  let component: AppAllElementsTestPageComponent;
+  let fixture: ComponentFixture<AppAllElementsTestPageComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ AppCommandsListPaneComponent ]
+      declarations: [ AppAllElementsTestPageComponent ]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(AppCommandsListPaneComponent);
+    fixture = TestBed.createComponent(AppAllElementsTestPageComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

@@ -4,7 +4,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import {TableModule} from 'primeng/table';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { AppCommandsListPaneComponent } from './components/app-commands-list-pane/app-commands-list-pane.component';
+import { AppAllElementsTestPageComponent } from './pages/app-all-elements-test-page/app-all-elements-test-page.component';
 import { HttpClientModule } from '@angular/common/http';
 import { NgTerminalModule } from 'ng-terminal';
 import { AppCommandViewComponent } from './components/app-command-view/app-command-view.component';
@@ -19,7 +19,7 @@ import { AppCommandsListPageComponent } from './pages/app-commands-list-page/app
 @NgModule({
   declarations: [
     AppComponent,
-    AppCommandsListPaneComponent,
+    AppAllElementsTestPageComponent,
     AppCommandViewComponent,
     AppCommandExecutionViewComponent,
     AppAllCommandsPageComponent,
