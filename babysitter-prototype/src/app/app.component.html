@@ -66,6 +66,28 @@
     opacity: 0.8;
   }
 
+  /* Allow keeping the toolbar on top */
+  .content-scroll-container {
+    position: absolute;
+    overflow-y: scroll;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    margin-top: 60px;
+    flex-direction: column;
+    align-items: normal;
+  }
+
+  .content {
+    padding: 16px 16px 16px 16px;
+    display: flex;
+    max-width: 960px;
+    flex-direction: column;
+    align-items: normal;
+  }
+  /*
   .content {
     display: flex;
     margin: 82px auto 32px;
@@ -74,6 +96,8 @@
     flex-direction: column;
     align-items: center;
   }
+  */
+   */
 
   svg.material-icons {
     height: 24px;
@@ -340,18 +364,18 @@
   </div>
 </div>
 
-<div class="content" role="main">
-  <router-outlet></router-outlet>
-<div>
 
-<div>
-  <br>
-  <br>
-  <br>
-  <br>
-  (TEST for some links - TODO remove when not needed anymore:
-  <p><a routerLink="">base page</a></p>
-  <p><a routerLink="command/10/cmd-test">command - should parse params source 10, script id cmd-test</a></p>
-  <p><a routerLink="command-exec/10/20/30">command execution</a></p>
-  )
+<div class="content-scroll-container">
+  <div class="content" role="main">
+    <router-outlet></router-outlet>
+    <br>
+    <br>
+    <br>
+    <br>
+    (TEST for some links - TODO remove when not needed anymore:
+    <p><a routerLink="">base page</a></p>
+    <p><a routerLink="command/10/cmd-test">command - should parse params source 10, script id cmd-test</a></p>
+    <p><a routerLink="command-exec/10/20/30">command execution</a></p>
+    )
+  </div>
 </div>
