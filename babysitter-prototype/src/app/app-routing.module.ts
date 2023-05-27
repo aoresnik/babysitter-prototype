@@ -30,13 +30,13 @@ const routes: Routes = [
     children: [
       {path: '', redirectTo: 'list', pathMatch: 'full'},
       {path: 'list', component: AppCommandExecutionNotSelectedSubpageComponent},
-      {path: 'execution/:source_id/:script_id', component: AppCommandExecutionPageComponent},
+      {path: 'execution/:execution_id', component: AppCommandExecutionPageComponent},
     ]
   },
 
   // Show command without list of commands
   {path: 'command/:source_id/:script_id', component: AppCommandPageComponent},
-  {path: 'execution/:source_id/:script_id', component: AppCommandPageComponent},
+  {path: 'execution/:execution_id', component: AppCommandExecutionPageComponent},
 
 
   // TEST Pages

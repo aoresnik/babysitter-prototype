@@ -1,3 +1,5 @@
-<p>app-command-page works!</p>
+<div>Selected command: source id: <b>{{ scriptSourceID }}</b> script id: <b>{{ scriptID }}</b></div>
 
-Selected command: source id: <b>{{ scriptSourceID }}</b> script id: <b>{{ scriptID }}</b>
+<div>
+  <a href="#" (click)="runScript(scriptID); false">run</a>
+</div>
