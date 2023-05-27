@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { AppCommandsListPageComponent } from './app-commands-list-page.component';
+import { AppCommandNotSelectedSubpageComponent } from './app-command-not-selected-subpage.component';
 
 describe('AppCommandsListPageComponent', () => {
-  let component: AppCommandsListPageComponent;
-  let fixture: ComponentFixture<AppCommandsListPageComponent>;
+  let component: AppCommandNotSelectedSubpageComponent;
+  let fixture: ComponentFixture<AppCommandNotSelectedSubpageComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ AppCommandsListPageComponent ]
+      declarations: [ AppCommandNotSelectedSubpageComponent ]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(AppCommandsListPageComponent);
+    fixture = TestBed.createComponent(AppCommandNotSelectedSubpageComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

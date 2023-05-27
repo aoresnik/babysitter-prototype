@@ -174,17 +174,14 @@
   <div>
     <nav>
       <a routerLink="/commands/list" style="color: white;"
-         [routerLinkActive]="['active']">All commands</a>
+         [routerLinkActive]="['active']">Commands</a>
 <!-- TODO: list commands by object, when object support is implemented. hidden until then -->
 <!--      <span class="spacer"></span>-->
 <!--      <a routerLink="/commands/by-object" style="color: white;"-->
 <!--         [routerLinkActive]="['active']">By object</a>-->
       <span class="spacer"></span>
-      <a routerLink="/command-executions/active" style="color: white;"
-         [routerLinkActive]="['active']">Active runs</a>
-      <span class="spacer"></span>
-      <a routerLink="/command-executions/history" style="color: white;"
-         [routerLinkActive]="['active']">History</a>
+      <a routerLink="/executions/list" style="color: white;"
+         [routerLinkActive]="['active']">Executions</a>
     </nav>
   </div>
 </div>
@@ -197,8 +194,6 @@
 </div>
 
 <div class="footer">
-  TEST for some links - TODO remove when not needed anymore:
-  <a routerLink="">base page</a>,
-  <a routerLink="command/10/cmd-test">command (should parse params source 10, script id cmd-test)</a>,
-  <a routerLink="command-exec/10/20/30">command execution</a>
+  Placeholder footer TEST area
+  <a routerLink="">base page</a>
 </div>

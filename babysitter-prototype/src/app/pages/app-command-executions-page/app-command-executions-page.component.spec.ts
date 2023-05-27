@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { AppActiveRunsPageComponent } from './app-active-runs-page.component';
+import { AppCommandExecutionsPage } from './app-command-executions-page.component';
 
 describe('AppActiveRunsPageComponent', () => {
-  let component: AppActiveRunsPageComponent;
-  let fixture: ComponentFixture<AppActiveRunsPageComponent>;
+  let component: AppCommandExecutionsPage;
+  let fixture: ComponentFixture<AppCommandExecutionsPage>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ AppActiveRunsPageComponent ]
+      declarations: [ AppCommandExecutionsPage ]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(AppActiveRunsPageComponent);
+    fixture = TestBed.createComponent(AppCommandExecutionsPage);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

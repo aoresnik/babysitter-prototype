@@ -1,6 +1,10 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from "@angular/router";
 
+/**
+ * NOTE: The page must be able to be embedded in the router-outlet of the app-commands-page.component.html and also on
+ * the top level router outlet (for performance reasons, some actions may link directly to command)
+ */
 @Component({
   selector: 'app-app-command-page',
   templateUrl: './app-command-page.component.html',
