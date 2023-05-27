@@ -10,7 +10,7 @@ export class ScriptRunSessionService {
   constructor(private wsService: WebsocketTestService) {
   }
 
-  messagesForSession(scriptName: string, scriptRunSessionId: string): ScriptWebsocketConnection {
+  messagesForSession(scriptRunSessionId: string): ScriptWebsocketConnection {
     return this.wsService.connect(`ws://localhost:8080/api/v1/scripts/session/${scriptRunSessionId}/websocket`);
   }
 }

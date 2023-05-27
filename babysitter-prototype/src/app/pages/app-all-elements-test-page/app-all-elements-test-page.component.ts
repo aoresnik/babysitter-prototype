@@ -98,7 +98,7 @@ export class AppAllElementsTestPageComponent {
       this.messages.ws.close();
     }
 
-    this.messages = this.scriptRunSessionService.messagesForSession(run.scriptName, run.scriptRunSessionId);
+    this.messages = this.scriptRunSessionService.messagesForSession(run.scriptRunSessionId);
     this.messages.subject.subscribe(response => {
       let msg = JSON.parse(response.data);
       console.log("Response from websocket: " + msg);
