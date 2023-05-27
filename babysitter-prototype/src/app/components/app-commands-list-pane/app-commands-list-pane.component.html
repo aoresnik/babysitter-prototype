@@ -1,4 +1,5 @@
-<p>app-commands-list-pane works!</p>
+<div style="font-weight: bold">Available commands:</div>
+<div *ngFor="let script of scriptsList; index as i"><span style="background-color: #eff3f6">({{ script.scriptSourceName }})</span>&nbsp;<a href="#" (click)="selectCommand(script); false">{{ script.scriptId }}</a></div>
 
-<p-tree class="w-full md:w-30rem" [value]="commands"></p-tree>
+<!--<p-tree class="w-full md:w-30rem" [value]="commandsAsTree"></p-tree>-->
 
