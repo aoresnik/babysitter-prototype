@@ -3,6 +3,7 @@ import {UITreeNode} from "primeng/tree";
 import {TreeNode} from "primeng/api";
 import {ScriptsServiceService} from "../../scripts-service.service";
 import {ScriptRunSessionService} from "../../script-run-session.service";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-app-commands-list-pane',
@@ -22,7 +23,7 @@ export class AppCommandsListPaneComponent implements OnInit {
   // } ];
   scriptsList?: any[];
 
-  constructor(private scriptsService: ScriptsServiceService) {
+  constructor(private scriptsService: ScriptsServiceService, private router: Router) {
 
   }
 
@@ -34,6 +35,7 @@ export class AppCommandsListPaneComponent implements OnInit {
   }
 
   selectCommand(script: any) {
-
+    this.router.navigateByUrl(`/commands/command/${script.scriptSourceId}/${script.scriptId}`)
+      .then(r => console.log(`Navigation successful: ${r}`));
   }
 }
