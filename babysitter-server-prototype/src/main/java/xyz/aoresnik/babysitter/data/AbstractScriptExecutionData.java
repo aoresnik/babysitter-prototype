@@ -7,7 +7,9 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ScriptExecutionData {
+public class AbstractScriptExecutionData {
+    private String scriptExecutionID;
+
     private boolean scriptRun;
 
     private boolean scriptCompleted;

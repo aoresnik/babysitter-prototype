@@ -4,7 +4,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import org.jboss.logging.Logger;
-import xyz.aoresnik.babysitter.data.ScriptExecutionData;
+import xyz.aoresnik.babysitter.data.AbstractScriptExecutionData;
 import xyz.aoresnik.babysitter.data.ScriptExecutionInitialStateData;
 import xyz.aoresnik.babysitter.data.ScriptExecutionUpdateData;
 import xyz.aoresnik.babysitter.data.ScriptInputData;
@@ -45,7 +45,7 @@ abstract public class AbstractScriptRunner {
     @Setter(AccessLevel.PROTECTED)
     private Integer exitCode;
 
-    private Set<Consumer<ScriptExecutionData>> listeners = new HashSet<>();
+    private Set<Consumer<AbstractScriptExecutionData>> listeners = new HashSet<>();
 
     private Set<Consumer<AbstractScriptRunner>> statusChangeListeners = new HashSet<>();
 
@@ -66,7 +66,7 @@ abstract public class AbstractScriptRunner {
      * @param listener
      * @return
      */
-    public ScriptExecutionInitialStateData registerConsoleChangeListener(Consumer<ScriptExecutionData> listener) {
+    public ScriptExecutionInitialStateData registerConsoleChangeListener(Consumer<AbstractScriptExecutionData> listener) {
         synchronized (listeners) {
             listeners.add(listener);
             return getScriptExecutionInitialStateData();
@@ -92,7 +92,7 @@ abstract public class AbstractScriptRunner {
         return initialStateData;
     }
 
-    public void removeConsoleChangeListener(Consumer<ScriptExecutionData> listener) {
+    public void removeConsoleChangeListener(Consumer<AbstractScriptExecutionData> listener) {
         synchronized (listeners) {
             listeners.remove(listener);
         }
@@ -115,7 +115,7 @@ abstract public class AbstractScriptRunner {
 
         synchronized (listeners) {
             log.debug(String.format("Notifying %d listeners", listeners.size()));
-            for (Consumer<ScriptExecutionData> listener : listeners) {
+            for (Consumer<AbstractScriptExecutionData> listener : listeners) {
                 listener.accept(updateData);
             }
         }

@@ -34,14 +34,17 @@ export class AppCommandPageComponent implements OnInit {
       );
   }
 
-  runScript(script: any) {
+  runScript(script: any, openConsole: boolean) {
     console.log(`Running script ${ script }`);
     if (this.scriptSourceID != null && this.scriptID != null) {
       this.scriptsService.runScriptAsync(this.scriptSourceID, this.scriptID).subscribe(res => {
         let runSessionId = res;
         console.log(`Script run session ID: ${runSessionId}`);
-        let scriptRun = new ScriptRun(script.scriptId, runSessionId);
-        this.showRun(scriptRun);
+        if (openConsole) {
+          console.log(`Opening command execution console for: ${runSessionId}`);
+          let scriptRun = new ScriptRun(script.scriptId, runSessionId);
+          this.showRun(scriptRun);
+        }
       });
     }
   }

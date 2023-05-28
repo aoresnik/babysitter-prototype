@@ -1,5 +1,10 @@
 <div>Selected command: source id: <b>{{ scriptSourceID }}</b> script id: <b>{{ scriptID }}</b></div>
 
 <div>
-  <a href="#" (click)="runScript(scriptID); false">run</a>
+  <div>
+    <a href="#" (click)="runScript(scriptID, false); false">run</a>
+  </div>
+  <div>
+    <a href="#" (click)="runScript(scriptID, true); false">run and open console</a>
+  </div>
 </div>
