@@ -16,6 +16,7 @@ import { AppCommandsListPaneComponent } from './components/app-commands-list-pan
 import { TreeModule } from 'primeng/tree';
 import { AppCommandExecutionNotSelectedSubpageComponent } from './pages/app-command-execution-not-selected-subpage/app-command-execution-not-selected-subpage.component';
 import { AppExecutionsListPaneComponent } from './components/app-executions-list-pane/app-executions-list-pane.component';
+import { AppHomePageComponent } from './pages/app-home-page/app-home-page.component';
 
 @NgModule({
   declarations: [
@@ -29,6 +30,7 @@ import { AppExecutionsListPaneComponent } from './components/app-executions-list
     AppCommandsListPaneComponent,
     AppCommandExecutionNotSelectedSubpageComponent,
     AppExecutionsListPaneComponent,
+    AppHomePageComponent,
   ],
   imports: [
     NgTerminalModule,

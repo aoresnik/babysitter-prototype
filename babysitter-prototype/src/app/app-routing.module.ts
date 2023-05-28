@@ -11,10 +11,13 @@ import {
 import {
   AppCommandExecutionPageComponent
 } from "./pages/app-command-execution-page/app-command-execution-page.component";
+import {AppHomePageComponent} from "./pages/app-home-page/app-home-page.component";
 
 const routes: Routes = [
   // PRODUCTION pages
   // Show commands with searchable list of commands
+  {path: '', component: AppHomePageComponent}, // TODO: map this to the "home" page, with recent commands etc.
+
   {
     path: 'commands', component: AppCommandsPageComponent,
     children: [
@@ -38,9 +41,8 @@ const routes: Routes = [
   {path: 'command/:source_id/:script_id', component: AppCommandPageComponent},
   {path: 'execution/:execution_id', component: AppCommandExecutionPageComponent},
 
-
   // TEST Pages
-  {path: '', component: AppAllElementsTestPageComponent}, // TODO: map this to the "home" page, with recent commands etc.
+  {path: 'all-components-up', component: AppAllElementsTestPageComponent},
 ];
 
 @NgModule({
