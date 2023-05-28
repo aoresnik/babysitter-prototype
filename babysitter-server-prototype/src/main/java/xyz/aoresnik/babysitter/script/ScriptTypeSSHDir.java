@@ -155,6 +155,7 @@ public class ScriptTypeSSHDir extends AbstractScriptType {
                 notifyConsoleChangeListeners("", null);
 
                 while(true){
+                    // TODO: this is busy waiting - is there a way to do this better?
                     while(in.available()>0){
                         int i=in.read(tmp, 0, 1024);
                         if(i<0)break;
@@ -169,7 +170,7 @@ public class ScriptTypeSSHDir extends AbstractScriptType {
                         log.debug("SSH session: exit-status: "+channel.getExitStatus());
                         break;
                     }
-                    try{Thread.sleep(1000);}catch(Exception ee){}
+                    try{Thread.sleep(300);}catch(Exception ee){}
                 }
                 channel.disconnect();
                 session.disconnect();
