@@ -1,14 +1,21 @@
 package xyz.aoresnik.babysitter.data;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-public class AbstractScriptExecutionData {
-    private String scriptExecutionID;
+@XmlRootElement
+public class ScriptExecutionData {
+    private String scriptExecutionId;
+
+    private String scriptSourceId;
+
+    private String scriptSourceName;
+
+    private String scriptId;
 
     private boolean scriptRun;
 
@@ -17,4 +24,6 @@ public class AbstractScriptExecutionData {
     private Integer exitCode;
 
     private String errorText;
+
 }
+

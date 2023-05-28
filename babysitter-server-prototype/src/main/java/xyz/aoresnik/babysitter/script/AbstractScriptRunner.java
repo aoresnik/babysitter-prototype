@@ -4,9 +4,9 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import org.jboss.logging.Logger;
-import xyz.aoresnik.babysitter.data.AbstractScriptExecutionData;
-import xyz.aoresnik.babysitter.data.ScriptExecutionInitialStateData;
-import xyz.aoresnik.babysitter.data.ScriptExecutionUpdateData;
+import xyz.aoresnik.babysitter.data.AbstractScriptExecutionRTData;
+import xyz.aoresnik.babysitter.data.ScriptExecutionInitialStateRTData;
+import xyz.aoresnik.babysitter.data.ScriptExecutionUpdateRTData;
 import xyz.aoresnik.babysitter.data.ScriptInputData;
 import xyz.aoresnik.babysitter.entity.ScriptExecution;
 import xyz.aoresnik.babysitter.entity.ScriptSource;
@@ -45,7 +45,7 @@ abstract public class AbstractScriptRunner {
     @Setter(AccessLevel.PROTECTED)
     private Integer exitCode;
 
-    private Set<Consumer<AbstractScriptExecutionData>> listeners = new HashSet<>();
+    private Set<Consumer<AbstractScriptExecutionRTData>> listeners = new HashSet<>();
 
     private Set<Consumer<AbstractScriptRunner>> statusChangeListeners = new HashSet<>();
 
@@ -66,7 +66,7 @@ abstract public class AbstractScriptRunner {
      * @param listener
      * @return
      */
-    public ScriptExecutionInitialStateData registerConsoleChangeListener(Consumer<AbstractScriptExecutionData> listener) {
+    public ScriptExecutionInitialStateRTData registerConsoleChangeListener(Consumer<AbstractScriptExecutionRTData> listener) {
         synchronized (listeners) {
             listeners.add(listener);
             return getScriptExecutionInitialStateData();
@@ -79,9 +79,9 @@ abstract public class AbstractScriptRunner {
      * regard to that initial state.
      * @return
      */
-    public ScriptExecutionInitialStateData getScriptExecutionInitialStateData() {
+    public ScriptExecutionInitialStateRTData getScriptExecutionInitialStateData() {
         byte[] resultText = getResult();
-        ScriptExecutionInitialStateData initialStateData = new ScriptExecutionInitialStateData();
+        ScriptExecutionInitialStateRTData initialStateData = new ScriptExecutionInitialStateRTData();
 
         initialStateData.setScriptRun(scriptRun);
         initialStateData.setScriptCompleted(scriptCompleted);
@@ -92,7 +92,7 @@ abstract public class AbstractScriptRunner {
         return initialStateData;
     }
 
-    public void removeConsoleChangeListener(Consumer<AbstractScriptExecutionData> listener) {
+    public void removeConsoleChangeListener(Consumer<AbstractScriptExecutionRTData> listener) {
         synchronized (listeners) {
             listeners.remove(listener);
         }
@@ -106,7 +106,7 @@ abstract public class AbstractScriptRunner {
     abstract public void run();
 
     protected void notifyConsoleChangeListeners(String errorText1, byte[] incrementalConsoleData) {
-        ScriptExecutionUpdateData updateData = new ScriptExecutionUpdateData();
+        ScriptExecutionUpdateRTData updateData = new ScriptExecutionUpdateRTData();
         updateData.setScriptRun(scriptRun);
         updateData.setScriptCompleted(scriptCompleted);
         updateData.setExitCode(exitCode);
@@ -115,7 +115,7 @@ abstract public class AbstractScriptRunner {
 
         synchronized (listeners) {
             log.debug(String.format("Notifying %d listeners", listeners.size()));
-            for (Consumer<AbstractScriptExecutionData> listener : listeners) {
+            for (Consumer<AbstractScriptExecutionRTData> listener : listeners) {
                 listener.accept(updateData);
             }
         }

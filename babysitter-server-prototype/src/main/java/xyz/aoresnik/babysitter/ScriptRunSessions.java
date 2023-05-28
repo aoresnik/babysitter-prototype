@@ -4,8 +4,8 @@ import com.fasterxml.jackson.core.exc.StreamReadException;
 import com.fasterxml.jackson.databind.DatabindException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.jboss.logging.Logger;
-import xyz.aoresnik.babysitter.data.ScriptExecutionData;
-import xyz.aoresnik.babysitter.data.ScriptExecutionInitialStateData;
+import xyz.aoresnik.babysitter.data.AbstractScriptExecutionRTData;
+import xyz.aoresnik.babysitter.data.ScriptExecutionInitialStateRTData;
 import xyz.aoresnik.babysitter.data.ScriptInputData;
 import xyz.aoresnik.babysitter.entity.ScriptExecution;
 import xyz.aoresnik.babysitter.script.AbstractScriptRunner;
@@ -49,7 +49,7 @@ public class ScriptRunSessions {
     ScriptExecutionService scriptExecutionService;
 
     static class ScriptRunSession {
-        Consumer<ScriptExecutionData> listener;
+        Consumer<AbstractScriptExecutionRTData> listener;
 
 
     }
@@ -65,9 +65,9 @@ public class ScriptRunSessions {
         sessions.put(sessionId, scriptRunSession);
         log.debug("Connected terminal for script execution session ID: " + sessionId);
 
-        Consumer<ScriptExecutionData> listener = new Consumer<ScriptExecutionData>() {
+        Consumer<AbstractScriptExecutionRTData> listener = new Consumer<AbstractScriptExecutionRTData>() {
             @Override
-            public void accept(ScriptExecutionData scriptExecutionData) {
+            public void accept(AbstractScriptExecutionRTData scriptExecutionData) {
                 try {
                     StringWriter writer = new StringWriter();
                     ObjectMapper mapper = new ObjectMapper();
@@ -87,7 +87,7 @@ public class ScriptRunSessions {
         AbstractScriptRunner scriptRunner = activeScriptRunners.getScriptExecution(sessionId);
         if (scriptRunner != null) {
             log.error("For session ID=%s the script runner is still active".formatted(sessionId));
-            ScriptExecutionInitialStateData initialStateData = scriptRunner.registerConsoleChangeListener(listener);
+            ScriptExecutionInitialStateRTData initialStateData = scriptRunner.registerConsoleChangeListener(listener);
             session.getAsyncRemote().sendObject(initialStateData, result -> {
                 if (result.getException() != null) {
                     log.error("Unable to send message: " + result.getException());
@@ -97,7 +97,7 @@ public class ScriptRunSessions {
             log.error("For session ID=%s the script runner has completed and is inactive - obtaining from database".formatted(sessionId));
             ScriptExecution scriptExecution = scriptExecutionService.getScriptExecution(sessionId);
             AbstractScriptRunner scriptRunner1 = ScriptTypes.newForScriptSource(scriptExecution.getScriptSource()).forInactiveScriptExecution(scriptExecution);
-            ScriptExecutionInitialStateData initialStateData = scriptRunner1.getScriptExecutionInitialStateData();
+            ScriptExecutionInitialStateRTData initialStateData = scriptRunner1.getScriptExecutionInitialStateData();
             session.getAsyncRemote().sendObject(initialStateData, result -> {
                 if (result.getException() != null) {
                     log.error("Unable to send message: " + result.getException());
@@ -131,7 +131,7 @@ public class ScriptRunSessions {
         }
     }
 
-    public static class EncoderDecoder implements javax.websocket.Encoder.Text<ScriptExecutionInitialStateData>, javax.websocket.Decoder.Text<ScriptInputData> {
+    public static class EncoderDecoder implements javax.websocket.Encoder.Text<ScriptExecutionInitialStateRTData>, javax.websocket.Decoder.Text<ScriptInputData> {
         ObjectMapper mapper;
 
         Logger log = Logger.getLogger(EncoderDecoder.class);
@@ -145,7 +145,7 @@ public class ScriptRunSessions {
         }
 
         @Override
-        public String encode(ScriptExecutionInitialStateData object) throws EncodeException {
+        public String encode(ScriptExecutionInitialStateRTData object) throws EncodeException {
             try {
                 StringWriter sw = new StringWriter();
                 mapper.writeValue(sw, object);
