@@ -83,6 +83,8 @@ export class AppCommandExecutionPageComponent implements OnInit, AfterViewInit {
       console.log("Response from websocket: " + msg);
       if (msg.initialConsoleData !== undefined) {
         // Documentation of terminal class of this.terminal.underlying http://xtermjs.org/docs/api/terminal/classes/terminal/
+        this.terminal.setRows(43);
+        this.terminal.setCols(80);
         this.terminal.underlying.reset();
         this.terminal.underlying.options.convertEol = true;
         this.terminal.write(atob(msg.initialConsoleData));
