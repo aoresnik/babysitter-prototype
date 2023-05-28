@@ -2,11 +2,13 @@
 
 <div style="font-weight: bold">Command execution console: <span style="background-color: #eff3f6"> Started: {{scriptRun}} Completed {{scriptCompleted}} <span *ngIf="scriptCompleted">Exit code: {{exitCode}}</span></span></div>
 <div>
+  <!-- TODO: OK when inside flex-child, otherwise it spans entire parent div width -->
   <div class="error-pane" *ngIf="scriptError != null">{{ scriptError }}</div>
   <!--
   <pre class="terminal" style="padding: 0px">
   {{scriptResult}}
   </pre>
   -->
-  <ng-terminal #term></ng-terminal>
+  <!-- NOTE: without width, the terminal shrinks (animatedly) to dimensions of other elements in parent div when inside flex-child -->
+  <ng-terminal #term style="width: 800px"></ng-terminal>
 </div>
