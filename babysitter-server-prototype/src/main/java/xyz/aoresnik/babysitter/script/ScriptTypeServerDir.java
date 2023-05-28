@@ -54,6 +54,8 @@ public class ScriptTypeServerDir extends AbstractScriptType {
         result.setScriptRun(scriptExecution.isScriptRun());
         result.setErrorText(scriptExecution.getErrorText());
         result.setExitCode(scriptExecution.getExitCode());
+        result.setStartTime(scriptExecution.getStartTime());
+        result.setEndTime(scriptExecution.getEndTime());
         return result;
     }
 
@@ -93,6 +95,7 @@ public class ScriptTypeServerDir extends AbstractScriptType {
                 OutputStream processStdoutLog = Files.newOutputStream(stdoutLog.toPath());
 
                 PtyProcess p = pb.start();
+                setStartTime(new Date());
 
                 setScriptRun(true);
                 saveStatusChange();
@@ -120,6 +123,7 @@ public class ScriptTypeServerDir extends AbstractScriptType {
                         }
                     }
 
+                    setEndTime(new Date());
                     setScriptCompleted(true);
                     setExitCode(p.waitFor());
                     saveStatusChange();
@@ -130,8 +134,12 @@ public class ScriptTypeServerDir extends AbstractScriptType {
                     log.info("Detected interrupt exception, stopping process");
                     p.destroy();
                 }
+                finally {
+                    processStdoutLog.close();
+                }
             } catch (Exception e) {
                 log.error("Error running script", e);
+                setEndTime(new Date());
                 setErrorText(e.getMessage());
                 saveStatusChange();
                 notifyConsoleChangeListeners(getErrorText(), null);

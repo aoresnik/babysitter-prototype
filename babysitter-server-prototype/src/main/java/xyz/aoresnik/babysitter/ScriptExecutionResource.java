@@ -12,6 +12,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import java.util.ArrayList;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 @Path("/api/v1/executions")
@@ -38,6 +39,8 @@ public class ScriptExecutionResource {
             scriptExecutionData.setScriptCompleted(scriptExecution.isScriptCompleted());
             scriptExecutionData.setExitCode(scriptExecution.getExitCode());
             scriptExecutionData.setErrorText(scriptExecution.getErrorText());
+            scriptExecutionData.setStartTime(scriptExecution.getStartTime() != null ? scriptExecution.getStartTime() : null);
+            scriptExecutionData.setEndTime(scriptExecution.getEndTime() != null ? scriptExecution.getEndTime() : null);
 
             scriptExecutionData.setScriptId(scriptExecution.getScriptId());
             scriptExecutionData.setScriptSourceId(String.valueOf(scriptExecution.getScriptSource().getId()));

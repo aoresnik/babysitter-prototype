@@ -1,6 +1,8 @@
 package xyz.aoresnik.babysitter.entity;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
+import java.util.Date;
 
 @Entity
 @Table(name = "SCRIPT_EXECUTION")
@@ -21,6 +23,12 @@ public class ScriptExecution {
 
     @Column
     private String errorText;
+
+    @Column
+    private Timestamp startTime;
+
+    @Column
+    private Timestamp endTime;
 
     @ManyToOne
     @JoinColumn(name = "SCRIPT_SOURCE_ID")
@@ -69,6 +77,22 @@ public class ScriptExecution {
         this.errorText = errorText;
     }
 
+    public Timestamp getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(Timestamp startTime) {
+        this.startTime = startTime;
+    }
+
+    public Timestamp getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(Timestamp endTime) {
+        this.endTime = endTime;
+    }
+
     public ScriptSource getScriptSource() {
         return scriptSource;
     }
@@ -93,6 +117,8 @@ public class ScriptExecution {
                 ", scriptCompleted=" + scriptCompleted +
                 ", exitCode=" + exitCode +
                 ", errorText='" + errorText + '\'' +
+                ", startTime=" + startTime +
+                ", endTime=" + endTime +
                 ", scriptSource=" + scriptSource +
                 ", scriptId='" + scriptId + '\'' +
                 '}';

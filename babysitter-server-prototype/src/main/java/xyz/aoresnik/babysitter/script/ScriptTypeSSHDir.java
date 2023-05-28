@@ -11,10 +11,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Base64;
-import java.util.List;
+import java.util.*;
 
 public class ScriptTypeSSHDir extends AbstractScriptType {
 
@@ -117,6 +114,8 @@ public class ScriptTypeSSHDir extends AbstractScriptType {
         result.setScriptRun(scriptExecution.isScriptRun());
         result.setErrorText(scriptExecution.getErrorText());
         result.setExitCode(scriptExecution.getExitCode());
+        result.setStartTime(scriptExecution.getStartTime());
+        result.setEndTime(scriptExecution.getEndTime());
         return result;
     }
 
@@ -133,6 +132,7 @@ public class ScriptTypeSSHDir extends AbstractScriptType {
             String command1=getScriptSource().getScriptSourceSSHDir().getDirname()+"/"+getScriptName();
 
             try{
+                // TODO: this is never closed - close it!
                 OutputStream processStdoutLog = Files.newOutputStream(getStdoutFile().toPath());
 
                 Session session = createSSHSession();
@@ -150,6 +150,7 @@ public class ScriptTypeSSHDir extends AbstractScriptType {
                 byte[] tmp=new byte[1024];
                 String output = "";
 
+                setStartTime(new Date());
                 setScriptRun(true);
                 saveStatusChange();
                 notifyConsoleChangeListeners("", null);
@@ -177,12 +178,14 @@ public class ScriptTypeSSHDir extends AbstractScriptType {
                 log.debug("SSH session: DONE");
 
                 setScriptCompleted(true);
+                setEndTime(new Date());
                 setExitCode(channel.getExitStatus());
                 saveStatusChange();
                 notifyConsoleChangeListeners(getErrorText(), null);
 
             }catch(Exception e){
                 log.error("Error while trying to run commands over SSH to get a list of script", e);
+                setEndTime(new Date());
                 setErrorText(e.getMessage());
                 saveStatusChange();
                 notifyConsoleChangeListeners(getErrorText(), null);

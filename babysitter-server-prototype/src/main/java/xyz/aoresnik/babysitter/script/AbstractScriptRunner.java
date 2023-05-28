@@ -11,9 +11,12 @@ import xyz.aoresnik.babysitter.data.ScriptInputData;
 import xyz.aoresnik.babysitter.entity.ScriptExecution;
 import xyz.aoresnik.babysitter.entity.ScriptSource;
 
+import javax.persistence.Column;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.sql.Timestamp;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -44,6 +47,14 @@ abstract public class AbstractScriptRunner {
     @Getter
     @Setter(AccessLevel.PROTECTED)
     private Integer exitCode;
+
+    @Getter
+    @Setter(AccessLevel.PROTECTED)
+    private Date startTime;
+
+    @Getter
+    @Setter(AccessLevel.PROTECTED)
+    private Date endTime;
 
     private Set<Consumer<AbstractScriptExecutionRTData>> listeners = new HashSet<>();
 
@@ -102,6 +113,13 @@ abstract public class AbstractScriptRunner {
      * Must run the script in current thread (it's called from appropriate workers).
      * Output (both STDOUT and STDERR) must be sent to listeners and write to the file returned by {@link #getStdoutFile()}
      * Input is sent in another thread to {@link #sendInput(ScriptInputData)}
+     * Must set:
+     * <ul>
+     * <li>{@link #scriptRun} to true when script starts, and set {@link #startTime}</<li>
+     * <li>{@link #scriptCompleted} to true when script completes, and set {@link #endTime}</li>
+     * </ul>
+     * After each update, it must call {@link #notifyConsoleChangeListeners(String, byte[])} (if console changes) or
+     * {@link #saveStatusChange()} if only status fields changes.
      */
     abstract public void run();
 
@@ -147,6 +165,8 @@ abstract public class AbstractScriptRunner {
         scriptExecution.setScriptRun(scriptRun);
         scriptExecution.setErrorText(errorText);
         scriptExecution.setExitCode(exitCode);
+        scriptExecution.setStartTime(startTime != null ? new Timestamp(startTime.getTime()) : null);
+        scriptExecution.setEndTime(endTime != null ? new Timestamp(endTime.getTime()) : null);
     }
 
     public void addStatusChangeListener(Consumer<AbstractScriptRunner> statusChangeListener) {

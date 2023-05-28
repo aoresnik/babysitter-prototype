@@ -31,6 +31,8 @@ create table SCRIPT_EXECUTION(
     scriptCompleted int not null,
     exitCode int null,
     errorText varchar(1024) null,
+    startTime timestamp null,
+    endTime timestamp null,
 
     primary key (ID),
     foreign key (SCRIPT_SOURCE_ID) references SCRIPT_SOURCE(ID)
