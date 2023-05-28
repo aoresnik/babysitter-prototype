@@ -15,6 +15,7 @@ import { AppCommandNotSelectedSubpageComponent } from './pages/app-command-not-s
 import { AppCommandsListPaneComponent } from './components/app-commands-list-pane/app-commands-list-pane.component';
 import { TreeModule } from 'primeng/tree';
 import { AppCommandExecutionNotSelectedSubpageComponent } from './pages/app-command-execution-not-selected-subpage/app-command-execution-not-selected-subpage.component';
+import { AppExecutionsListPaneComponent } from './components/app-executions-list-pane/app-executions-list-pane.component';
 
 @NgModule({
   declarations: [
@@ -27,6 +28,7 @@ import { AppCommandExecutionNotSelectedSubpageComponent } from './pages/app-comm
     AppCommandNotSelectedSubpageComponent,
     AppCommandsListPaneComponent,
     AppCommandExecutionNotSelectedSubpageComponent,
+    AppExecutionsListPaneComponent,
   ],
   imports: [
     NgTerminalModule,

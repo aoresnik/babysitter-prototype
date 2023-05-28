@@ -1,0 +1,2 @@
+<div style="font-weight: bold">Command executions:</div>
+<div *ngFor="let script of scriptExecutionsList; index as i"><span style="background-color: #eff3f6"><a href="#" (click)="selectExecution(script); false">{{ script.scriptExecutionId }},&nbsp;script: {{ script.scriptId }}</a></span>&nbsp;(from {{ script.scriptSourceName }})</div>
