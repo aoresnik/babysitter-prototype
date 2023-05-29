@@ -142,7 +142,6 @@ public class ScriptTypeSSHDir extends AbstractScriptType {
                 processStdin = channel.getOutputStream();
                 channel.connect();
                 byte[] tmp=new byte[1024];
-                String output = "";
 
                 setScriptRun(true);
                 saveStatusChange();
@@ -158,9 +157,8 @@ public class ScriptTypeSSHDir extends AbstractScriptType {
                         if(i<0)break;
                         processStdoutLog.write(tmp, 0, i);
                         processStdoutLog.flush();
-                        String s = new String(tmp, 0, i);
-                        output += s;
                         notifyConsoleChangeListeners(getErrorText(), Arrays.copyOf(tmp, i));
+                        String s = new String(tmp, 0, i);
                         log.debug("SSH session: output> "  + s);
 //                    }
 //                    if(channel.isClosed()){
