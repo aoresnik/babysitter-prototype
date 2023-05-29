@@ -149,23 +149,14 @@ public class ScriptTypeSSHDir extends AbstractScriptType {
 
                 // Based on sample code at http://www.jcraft.com/jsch/examples/OpenSSHConfig.java.html
 
-                while(true){
-                    // TODO: This seems to work, but I'm not comfortable deleting this commented out code yet (see sample code at http://www.jcraft.com/jsch/examples/Exec.java.html)
-                    // The commented out code is busy waiting - is there a way to do this better?
-//                    while(in.available()>0){
-                        int i=in.read(tmp, 0, 1024);
-                        if(i<0)break;
-                        processStdoutLog.write(tmp, 0, i);
-                        processStdoutLog.flush();
-                        notifyConsoleChangeListeners(getErrorText(), Arrays.copyOf(tmp, i));
-                        String s = new String(tmp, 0, i);
-                        log.debug("SSH session: output> "  + s);
-//                    }
-//                    if(channel.isClosed()){
-//                        log.debug("SSH session: exit-status: "+channel.getExitStatus());
-//                        break;
-//                    }
-//                    try{Thread.sleep(300);}catch(Exception ee){}
+                while (true) {
+                    int i = in.read(tmp, 0, 1024);
+                    if (i < 0) break;
+                    processStdoutLog.write(tmp, 0, i);
+                    processStdoutLog.flush();
+                    notifyConsoleChangeListeners(getErrorText(), Arrays.copyOf(tmp, i));
+                    String s = new String(tmp, 0, i);
+                    log.debug("SSH session: output> " + s);
                 }
                 channel.disconnect();
                 session.disconnect();
