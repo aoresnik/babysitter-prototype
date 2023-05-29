@@ -50,12 +50,7 @@ public class ScriptTypeServerDir extends AbstractScriptType {
     @Override
     public AbstractScriptRunner forInactiveScriptExecution(ScriptExecution scriptExecution) {
         ServerDirScriptTypeRunner result = new ServerDirScriptTypeRunner(getScriptSource(), scriptExecution.getScriptId(), Long.toString(scriptExecution.getId()));
-        result.setScriptCompleted(scriptExecution.isScriptCompleted());
-        result.setScriptRun(scriptExecution.isScriptRun());
-        result.setErrorText(scriptExecution.getErrorText());
-        result.setExitCode(scriptExecution.getExitCode());
-        result.setStartTime(scriptExecution.getStartTime());
-        result.setEndTime(scriptExecution.getEndTime());
+        result.initFromScriptExecutionEntity(scriptExecution);
         return result;
     }
 

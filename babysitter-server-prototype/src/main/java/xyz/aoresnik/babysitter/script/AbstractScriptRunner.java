@@ -172,4 +172,14 @@ abstract public class AbstractScriptRunner {
     public void addStatusChangeListener(Consumer<AbstractScriptRunner> statusChangeListener) {
         this.statusChangeListeners.add(statusChangeListener);
     }
+
+    public void initFromScriptExecutionEntity(ScriptExecution scriptExecution)
+    {
+        setScriptCompleted(scriptExecution.isScriptCompleted());
+        setScriptRun(scriptExecution.isScriptRun());
+        setErrorText(scriptExecution.getErrorText());
+        setExitCode(scriptExecution.getExitCode());
+        setStartTime(scriptExecution.getStartTime());
+        setEndTime(scriptExecution.getEndTime());
+    }
 }
