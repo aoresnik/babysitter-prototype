@@ -16,7 +16,7 @@ import {AppHomePageComponent} from "./pages/app-home-page/app-home-page.componen
 const routes: Routes = [
   // PRODUCTION pages
   // Show commands with searchable list of commands
-  {path: '', component: AppHomePageComponent}, // TODO: map this to the "home" page, with recent commands etc.
+  {path: '', component: AppHomePageComponent},
 
   {
     path: 'commands', component: AppCommandsPageComponent,

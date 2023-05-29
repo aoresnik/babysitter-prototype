@@ -67,7 +67,9 @@ public class ScriptTypeServerDir extends AbstractScriptType {
             if (isScriptRun()) {
                 throw new IllegalStateException("Script was already run");
             }
-            try {
+            File stdoutLog = getStdoutFile();
+            try (OutputStream processStdoutLog = Files.newOutputStream(stdoutLog.toPath())) {
+                setStartTime(new Date());
 
                 File scriptsDir = new File(getScriptSource().getScriptSourceServerDir().getDirname());
                 //ProcessBuilder pb = new ProcessBuilder(new File(scriptsDir, scriptName).getCanonicalPath());
@@ -76,7 +78,6 @@ public class ScriptTypeServerDir extends AbstractScriptType {
                 // instead of "not executable", as vanilla ProcessBuilder does
 
                 PtyProcessBuilder pb = new PtyProcessBuilder().setCommand(new String[] {new File(scriptsDir, getScriptName()).getCanonicalPath()});
-                File stdoutLog = getStdoutFile();
                 //Map<String, String> env = pb.environment();
                 pb.setDirectory(scriptsDir.getCanonicalPath());
                 pb.setRedirectErrorStream(true);
@@ -87,10 +88,8 @@ public class ScriptTypeServerDir extends AbstractScriptType {
 
                 // Don't redirect to file - read directly so that we can notify UI
                 //pb.redirectOutput(ProcessBuilder.Redirect.appendTo(stdoutLog));
-                OutputStream processStdoutLog = Files.newOutputStream(stdoutLog.toPath());
 
                 PtyProcess p = pb.start();
-                setStartTime(new Date());
 
                 setScriptRun(true);
                 saveStatusChange();
@@ -118,24 +117,19 @@ public class ScriptTypeServerDir extends AbstractScriptType {
                         }
                     }
 
-                    setEndTime(new Date());
                     setScriptCompleted(true);
                     setExitCode(p.waitFor());
-                    saveStatusChange();
-
-                    notifyConsoleChangeListeners(getErrorText(), null);
 
                 } catch (InterruptedException e) {
                     log.info("Detected interrupt exception, stopping process");
                     p.destroy();
                 }
-                finally {
-                    processStdoutLog.close();
-                }
+
             } catch (Exception e) {
-                log.error("Error running script", e);
-                setEndTime(new Date());
+                log.error("Error while trying to run commands over SSH to get a list of script", e);
                 setErrorText(e.getMessage());
+            } finally {
+                setEndTime(new Date());
                 saveStatusChange();
                 notifyConsoleChangeListeners(getErrorText(), null);
             }

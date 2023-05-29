@@ -126,9 +126,8 @@ public class ScriptTypeSSHDir extends AbstractScriptType {
         public void run() {
             String command1=getScriptSource().getScriptSourceSSHDir().getDirname()+"/"+getScriptName();
 
-            try{
-                // TODO: this is never closed - close it!
-                OutputStream processStdoutLog = Files.newOutputStream(getStdoutFile().toPath());
+            try (OutputStream processStdoutLog = Files.newOutputStream(getStdoutFile().toPath())) {
+                setStartTime(new Date());
 
                 Session session = createSSHSession();
                 session.connect();
@@ -145,7 +144,6 @@ public class ScriptTypeSSHDir extends AbstractScriptType {
                 byte[] tmp=new byte[1024];
                 String output = "";
 
-                setStartTime(new Date());
                 setScriptRun(true);
                 saveStatusChange();
                 notifyConsoleChangeListeners("", null);
@@ -173,15 +171,13 @@ public class ScriptTypeSSHDir extends AbstractScriptType {
                 log.debug("SSH session: DONE");
 
                 setScriptCompleted(true);
-                setEndTime(new Date());
                 setExitCode(channel.getExitStatus());
-                saveStatusChange();
-                notifyConsoleChangeListeners(getErrorText(), null);
 
-            }catch(Exception e){
+            } catch (Exception e) {
                 log.error("Error while trying to run commands over SSH to get a list of script", e);
-                setEndTime(new Date());
                 setErrorText(e.getMessage());
+            } finally {
+                setEndTime(new Date());
                 saveStatusChange();
                 notifyConsoleChangeListeners(getErrorText(), null);
             }
