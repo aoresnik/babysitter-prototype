@@ -32,24 +32,29 @@ public class ScriptExecutionResource {
         List<ScriptExecutionData> result = new ArrayList<>();
 
         for (ScriptExecution scriptExecution : scriptExecutions) {
-            ScriptExecutionData scriptExecutionData = new ScriptExecutionData();
-            scriptExecutionData.setScriptExecutionId(String.valueOf(scriptExecution.getId()));
-
-            scriptExecutionData.setScriptRun(scriptExecution.isScriptRun());
-            scriptExecutionData.setScriptCompleted(scriptExecution.isScriptCompleted());
-            scriptExecutionData.setExitCode(scriptExecution.getExitCode());
-            scriptExecutionData.setErrorText(scriptExecution.getErrorText());
-            scriptExecutionData.setStartTime(scriptExecution.getStartTime() != null ? scriptExecution.getStartTime() : null);
-            scriptExecutionData.setEndTime(scriptExecution.getEndTime() != null ? scriptExecution.getEndTime() : null);
-
-            scriptExecutionData.setScriptId(scriptExecution.getScriptId());
-            scriptExecutionData.setScriptSourceId(String.valueOf(scriptExecution.getScriptSource().getId()));
-            scriptExecutionData.setScriptSourceName(scriptExecution.getScriptSource().getName());
+            ScriptExecutionData scriptExecutionData = scriptExecutionDataFromEntity(scriptExecution);
 
             result.add(scriptExecutionData);
         }
 
         return result;
+    }
+
+    private static ScriptExecutionData scriptExecutionDataFromEntity(ScriptExecution scriptExecution) {
+        ScriptExecutionData scriptExecutionData = new ScriptExecutionData();
+        scriptExecutionData.setScriptExecutionId(String.valueOf(scriptExecution.getId()));
+
+        scriptExecutionData.setScriptRun(scriptExecution.isScriptRun());
+        scriptExecutionData.setScriptCompleted(scriptExecution.isScriptCompleted());
+        scriptExecutionData.setExitCode(scriptExecution.getExitCode());
+        scriptExecutionData.setErrorText(scriptExecution.getErrorText());
+        scriptExecutionData.setStartTime(scriptExecution.getStartTime() != null ? scriptExecution.getStartTime() : null);
+        scriptExecutionData.setEndTime(scriptExecution.getEndTime() != null ? scriptExecution.getEndTime() : null);
+
+        scriptExecutionData.setScriptId(scriptExecution.getScriptId());
+        scriptExecutionData.setScriptSourceId(String.valueOf(scriptExecution.getScriptSource().getId()));
+        scriptExecutionData.setScriptSourceName(scriptExecution.getScriptSource().getName());
+        return scriptExecutionData;
     }
 
 }
