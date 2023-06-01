@@ -84,6 +84,14 @@ public class ScriptsResource {
         });
     }
 
+    /**
+     * <p>Returns the list of scripts.</p>
+     *
+     * <p>Note that scripts are currently directly in the database, but only their directories are. So the scripts are
+     * autodiscovered at this time</p>
+     *
+     * <p>TODO: consider keeping them in the database and autodiscover periodically or on demand</p>
+     */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public List<ScriptData> getScripts() {
