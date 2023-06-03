@@ -19,7 +19,7 @@ public class ScriptExecutionService {
         scriptExecutionRunner.updateEntity(scriptExecution);
     }
 
-    public ScriptExecution getScriptExecution(String sessionId) {
-        return em.find(ScriptExecution.class, Long.parseLong(sessionId));
+    public ScriptExecution getScriptExecution(String executionId) {
+        return em.find(ScriptExecution.class, Long.parseLong(executionId));
     }
 }

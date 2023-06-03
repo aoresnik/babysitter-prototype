@@ -4,11 +4,14 @@ import org.jboss.logging.Logger;
 import xyz.aoresnik.babysitter.data.ScriptData;
 import xyz.aoresnik.babysitter.data.ScriptExecutionData;
 import xyz.aoresnik.babysitter.entity.ScriptExecution;
+import xyz.aoresnik.babysitter.script.AbstractScriptRunner;
+import xyz.aoresnik.babysitter.script.ScriptTypes;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import java.util.ArrayList;
@@ -22,6 +25,9 @@ public class ScriptExecutionResource {
 
     @Inject
     EntityManager em;
+
+    @Inject
+    ScriptExecutionService scriptExecutionService;
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -38,6 +44,15 @@ public class ScriptExecutionResource {
         }
 
         return result;
+    }
+
+    @Path("/{executionId}/transcript")
+    @GET
+    @Produces(MediaType.TEXT_PLAIN)
+    public byte[] getRawTranscript(@PathParam("executionId") String executionId) {
+        ScriptExecution scriptExecution = scriptExecutionService.getScriptExecution(executionId);
+        AbstractScriptRunner scriptRunner1 = ScriptTypes.newForScriptSource(scriptExecution.getScriptSource()).forInactiveScriptExecution(scriptExecution);
+        return scriptRunner1.getResult();
     }
 
     private static ScriptExecutionData scriptExecutionDataFromEntity(ScriptExecution scriptExecution) {
