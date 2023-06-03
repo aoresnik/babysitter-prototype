@@ -4,6 +4,8 @@ import io.vertx.core.Vertx;
 import io.vertx.core.WorkerExecutor;
 import org.jboss.logging.Logger;
 import xyz.aoresnik.babysitter.data.ScriptData;
+import xyz.aoresnik.babysitter.data.ScriptLastUsedData;
+import xyz.aoresnik.babysitter.data.ScriptMostUsedData;
 import xyz.aoresnik.babysitter.entity.ScriptExecution;
 import xyz.aoresnik.babysitter.entity.ScriptSource;
 import xyz.aoresnik.babysitter.script.AbstractScriptRunner;
@@ -17,7 +19,10 @@ import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import java.sql.Time;
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -123,13 +128,13 @@ public class ScriptsResource {
     @Path("/most-used")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public List<ScriptData> getMostUsedCommands() {
+    public List<ScriptMostUsedData> getMostUsedCommands() {
         log.info("Reading the list of most used commands");
         List<Object[]> scripts = em.createQuery("select se.scriptSource, se.scriptId, COUNT(*) from ScriptExecution se GROUP BY se.scriptId ORDER BY COUNT(*) DESC")
                 .setMaxResults(10)
                 .getResultList();
 
-        List<ScriptData> result = new ArrayList<>();
+        List<ScriptMostUsedData> result = new ArrayList<>();
 
         for (Object[] resultItem : scripts) {
             ScriptSource scriptSource = (ScriptSource) resultItem[0];
@@ -141,7 +146,11 @@ public class ScriptsResource {
             scriptData.setScriptSourceId(scriptSource.getId());
             scriptData.setScriptSourceName(scriptSource.getName());
             scriptData.setScriptId(scriptId);
-            result.add(scriptData);
+
+            ScriptMostUsedData scriptMostUsedData = new ScriptMostUsedData();
+            scriptMostUsedData.setCommandData(scriptData);
+            scriptMostUsedData.setUsageCount(count);
+            result.add(scriptMostUsedData);
         }
 
         return result;
@@ -150,30 +159,33 @@ public class ScriptsResource {
     @Path("/last-used")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public List<ScriptData> getLastUsedCommands() {
+    public List<ScriptLastUsedData> getLastUsedCommands() {
         log.info("Reading the list of most used commands");
-        List<Object[]> scripts = em.createQuery("select se.scriptSource, se.scriptId, COUNT(*) from ScriptExecution se GROUP BY se.scriptId ORDER BY se.startTime DESC")
+        List<Object[]> scripts = em.createQuery("select se.scriptSource, se.scriptId, MAX(se.startTime) from ScriptExecution se GROUP BY se.scriptId ORDER BY MAX(se.startTime) DESC")
                 .setMaxResults(10)
                 .getResultList();
 
-        List<ScriptData> result = new ArrayList<>();
+        List<ScriptLastUsedData> result = new ArrayList<>();
 
         for (Object[] resultItem : scripts) {
             ScriptSource scriptSource = (ScriptSource) resultItem[0];
             String scriptId = (String) resultItem[1];
-            Long count = (Long) resultItem[2];
-            log.info(String.format("Result: source %s, script %s, used %d times", scriptSource.getName(), scriptId, count));
+            Timestamp lastUsage = (Timestamp) resultItem[2];
+            log.info(String.format("Result: source %s, script %s, last used %s", scriptSource.getName(), scriptId, lastUsage));
 
             ScriptData scriptData = new ScriptData();
             scriptData.setScriptSourceId(scriptSource.getId());
             scriptData.setScriptSourceName(scriptSource.getName());
             scriptData.setScriptId(scriptId);
-            result.add(scriptData);
+
+            ScriptLastUsedData scriptLastUsedData = new ScriptLastUsedData();
+            scriptLastUsedData.setCommandData(scriptData);
+            scriptLastUsedData.setLastUsed(new Date(lastUsage.getTime()));
+            result.add(scriptLastUsedData);
         }
 
         return result;
     }
-
 
     /**
      * Returns the script session ID
