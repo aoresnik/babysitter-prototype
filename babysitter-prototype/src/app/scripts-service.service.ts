@@ -40,28 +40,28 @@ export class ScriptsServiceService {
   };
 
   getScripts(): Observable<any[]> {
-    return this.http.get<string[]>(`${ this.serverRootUrl }/api/v1/scripts`, this.httpOptions ).pipe(
+    return this.http.get<string[]>(`${ this.serverRootUrl }/api/v1/commands`, this.httpOptions ).pipe(
       tap(res => console.log('Loaded list of scripts')),
       catchError(this.handleError<any>('saveNewState'))
     );
   }
 
   getMostUsedCommands(): Observable<any[]> {
-    return this.http.get<string[]>(`${ this.serverRootUrl }/api/v1/scripts/most-used`, this.httpOptions ).pipe(
+    return this.http.get<string[]>(`${ this.serverRootUrl }/api/v1/commands/most-used`, this.httpOptions ).pipe(
       tap(res => console.log('Loaded list of scripts')),
       catchError(this.handleError<any>('saveNewState'))
     );
   }
 
   getLastUsedCommands(): Observable<any[]> {
-    return this.http.get<string[]>(`${ this.serverRootUrl }/api/v1/scripts/last-used`, this.httpOptions ).pipe(
+    return this.http.get<string[]>(`${ this.serverRootUrl }/api/v1/commands/last-used`, this.httpOptions ).pipe(
       tap(res => console.log('Loaded list of scripts')),
       catchError(this.handleError<any>('saveNewState'))
     );
   }
 
   runScriptAsync(scriptSourceId: number, script: string): Observable<string> {
-    return this.http.post<string>(`${ this.serverRootUrl }/api/v1/scripts/${scriptSourceId}/${script}/run-async`, this.httpOptions ).pipe(
+    return this.http.post<string>(`${ this.serverRootUrl }/api/v1/commands/sources/${scriptSourceId}/${script}/run-async`, this.httpOptions ).pipe(
       tap(res => console.log(`Run script ${ script }`)),
       map(res => {
         return res;

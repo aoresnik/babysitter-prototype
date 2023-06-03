@@ -29,7 +29,7 @@ import java.util.List;
  * TODO: At the time of this writing, scripts are identified by name, not ID - hard to add endpoionts under the /{scriptSourceId} paths
  * TODO: also change the format of /api/v1/scripts/{scriptSourceId}/executions/{scriptExecutionId} to /api/v1/command-sources/{commandSourceId}/commands/{commandId}
  */
-@Path("/api/v1/scripts")
+@Path("/api/v1/commands")
 public class ScriptsResource {
 
     @Inject
@@ -192,7 +192,7 @@ public class ScriptsResource {
      * @param scriptName
      * @return
      */
-    @Path("/{scriptSourceId}/{scriptName}/run-async")
+    @Path("/sources/{scriptSourceId}/{scriptName}/run-async")
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Transactional

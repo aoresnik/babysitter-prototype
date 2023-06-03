@@ -10,6 +10,6 @@ export class ScriptRunSessionService {
   }
 
   messagesForSession(scriptRunSessionId: string): ScriptWebsocketConnection {
-    return this.wsService.connect(environment.serverRootURLWS + `/api/v1/scripts/session/${scriptRunSessionId}/websocket`);
+    return this.wsService.connect(environment.serverRootURLWS + `/api/v1/commands/session/${scriptRunSessionId}/websocket`);
   }
 }

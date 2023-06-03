@@ -30,7 +30,7 @@ import java.util.function.Consumer;
  *
  * Based on https://quarkus.io/guides/websockets
  */
-@ServerEndpoint(value = "/api/v1/scripts/session/{sessionId}/websocket", encoders = {ScriptRunSessions.EncoderDecoder.class}, decoders = {ScriptRunSessions.EncoderDecoder.class})
+@ServerEndpoint(value = "/api/v1/commands/session/{sessionId}/websocket", encoders = {ScriptRunSessions.EncoderDecoder.class}, decoders = {ScriptRunSessions.EncoderDecoder.class})
 @ApplicationScoped
 public class ScriptRunSessions {
 
