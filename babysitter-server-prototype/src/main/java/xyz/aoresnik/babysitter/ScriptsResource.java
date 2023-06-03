@@ -120,6 +120,34 @@ public class ScriptsResource {
         return result;
     }
 
+    @Path("/most-used")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<ScriptData> getMostUsedCommands() {
+        log.info("Reading the list of most used commands");
+        List<Object[]> scripts = em.createQuery("select se.scriptSource, se.scriptId, COUNT(*) from ScriptExecution se GROUP BY se.scriptId ORDER BY COUNT(*) DESC")
+                .setMaxResults(10)
+                .getResultList();
+
+        List<ScriptData> result = new ArrayList<>();
+
+        for (Object[] resultItem : scripts) {
+            ScriptSource scriptSource = (ScriptSource) resultItem[0];
+            String scriptId = (String) resultItem[1];
+            Long count = (Long) resultItem[2];
+            log.info(String.format("Result: source %s, script %s, used %d times", scriptSource.getName(), scriptId, count));
+
+            ScriptData scriptData = new ScriptData();
+            scriptData.setScriptSourceId(scriptSource.getId());
+            scriptData.setScriptSourceName(scriptSource.getName());
+            scriptData.setScriptId(scriptId);
+            result.add(scriptData);
+        }
+
+        return result;
+    }
+
+
     /**
      * Returns the script session ID
      * @param scriptName
