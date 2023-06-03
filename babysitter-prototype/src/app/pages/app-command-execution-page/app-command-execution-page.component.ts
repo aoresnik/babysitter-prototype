@@ -5,6 +5,7 @@ import {ScriptRun} from "../app-all-elements-test-page/app-all-elements-test-pag
 import {NgTerminal} from "ng-terminal";
 import {ScriptWebsocketConnection} from "../../websocket-test.service";
 import {ScriptRunSessionService} from "../../script-run-session.service";
+import {environment} from "../../../environments/environment";
 
 @Component({
   selector: 'app-app-command-execution-page',
@@ -107,4 +108,6 @@ export class AppCommandExecutionPageComponent implements OnInit, AfterViewInit {
       }
     });
   }
+
+  protected readonly environment = environment;
 }
