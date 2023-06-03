@@ -1,5 +1,4 @@
-import { Component } from '@angular/core';
-import {ScriptsServiceService} from "../../scripts-service.service";
+import {Component} from '@angular/core';
 import {Router} from "@angular/router";
 import {ScriptExecutionsService} from "../../script-executions.service";
 

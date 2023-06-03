@@ -1,7 +1,6 @@
 package xyz.aoresnik.babysitter;
 
 import org.jboss.logging.Logger;
-import xyz.aoresnik.babysitter.data.ScriptData;
 import xyz.aoresnik.babysitter.data.ScriptExecutionData;
 import xyz.aoresnik.babysitter.entity.ScriptExecution;
 import xyz.aoresnik.babysitter.script.AbstractScriptRunner;
@@ -15,7 +14,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import java.util.ArrayList;
-import java.util.GregorianCalendar;
 import java.util.List;
 
 @Path("/api/v1/executions")

@@ -1,6 +1,6 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { AppAllElementsTestPageComponent } from './app-all-elements-test-page.component';
+import {AppAllElementsTestPageComponent} from './app-all-elements-test-page.component';
 
 describe('AppCommandsListPaneComponent', () => {
   let component: AppAllElementsTestPageComponent;

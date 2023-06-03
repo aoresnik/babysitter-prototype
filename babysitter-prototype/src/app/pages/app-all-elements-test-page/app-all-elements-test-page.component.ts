@@ -1,8 +1,7 @@
 import {Component, ViewChild} from '@angular/core';
-import {ScriptError, ScriptResult, ScriptsServiceService} from "../../scripts-service.service";
+import {ScriptsServiceService} from "../../scripts-service.service";
 import {NgTerminal} from "ng-terminal";
 import {ScriptRunSessionService} from "../../script-run-session.service";
-import {Subject} from "rxjs";
 import {ScriptWebsocketConnection} from "../../websocket-test.service";
 
 export class ScriptRun {

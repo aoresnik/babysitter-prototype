@@ -1,8 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {UITreeNode} from "primeng/tree";
-import {TreeNode} from "primeng/api";
 import {ScriptsServiceService} from "../../scripts-service.service";
-import {ScriptRunSessionService} from "../../script-run-session.service";
 import {Router} from "@angular/router";
 
 @Component({

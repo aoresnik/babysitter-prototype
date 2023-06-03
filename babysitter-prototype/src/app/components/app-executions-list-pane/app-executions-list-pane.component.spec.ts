@@ -1,6 +1,6 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { AppExecutionsListPaneComponent } from './app-executions-list-pane.component';
+import {AppExecutionsListPaneComponent} from './app-executions-list-pane.component';
 
 describe('AppExecutionsListPaneComponent', () => {
   let component: AppExecutionsListPaneComponent;

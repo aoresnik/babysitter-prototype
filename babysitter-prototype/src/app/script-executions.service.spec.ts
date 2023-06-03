@@ -1,6 +1,6 @@
-import { TestBed } from '@angular/core/testing';
+import {TestBed} from '@angular/core/testing';
 
-import { ScriptExecutionsService } from './script-executions.service';
+import {ScriptExecutionsService} from './script-executions.service';
 
 describe('ScriptExecutionsService', () => {
   let service: ScriptExecutionsService;

@@ -1,6 +1,4 @@
-import { Injectable} from '@angular/core';
-import {Observable, Subject} from "rxjs";
-import { map } from 'rxjs/operators';
+import {Injectable} from '@angular/core';
 import {ScriptWebsocketConnection, WebsocketTestService} from "./websocket-test.service";
 import {environment} from "../environments/environment";
 

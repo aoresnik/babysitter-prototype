@@ -4,7 +4,9 @@ import {AppAllElementsTestPageComponent} from "./pages/app-all-elements-test-pag
 import {AppCommandsPageComponent} from "./pages/app-commands-page/app-commands-page.component";
 import {AppCommandPageComponent} from "./pages/app-command-page/app-command-page.component";
 import {AppCommandExecutionsPage} from "./pages/app-command-executions-page/app-command-executions-page.component";
-import {AppCommandNotSelectedSubpageComponent} from "./pages/app-command-not-selected-subpage/app-command-not-selected-subpage.component";
+import {
+  AppCommandNotSelectedSubpageComponent
+} from "./pages/app-command-not-selected-subpage/app-command-not-selected-subpage.component";
 import {
   AppCommandExecutionNotSelectedSubpageComponent
 } from "./pages/app-command-execution-not-selected-subpage/app-command-execution-not-selected-subpage.component";

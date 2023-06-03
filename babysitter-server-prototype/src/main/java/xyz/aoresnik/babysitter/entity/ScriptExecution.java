@@ -2,7 +2,6 @@ package xyz.aoresnik.babysitter.entity;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
-import java.util.Date;
 
 @Entity
 @Table(name = "SCRIPT_EXECUTION")

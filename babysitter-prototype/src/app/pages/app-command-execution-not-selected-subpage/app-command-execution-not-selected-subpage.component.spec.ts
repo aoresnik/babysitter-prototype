@@ -1,6 +1,6 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { AppCommandExecutionNotSelectedSubpageComponent } from './app-command-execution-not-selected-subpage.component';
+import {AppCommandExecutionNotSelectedSubpageComponent} from './app-command-execution-not-selected-subpage.component';
 
 describe('AppCommandExecutionNotSelectedSubpageComponent', () => {
   let component: AppCommandExecutionNotSelectedSubpageComponent;

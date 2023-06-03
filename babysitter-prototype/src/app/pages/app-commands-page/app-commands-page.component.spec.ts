@@ -1,6 +1,6 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { AppCommandsPageComponent } from './app-commands-page.component';
+import {AppCommandsPageComponent} from './app-commands-page.component';
 
 describe('AppAllCoomandsPageComponent', () => {
   let component: AppCommandsPageComponent;

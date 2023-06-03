@@ -1,6 +1,6 @@
-import { TestBed } from '@angular/core/testing';
+import {TestBed} from '@angular/core/testing';
 
-import { ScriptRunSessionService } from './script-run-session.service';
+import {ScriptRunSessionService} from './script-run-session.service';
 
 describe('ScriptRunSessionService', () => {
   let service: ScriptRunSessionService;
