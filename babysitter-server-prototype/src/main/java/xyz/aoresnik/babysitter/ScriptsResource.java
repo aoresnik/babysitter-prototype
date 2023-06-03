@@ -21,7 +21,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
+ * TODO: At the time of this writing, scripts are identified by name, not ID - hard to add endpoionts under the /{scriptSourceId} paths
+ * TODO: also change the format of /api/v1/scripts/{scriptSourceId}/executions/{scriptExecutionId} to /api/v1/command-sources/{commandSourceId}/commands/{commandId}
  */
 @Path("/api/v1/scripts")
 public class ScriptsResource {
@@ -115,12 +116,6 @@ public class ScriptsResource {
                     result.add(scriptData);
                 });
         }
-
-        // This is only to check that status update get to the database
-        // TODO: use this to return data to the client
-        em.createQuery("select se from ScriptExecution se", ScriptExecution.class).getResultList().forEach(scriptExecution -> {
-            log.debug("Found script execution: " + scriptExecution);
-        });
 
         return result;
     }
