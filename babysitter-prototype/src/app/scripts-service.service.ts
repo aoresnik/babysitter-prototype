@@ -3,6 +3,7 @@ import {from, Observable, of} from 'rxjs';
 import {catchError, tap, map} from 'rxjs/operators';
 import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {WebsocketTestService} from "./websocket-test.service";
+import {environment} from "../environments/environment";
 
 // TODO: stderr, stout, timestamp?
 export class ScriptResult
@@ -29,7 +30,7 @@ export class ScriptError
 })
 export class ScriptsServiceService {
 
-  serverRootUrl: string = "http://localhost:8080"
+  serverRootUrl: string = environment.serverRootURL;
 
   constructor(private http: HttpClient, private scriptRunWSService: WebsocketTestService) {
   }

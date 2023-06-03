@@ -2,6 +2,7 @@ import { Injectable} from '@angular/core';
 import {Observable, Subject} from "rxjs";
 import { map } from 'rxjs/operators';
 import {ScriptWebsocketConnection, WebsocketTestService} from "./websocket-test.service";
+import {environment} from "../environments/environment";
 
 @Injectable({
   providedIn: 'root'
@@ -11,6 +12,6 @@ export class ScriptRunSessionService {
   }
 
   messagesForSession(scriptRunSessionId: string): ScriptWebsocketConnection {
-    return this.wsService.connect(`ws://localhost:8080/api/v1/scripts/session/${scriptRunSessionId}/websocket`);
+    return this.wsService.connect(environment.serverRootURLWS + `/api/v1/scripts/session/${scriptRunSessionId}/websocket`);
   }
 }
