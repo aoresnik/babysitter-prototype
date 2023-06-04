@@ -5,9 +5,9 @@ import lombok.Getter;
 import lombok.Setter;
 import org.jboss.logging.Logger;
 import xyz.aoresnik.babysitter.data.AbstractScriptExecutionRTData;
-import xyz.aoresnik.babysitter.data.ScriptExecutionInitialStateRTData;
-import xyz.aoresnik.babysitter.data.ScriptExecutionUpdateRTData;
-import xyz.aoresnik.babysitter.data.ScriptInputData;
+import xyz.aoresnik.babysitter.data.CommandExecutionInitialStateRTData;
+import xyz.aoresnik.babysitter.data.CommandExecutionUpdateRTData;
+import xyz.aoresnik.babysitter.data.CommandInputData;
 import xyz.aoresnik.babysitter.entity.ScriptExecution;
 import xyz.aoresnik.babysitter.entity.ScriptSource;
 
@@ -20,9 +20,9 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Consumer;
 
-abstract public class AbstractScriptRunner {
+abstract public class AbstractCommandRunner {
 
-    Logger log = Logger.getLogger(AbstractScriptRunner.class);
+    Logger log = Logger.getLogger(AbstractCommandRunner.class);
 
     @Getter
     private final String scriptExecutionID;
@@ -57,9 +57,9 @@ abstract public class AbstractScriptRunner {
 
     private Set<Consumer<AbstractScriptExecutionRTData>> listeners = new HashSet<>();
 
-    private Set<Consumer<AbstractScriptRunner>> statusChangeListeners = new HashSet<>();
+    private Set<Consumer<AbstractCommandRunner>> statusChangeListeners = new HashSet<>();
 
-    public AbstractScriptRunner(ScriptSource scriptSource, String scriptName, String executionId) {
+    public AbstractCommandRunner(ScriptSource scriptSource, String scriptName, String executionId) {
         this.scriptSource = scriptSource;
         this.scriptName = scriptName;
         this.scriptExecutionID = executionId;
@@ -76,7 +76,7 @@ abstract public class AbstractScriptRunner {
      * @param listener
      * @return
      */
-    public ScriptExecutionInitialStateRTData registerConsoleChangeListener(Consumer<AbstractScriptExecutionRTData> listener) {
+    public CommandExecutionInitialStateRTData registerConsoleChangeListener(Consumer<AbstractScriptExecutionRTData> listener) {
         synchronized (listeners) {
             listeners.add(listener);
             return getScriptExecutionInitialStateData();
@@ -89,9 +89,9 @@ abstract public class AbstractScriptRunner {
      * regard to that initial state.
      * @return
      */
-    public ScriptExecutionInitialStateRTData getScriptExecutionInitialStateData() {
+    public CommandExecutionInitialStateRTData getScriptExecutionInitialStateData() {
         byte[] resultText = getResult();
-        ScriptExecutionInitialStateRTData initialStateData = new ScriptExecutionInitialStateRTData();
+        CommandExecutionInitialStateRTData initialStateData = new CommandExecutionInitialStateRTData();
 
         initialStateData.setScriptRun(scriptRun);
         initialStateData.setScriptCompleted(scriptCompleted);
@@ -111,7 +111,7 @@ abstract public class AbstractScriptRunner {
     /**
      * Must run the script in current thread (it's called from appropriate workers).
      * Output (both STDOUT and STDERR) must be sent to listeners and write to the file returned by {@link #getStdoutFile()}
-     * Input is sent in another thread to {@link #sendInput(ScriptInputData)}
+     * Input is sent in another thread to {@link #sendInput(CommandInputData)}
      * Must set:
      * <ul>
      * <li>{@link #scriptRun} to true when script starts, and set {@link #startTime}</<li>
@@ -123,7 +123,7 @@ abstract public class AbstractScriptRunner {
     abstract public void run();
 
     protected void notifyConsoleChangeListeners(String errorText1, byte[] incrementalConsoleData) {
-        ScriptExecutionUpdateRTData updateData = new ScriptExecutionUpdateRTData();
+        CommandExecutionUpdateRTData updateData = new CommandExecutionUpdateRTData();
         updateData.setScriptRun(scriptRun);
         updateData.setScriptCompleted(scriptCompleted);
         updateData.setExitCode(exitCode);
@@ -153,7 +153,7 @@ abstract public class AbstractScriptRunner {
         return new File(System.getProperty("java.io.tmpdir"), "stdout-" + scriptExecutionID + ".log");
     }
 
-    abstract public void sendInput(ScriptInputData message);
+    abstract public void sendInput(CommandInputData message);
 
     public void saveStatusChange() {
         statusChangeListeners.forEach(listener -> listener.accept(this));
@@ -168,7 +168,7 @@ abstract public class AbstractScriptRunner {
         scriptExecution.setEndTime(endTime != null ? new Timestamp(endTime.getTime()) : null);
     }
 
-    public void addStatusChangeListener(Consumer<AbstractScriptRunner> statusChangeListener) {
+    public void addStatusChangeListener(Consumer<AbstractCommandRunner> statusChangeListener) {
         this.statusChangeListeners.add(statusChangeListener);
     }
 

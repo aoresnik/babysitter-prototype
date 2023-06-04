@@ -10,7 +10,7 @@ import java.util.Date;
 @Data
 @NoArgsConstructor
 @XmlRootElement
-public class ScriptExecutionData {
+public class CommandExecutionData {
     private String scriptExecutionId;
 
     private String scriptSourceId;

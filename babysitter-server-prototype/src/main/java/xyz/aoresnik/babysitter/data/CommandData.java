@@ -8,7 +8,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Data
 @NoArgsConstructor
 @XmlRootElement
-public class ScriptData {
+public class CommandData {
     private Long scriptSourceId;
 
     private String scriptSourceName;

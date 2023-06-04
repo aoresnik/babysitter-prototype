@@ -5,12 +5,12 @@ import com.fasterxml.jackson.databind.DatabindException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.jboss.logging.Logger;
 import xyz.aoresnik.babysitter.data.AbstractScriptExecutionRTData;
-import xyz.aoresnik.babysitter.data.ScriptExecutionInitialStateRTData;
-import xyz.aoresnik.babysitter.data.ScriptInputData;
+import xyz.aoresnik.babysitter.data.CommandExecutionInitialStateRTData;
+import xyz.aoresnik.babysitter.data.CommandInputData;
 import xyz.aoresnik.babysitter.entity.ScriptExecution;
-import xyz.aoresnik.babysitter.script.AbstractScriptRunner;
-import xyz.aoresnik.babysitter.script.ActiveScriptRunners;
-import xyz.aoresnik.babysitter.script.ScriptTypes;
+import xyz.aoresnik.babysitter.script.AbstractCommandRunner;
+import xyz.aoresnik.babysitter.script.ActiveCommandRunners;
+import xyz.aoresnik.babysitter.script.CommandTypes;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -30,9 +30,9 @@ import java.util.function.Consumer;
  *
  * Based on https://quarkus.io/guides/websockets
  */
-@ServerEndpoint(value = "/api/v1/commands/session/{sessionId}/websocket", encoders = {ScriptRunSessions.EncoderDecoder.class}, decoders = {ScriptRunSessions.EncoderDecoder.class})
+@ServerEndpoint(value = "/api/v1/commands/session/{sessionId}/websocket", encoders = {CommandRunSessions.EncoderDecoder.class}, decoders = {CommandRunSessions.EncoderDecoder.class})
 @ApplicationScoped
-public class ScriptRunSessions {
+public class CommandRunSessions {
 
     @Inject
     Logger log;
@@ -43,10 +43,10 @@ public class ScriptRunSessions {
     Map<String, ScriptRunSession> sessions = new ConcurrentHashMap<>();
 
     @Inject
-    ActiveScriptRunners activeScriptRunners;
+    ActiveCommandRunners activeScriptRunners;
 
     @Inject
-    ScriptExecutionService scriptExecutionService;
+    CommandExecutionService commandExecutionService;
 
     static class ScriptRunSession {
         Consumer<AbstractScriptExecutionRTData> listener;
@@ -54,7 +54,7 @@ public class ScriptRunSessions {
 
     }
 
-    public void createForActiveExecution(String scriptName, AbstractScriptRunner scriptRunner) {
+    public void createForActiveExecution(String scriptName, AbstractCommandRunner scriptRunner) {
         activeScriptRunners.addScriptExecution(scriptRunner);
         log.debug("Created new script run session for script " + scriptName + " with session run ID: " + scriptRunner.getScriptExecutionID());
     }
@@ -84,10 +84,10 @@ public class ScriptRunSessions {
             }
         };
         scriptRunSession.listener = listener;
-        AbstractScriptRunner scriptRunner = activeScriptRunners.getScriptExecution(sessionId);
+        AbstractCommandRunner scriptRunner = activeScriptRunners.getScriptExecution(sessionId);
         if (scriptRunner != null) {
             log.error("For session ID=%s the script runner is still active".formatted(sessionId));
-            ScriptExecutionInitialStateRTData initialStateData = scriptRunner.registerConsoleChangeListener(listener);
+            CommandExecutionInitialStateRTData initialStateData = scriptRunner.registerConsoleChangeListener(listener);
             session.getAsyncRemote().sendObject(initialStateData, result -> {
                 if (result.getException() != null) {
                     log.error("Unable to send message: " + result.getException());
@@ -95,9 +95,9 @@ public class ScriptRunSessions {
             });
         } else {
             log.error("For session ID=%s the script runner has completed and is inactive - obtaining from database".formatted(sessionId));
-            ScriptExecution scriptExecution = scriptExecutionService.getScriptExecution(sessionId);
-            AbstractScriptRunner scriptRunner1 = ScriptTypes.newForScriptSource(scriptExecution.getScriptSource()).forInactiveScriptExecution(scriptExecution);
-            ScriptExecutionInitialStateRTData initialStateData = scriptRunner1.getScriptExecutionInitialStateData();
+            ScriptExecution scriptExecution = commandExecutionService.getScriptExecution(sessionId);
+            AbstractCommandRunner scriptRunner1 = CommandTypes.newForScriptSource(scriptExecution.getScriptSource()).forInactiveScriptExecution(scriptExecution);
+            CommandExecutionInitialStateRTData initialStateData = scriptRunner1.getScriptExecutionInitialStateData();
             session.getAsyncRemote().sendObject(initialStateData, result -> {
                 if (result.getException() != null) {
                     log.error("Unable to send message: " + result.getException());
@@ -109,7 +109,7 @@ public class ScriptRunSessions {
     @OnClose
     public void onClose(Session session, @PathParam("sessionId") String sessionId) {
         ScriptRunSession scriptRunSession = sessions.get(sessionId);
-        AbstractScriptRunner scriptExecution = activeScriptRunners.getScriptExecution(sessionId);
+        AbstractCommandRunner scriptExecution = activeScriptRunners.getScriptExecution(sessionId);
         if (scriptExecution != null)
         {
             scriptExecution.removeConsoleChangeListener(scriptRunSession.listener);
@@ -122,16 +122,16 @@ public class ScriptRunSessions {
     }
 
     @OnMessage
-    public void onMessage(ScriptInputData message, @PathParam("sessionId") String sessionId) {
+    public void onMessage(CommandInputData message, @PathParam("sessionId") String sessionId) {
         log.debug("Received message: " + message);
         ScriptRunSession scriptRunSession = sessions.get(sessionId);
-        AbstractScriptRunner scriptExecution = activeScriptRunners.getScriptExecution(sessionId);
+        AbstractCommandRunner scriptExecution = activeScriptRunners.getScriptExecution(sessionId);
         if (scriptExecution != null) {
             scriptExecution.sendInput(message);
         }
     }
 
-    public static class EncoderDecoder implements javax.websocket.Encoder.Text<ScriptExecutionInitialStateRTData>, javax.websocket.Decoder.Text<ScriptInputData> {
+    public static class EncoderDecoder implements javax.websocket.Encoder.Text<CommandExecutionInitialStateRTData>, javax.websocket.Decoder.Text<CommandInputData> {
         ObjectMapper mapper;
 
         Logger log = Logger.getLogger(EncoderDecoder.class);
@@ -145,7 +145,7 @@ public class ScriptRunSessions {
         }
 
         @Override
-        public String encode(ScriptExecutionInitialStateRTData object) throws EncodeException {
+        public String encode(CommandExecutionInitialStateRTData object) throws EncodeException {
             try {
                 StringWriter sw = new StringWriter();
                 mapper.writeValue(sw, object);
@@ -156,10 +156,10 @@ public class ScriptRunSessions {
         }
 
         @Override
-        public ScriptInputData decode(String s) throws DecodeException {
+        public CommandInputData decode(String s) throws DecodeException {
             try {
                 log.debug("Decoding " + s);
-                return mapper.readValue(new StringReader(s), ScriptInputData.class);
+                return mapper.readValue(new StringReader(s), CommandInputData.class);
             } catch (StreamReadException e) {
                 throw new RuntimeException(e);
             } catch (DatabindException e) {

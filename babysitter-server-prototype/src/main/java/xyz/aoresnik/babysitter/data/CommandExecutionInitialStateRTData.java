@@ -6,8 +6,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @Data
 @XmlRootElement
-public class ScriptExecutionUpdateRTData extends AbstractScriptExecutionRTData {
+public class CommandExecutionInitialStateRTData extends AbstractScriptExecutionRTData {
 
-    private byte[] incrementalConsoleData;
-
+    private byte[] initialConsoleData;
 }

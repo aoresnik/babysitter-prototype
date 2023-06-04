@@ -3,7 +3,7 @@ package xyz.aoresnik.babysitter.script;
 import com.pty4j.PtyProcess;
 import com.pty4j.PtyProcessBuilder;
 import org.jboss.logging.Logger;
-import xyz.aoresnik.babysitter.data.ScriptInputData;
+import xyz.aoresnik.babysitter.data.CommandInputData;
 import xyz.aoresnik.babysitter.entity.ScriptExecution;
 import xyz.aoresnik.babysitter.entity.ScriptSource;
 
@@ -15,11 +15,11 @@ import java.nio.file.Files;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class ScriptTypeServerDir extends AbstractScriptType {
+public class CommandTypeServerDir extends AbstractCommandType {
 
-    private static final Logger log = Logger.getLogger(ScriptTypeServerDir.class);
+    private static final Logger log = Logger.getLogger(CommandTypeServerDir.class);
 
-    public ScriptTypeServerDir(ScriptSource scriptSource) {
+    public CommandTypeServerDir(ScriptSource scriptSource) {
         super(scriptSource);
     }
 
@@ -43,22 +43,22 @@ public class ScriptTypeServerDir extends AbstractScriptType {
     }
 
     @Override
-    public AbstractScriptRunner createScriptExecution(String scriptName, String scriptExecutionID)  {
-        return new ServerDirScriptTypeRunner(getScriptSource(), scriptName, scriptExecutionID);
+    public AbstractCommandRunner createScriptExecution(String scriptName, String scriptExecutionID)  {
+        return new ServerDirCommandTypeRunner(getScriptSource(), scriptName, scriptExecutionID);
     }
 
     @Override
-    public AbstractScriptRunner forInactiveScriptExecution(ScriptExecution scriptExecution) {
-        ServerDirScriptTypeRunner result = new ServerDirScriptTypeRunner(getScriptSource(), scriptExecution.getScriptId(), Long.toString(scriptExecution.getId()));
+    public AbstractCommandRunner forInactiveScriptExecution(ScriptExecution scriptExecution) {
+        ServerDirCommandTypeRunner result = new ServerDirCommandTypeRunner(getScriptSource(), scriptExecution.getScriptId(), Long.toString(scriptExecution.getId()));
         result.initFromScriptExecutionEntity(scriptExecution);
         return result;
     }
 
-    class ServerDirScriptTypeRunner extends AbstractScriptRunner {
+    class ServerDirCommandTypeRunner extends AbstractCommandRunner {
 
         private OutputStream processStdin;
 
-        public ServerDirScriptTypeRunner(ScriptSource scriptSource, String scriptName, String scriptExecutionID) {
+        public ServerDirCommandTypeRunner(ScriptSource scriptSource, String scriptName, String scriptExecutionID) {
             super(scriptSource, scriptName, scriptExecutionID);
         }
 
@@ -136,7 +136,7 @@ public class ScriptTypeServerDir extends AbstractScriptType {
         }
 
         @Override
-        public void sendInput(ScriptInputData message) {
+        public void sendInput(CommandInputData message) {
             if (processStdin != null) {
                 try {
                     processStdin.write(Base64.getDecoder().decode(message.getInputData()));

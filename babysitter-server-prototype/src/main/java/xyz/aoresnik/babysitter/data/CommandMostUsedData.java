@@ -8,8 +8,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Data
 @NoArgsConstructor
 @XmlRootElement
-public class ScriptMostUsedData {
-    ScriptData commandData;
+public class CommandMostUsedData {
+    CommandData commandData;
 
     private Long usageCount;
 }
