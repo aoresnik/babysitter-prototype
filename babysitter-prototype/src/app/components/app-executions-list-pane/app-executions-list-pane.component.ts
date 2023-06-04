@@ -22,7 +22,7 @@ export class AppExecutionsListPaneComponent {
   }
 
   selectExecution(execution: any) {
-    this.router.navigateByUrl(`/executions/execution/${execution.scriptExecutionId}`)
+    this.router.navigateByUrl(`/executions/execution/${execution.commandExecutionId}`)
       .then(r => console.log(`Navigation successful: ${r}`));
   }
 }

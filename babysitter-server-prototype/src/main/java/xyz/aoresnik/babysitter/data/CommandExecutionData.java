@@ -11,17 +11,17 @@ import java.util.Date;
 @NoArgsConstructor
 @XmlRootElement
 public class CommandExecutionData {
-    private String scriptExecutionId;
+    private String commandExecutionId;
 
-    private String scriptSourceId;
+    private String commandSourceId;
 
-    private String scriptSourceName;
+    private String commandSourceName;
 
-    private String scriptId;
+    private String commandId;
 
-    private boolean scriptRun;
+    private boolean commandRun;
 
-    private boolean scriptCompleted;
+    private boolean commandCompleted;
 
     private Integer exitCode;
 

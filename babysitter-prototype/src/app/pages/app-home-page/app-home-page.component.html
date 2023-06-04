@@ -1,5 +1,5 @@
 <div style="font-weight: bold">Most used commands (<a href="/commands/list">see all commands</a>):</div>
-<div *ngFor="let script of scriptsList; index as i"><span style="background-color: #eff3f6">({{ script.commandData.scriptSourceName }})</span>&nbsp;<a href="#" (click)="selectCommand(script); false">{{ script.commandData.scriptId }}</a>, used {{ script.usageCount}} times</div>
+<div *ngFor="let script of scriptsList; index as i"><span style="background-color: #eff3f6">({{ script.commandData.commandSourceName }})</span>&nbsp;<a href="#" (click)="selectCommand(script.commandData); false">{{ script.commandData.commandId }}</a>, used {{ script.usageCount}} times</div>
 
 <div style="font-weight: bold">Last run commands (<a href="/commands/list">see all commands</a>):</div>
-<div *ngFor="let script of lastCommandsList, index as i"><span style="background-color: #eff3f6">({{ script.commandData.scriptSourceName }})</span>&nbsp;<a href="#" (click)="selectCommand(script); false">{{ script.commandData.scriptId }}</a>, last used {{script.lastUsed}}</div>
+<div *ngFor="let script of lastCommandsList, index as i"><span style="background-color: #eff3f6">({{ script.commandData.commandSourceName }})</span>&nbsp;<a href="#" (click)="selectCommand(script.commandData); false">{{ script.commandData.commandId }}</a>, last used {{script.lastUsed}}</div>

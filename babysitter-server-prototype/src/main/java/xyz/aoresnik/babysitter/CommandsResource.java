@@ -114,9 +114,9 @@ public class CommandsResource {
 
             scriptIds.forEach(filename -> {
                     CommandData commandData = new CommandData();
-                    commandData.setScriptSourceId(commandSource.getId());
-                    commandData.setScriptSourceName(commandSource.getName());
-                    commandData.setScriptId(filename);
+                    commandData.setCommandSourceId(commandSource.getId());
+                    commandData.setCommandSourceName(commandSource.getName());
+                    commandData.setCommandId(filename);
                     result.add(commandData);
                 });
         }
@@ -142,9 +142,9 @@ public class CommandsResource {
             log.info(String.format("Result: source %s, script %s, used %d times", commandSource.getName(), scriptId, count));
 
             CommandData commandData = new CommandData();
-            commandData.setScriptSourceId(commandSource.getId());
-            commandData.setScriptSourceName(commandSource.getName());
-            commandData.setScriptId(scriptId);
+            commandData.setCommandSourceId(commandSource.getId());
+            commandData.setCommandSourceName(commandSource.getName());
+            commandData.setCommandId(scriptId);
 
             CommandMostUsedData commandMostUsedData = new CommandMostUsedData();
             commandMostUsedData.setCommandData(commandData);
@@ -173,9 +173,9 @@ public class CommandsResource {
             log.info(String.format("Result: source %s, script %s, last used %s", commandSource.getName(), scriptId, lastUsage));
 
             CommandData commandData = new CommandData();
-            commandData.setScriptSourceId(commandSource.getId());
-            commandData.setScriptSourceName(commandSource.getName());
-            commandData.setScriptId(scriptId);
+            commandData.setCommandSourceId(commandSource.getId());
+            commandData.setCommandSourceName(commandSource.getName());
+            commandData.setCommandId(scriptId);
 
             CommandLastUsedData commandLastUsedData = new CommandLastUsedData();
             commandLastUsedData.setCommandData(commandData);

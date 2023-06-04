@@ -16,7 +16,7 @@ export class AppCommandPageComponent implements OnInit {
   constructor(private route: ActivatedRoute, private scriptsService: ScriptsServiceService, private router: Router) {
   }
 
-  scriptSourceID?: number | null;
+  commandSourceId?: number | null;
   scriptID?: string | null;
 
   ngOnInit() {
@@ -25,9 +25,9 @@ export class AppCommandPageComponent implements OnInit {
           console.log(paramMap);
         let sourceIdStr = paramMap.get('source_id')
         if (sourceIdStr != null) {
-          this.scriptSourceID = parseInt(sourceIdStr, 10);
+          this.commandSourceId = parseInt(sourceIdStr, 10);
         } else {
-          this.scriptSourceID = null;
+          this.commandSourceId = null;
         }
         this.scriptID = paramMap.get('script_id');
         }
@@ -36,13 +36,13 @@ export class AppCommandPageComponent implements OnInit {
 
   runScript(script: any, openConsole: boolean) {
     console.log(`Running script ${ script }`);
-    if (this.scriptSourceID != null && this.scriptID != null) {
-      this.scriptsService.runScriptAsync(this.scriptSourceID, this.scriptID).subscribe(res => {
+    if (this.commandSourceId != null && this.scriptID != null) {
+      this.scriptsService.runScriptAsync(this.commandSourceId, this.scriptID).subscribe(res => {
         let runSessionId = res;
         console.log(`Script run session ID: ${runSessionId}`);
         if (openConsole) {
           console.log(`Opening command execution console for: ${runSessionId}`);
-          let scriptRun = new ScriptRun(script.scriptId, runSessionId);
+          let scriptRun = new ScriptRun(script.commandId, runSessionId);
           this.showRun(scriptRun);
         }
       });

@@ -92,11 +92,11 @@ export class AppCommandExecutionPageComponent implements OnInit, AfterViewInit {
       } else if (msg.incrementalConsoleData !== undefined && msg.incrementalConsoleData) {
         this.terminal.write(atob(msg.incrementalConsoleData));
       }
-      if (msg.scriptRun !== undefined) {
-        this.scriptRun = msg.scriptRun;
+      if (msg.commandRun !== undefined) {
+        this.scriptRun = msg.commandRun;
       }
-      if (msg.scriptCompleted !== undefined) {
-        this.scriptCompleted = msg.scriptCompleted;
+      if (msg.commandCompleted !== undefined) {
+        this.scriptCompleted = msg.commandCompleted;
       }
       if (msg.exitCode !== undefined) {
         this.exitCode = msg.exitCode;

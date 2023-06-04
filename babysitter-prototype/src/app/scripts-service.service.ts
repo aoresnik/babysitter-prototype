@@ -60,8 +60,8 @@ export class ScriptsServiceService {
     );
   }
 
-  runScriptAsync(scriptSourceId: number, script: string): Observable<string> {
-    return this.http.post<string>(`${ this.serverRootUrl }/api/v1/commands/sources/${scriptSourceId}/${script}/run-async`, this.httpOptions ).pipe(
+  runScriptAsync(commandSourceId: number, script: string): Observable<string> {
+    return this.http.post<string>(`${ this.serverRootUrl }/api/v1/commands/sources/${commandSourceId}/${script}/run-async`, this.httpOptions ).pipe(
       tap(res => console.log(`Run script ${ script }`)),
       map(res => {
         return res;

@@ -13,9 +13,9 @@ import lombok.NoArgsConstructor;
 public class AbstractScriptExecutionRTData {
     private String scriptExecutionID;
 
-    private boolean scriptRun;
+    private boolean commandRun;
 
-    private boolean scriptCompleted;
+    private boolean commandCompleted;
 
     private Integer exitCode;
 

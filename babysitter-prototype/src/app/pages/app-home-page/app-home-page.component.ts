@@ -26,7 +26,7 @@ export class AppHomePageComponent {
   }
 
   selectCommand(script: any) {
-    this.router.navigateByUrl(`/commands/command/${script.scriptSourceId}/${script.scriptId}`)
+    this.router.navigateByUrl(`/commands/command/${script.commandSourceId}/${script.commandId}`)
       .then(r => console.log(`Navigation successful: ${r}`));
   }
 }

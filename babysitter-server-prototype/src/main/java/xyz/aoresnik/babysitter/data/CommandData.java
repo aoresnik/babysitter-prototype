@@ -9,12 +9,12 @@ import javax.xml.bind.annotation.XmlRootElement;
 @NoArgsConstructor
 @XmlRootElement
 public class CommandData {
-    private Long scriptSourceId;
+    private Long commandSourceId;
 
-    private String scriptSourceName;
+    private String commandSourceName;
 
     /**
      * For scripts in script dir contains the directory name.
      */
-    private String scriptId;
+    private String commandId;
 }

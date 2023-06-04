@@ -55,18 +55,18 @@ public class CommandExecutionResource {
 
     private static CommandExecutionData scriptExecutionDataFromEntity(CommandExecution commandExecution) {
         CommandExecutionData commandExecutionData = new CommandExecutionData();
-        commandExecutionData.setScriptExecutionId(String.valueOf(commandExecution.getId()));
+        commandExecutionData.setCommandExecutionId(String.valueOf(commandExecution.getId()));
 
-        commandExecutionData.setScriptRun(commandExecution.isCommandRun());
-        commandExecutionData.setScriptCompleted(commandExecution.isCommandCompleted());
+        commandExecutionData.setCommandRun(commandExecution.isCommandRun());
+        commandExecutionData.setCommandCompleted(commandExecution.isCommandCompleted());
         commandExecutionData.setExitCode(commandExecution.getExitCode());
         commandExecutionData.setErrorText(commandExecution.getErrorText());
         commandExecutionData.setStartTime(commandExecution.getStartTime() != null ? commandExecution.getStartTime() : null);
         commandExecutionData.setEndTime(commandExecution.getEndTime() != null ? commandExecution.getEndTime() : null);
 
-        commandExecutionData.setScriptId(commandExecution.getCommandId());
-        commandExecutionData.setScriptSourceId(String.valueOf(commandExecution.getScriptSource().getId()));
-        commandExecutionData.setScriptSourceName(commandExecution.getScriptSource().getName());
+        commandExecutionData.setCommandId(commandExecution.getCommandId());
+        commandExecutionData.setCommandSourceId(String.valueOf(commandExecution.getScriptSource().getId()));
+        commandExecutionData.setCommandSourceName(commandExecution.getScriptSource().getName());
         return commandExecutionData;
     }
 

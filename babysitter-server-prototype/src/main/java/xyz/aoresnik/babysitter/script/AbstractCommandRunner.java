@@ -93,8 +93,8 @@ abstract public class AbstractCommandRunner {
         byte[] resultText = getResult();
         CommandExecutionInitialStateRTData initialStateData = new CommandExecutionInitialStateRTData();
 
-        initialStateData.setScriptRun(scriptRun);
-        initialStateData.setScriptCompleted(scriptCompleted);
+        initialStateData.setCommandRun(scriptRun);
+        initialStateData.setCommandCompleted(scriptCompleted);
         initialStateData.setExitCode(exitCode);
         initialStateData.setErrorText(getErrorText());
         initialStateData.setInitialConsoleData(resultText);
@@ -124,8 +124,8 @@ abstract public class AbstractCommandRunner {
 
     protected void notifyConsoleChangeListeners(String errorText1, byte[] incrementalConsoleData) {
         CommandExecutionUpdateRTData updateData = new CommandExecutionUpdateRTData();
-        updateData.setScriptRun(scriptRun);
-        updateData.setScriptCompleted(scriptCompleted);
+        updateData.setCommandRun(scriptRun);
+        updateData.setCommandCompleted(scriptCompleted);
         updateData.setExitCode(exitCode);
         updateData.setErrorText(errorText1);
         updateData.setIncrementalConsoleData(incrementalConsoleData);
