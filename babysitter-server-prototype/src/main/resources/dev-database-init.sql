@@ -22,6 +22,15 @@ create table COMMAND_SOURCE_SSH_DIR(
      foreign key (COMMAND_SOURCE_ID) references COMMAND_SOURCE(ID)
 );
 
+create table COMMAND(
+    ID int not null auto_increment,
+    COMMAND_SOURCE_ID int not null,
+    NAME varchar(255) not null,
+    SCRIPT varchar(255) not null,
+    primary key (ID),
+    foreign key (COMMAND_SOURCE_ID) references COMMAND_SOURCE(ID)
+);
+
 create table COMMAND_EXECUTION(
     ID int not null auto_increment,
     COMMAND_SOURCE_ID int not null,
