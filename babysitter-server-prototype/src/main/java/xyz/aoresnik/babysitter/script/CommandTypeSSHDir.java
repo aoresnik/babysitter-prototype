@@ -109,7 +109,7 @@ public class CommandTypeSSHDir extends AbstractCommandType {
 
     @Override
     public AbstractCommandRunner forInactiveScriptExecution(CommandExecution commandExecution) {
-        SSHDirCommandTypeRunner result = new SSHDirCommandTypeRunner(getScriptSource(), commandExecution.getCommandId(), Long.toString(commandExecution.getId()));
+        SSHDirCommandTypeRunner result = new SSHDirCommandTypeRunner(getScriptSource(), commandExecution.getCommand().getScript(), Long.toString(commandExecution.getId()));
         result.initFromScriptExecutionEntity(commandExecution);
         return result;
     }

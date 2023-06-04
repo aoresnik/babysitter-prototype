@@ -4,6 +4,7 @@ import io.agroal.api.AgroalDataSource;
 import io.quarkus.runtime.ShutdownEvent;
 import io.quarkus.runtime.StartupEvent;
 import org.jboss.logging.Logger;
+import xyz.aoresnik.babysitter.CommandsService;
 import xyz.aoresnik.babysitter.entity.CommandSourceSSHDir;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -34,6 +35,9 @@ public class DevInitConfiguration {
     @Inject
     EntityManager em;
 
+    @Inject
+    CommandsService commandsService;
+
     @Transactional
     void onStart(@Observes StartupEvent ev) {
         log.info("The application is starting: initializing the dev environment database");
@@ -49,7 +53,7 @@ public class DevInitConfiguration {
 
         try (Connection connection = defaultDataSource.getConnection()) {
             try (Statement statement = connection.createStatement()) {
-                log.debug("Executing initialization SQL");
+                log.debug("Executing initialization SQL:\n" + contents);
                 boolean execute = statement.execute(contents);
             }
         } catch (SQLException e) {
@@ -83,6 +87,8 @@ public class DevInitConfiguration {
                 throw new RuntimeException("Unable to read config resource " + sshConfigFileName,e);
             }
         }
+
+        commandsService.refreshCommands();
     }
 
     void onStop(@Observes ShutdownEvent ev) {

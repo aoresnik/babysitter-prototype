@@ -96,7 +96,7 @@ public class CommandRunSessions {
         } else {
             log.error("For session ID=%s the script runner has completed and is inactive - obtaining from database".formatted(sessionId));
             CommandExecution commandExecution = commandExecutionService.getScriptExecution(sessionId);
-            AbstractCommandRunner scriptRunner1 = CommandTypes.newForScriptSource(commandExecution.getScriptSource()).forInactiveScriptExecution(commandExecution);
+            AbstractCommandRunner scriptRunner1 = CommandTypes.newForScriptSource(commandExecution.getCommand().getCommandSource()).forInactiveScriptExecution(commandExecution);
             CommandExecutionInitialStateRTData initialStateData = scriptRunner1.getScriptExecutionInitialStateData();
             session.getAsyncRemote().sendObject(initialStateData, result -> {
                 if (result.getException() != null) {

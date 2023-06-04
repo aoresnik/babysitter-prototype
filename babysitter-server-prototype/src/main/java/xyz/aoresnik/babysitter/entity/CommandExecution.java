@@ -30,11 +30,8 @@ public class CommandExecution {
     private Timestamp endTime;
 
     @ManyToOne
-    @JoinColumn(name = "COMMAND_SOURCE_ID")
-    private CommandSource commandSource;
-
-    @Column(name = "COMMAND_ID")
-    private String commandId;
+    @JoinColumn(name = "COMMAND_ID")
+    private Command command;
 
     public Long getId() {
         return id;
@@ -92,34 +89,25 @@ public class CommandExecution {
         this.endTime = endTime;
     }
 
-    public CommandSource getScriptSource() {
-        return commandSource;
+    public Command getCommand() {
+        return command;
     }
 
-    public void setScriptSource(CommandSource commandSource) {
-        this.commandSource = commandSource;
-    }
-
-    public String getCommandId() {
-        return commandId;
-    }
-
-    public void setCommandId(String scriptId) {
-        this.commandId = scriptId;
+    public void setCommand(Command command) {
+        this.command = command;
     }
 
     @Override
     public String toString() {
         return "CommandExecution{" +
                 "id=" + id +
-                ", scriptRun=" + commandRun +
-                ", scriptCompleted=" + commandCompleted +
+                ", commandRun=" + commandRun +
+                ", commandCompleted=" + commandCompleted +
                 ", exitCode=" + exitCode +
                 ", errorText='" + errorText + '\'' +
                 ", startTime=" + startTime +
                 ", endTime=" + endTime +
-                ", commandSource=" + commandSource +
-                ", scriptId='" + commandId + '\'' +
+                ", command=" + command +
                 '}';
     }
 }

@@ -33,8 +33,7 @@ create table COMMAND(
 
 create table COMMAND_EXECUTION(
     ID int not null auto_increment,
-    COMMAND_SOURCE_ID int not null,
-    COMMAND_ID varchar(255) not null,
+    COMMAND_ID int not null,
 
     commandRun int not null,
     commandCompleted int not null,
@@ -44,7 +43,7 @@ create table COMMAND_EXECUTION(
     endTime timestamp null,
 
     primary key (ID),
-    foreign key (COMMAND_SOURCE_ID) references COMMAND_SOURCE(ID)
+    foreign key (COMMAND_ID) references COMMAND(ID)
 );
 
 insert into COMMAND_SOURCE (NAME) values ('Local dir on server');

@@ -31,7 +31,7 @@ public class CommandExecutionResource {
     @Produces(MediaType.APPLICATION_JSON)
     public List<CommandExecutionData> getScripts() {
         log.info("Reading the list of scripts");
-        List<CommandExecution> commandExecutions = em.createQuery("select se from CommandExecution se", CommandExecution.class).getResultList();
+        List<CommandExecution> commandExecutions = em.createQuery("select ce from CommandExecution ce", CommandExecution.class).getResultList();
 
         List<CommandExecutionData> result = new ArrayList<>();
 
@@ -49,7 +49,7 @@ public class CommandExecutionResource {
     @Produces(MediaType.TEXT_PLAIN)
     public byte[] getRawTranscript(@PathParam("executionId") String executionId) {
         CommandExecution commandExecution = commandExecutionService.getScriptExecution(executionId);
-        AbstractCommandRunner scriptRunner1 = CommandTypes.newForScriptSource(commandExecution.getScriptSource()).forInactiveScriptExecution(commandExecution);
+        AbstractCommandRunner scriptRunner1 = CommandTypes.newForScriptSource(commandExecution.getCommand().getCommandSource()).forInactiveScriptExecution(commandExecution);
         return scriptRunner1.getResult();
     }
 
@@ -64,9 +64,9 @@ public class CommandExecutionResource {
         commandExecutionData.setStartTime(commandExecution.getStartTime() != null ? commandExecution.getStartTime() : null);
         commandExecutionData.setEndTime(commandExecution.getEndTime() != null ? commandExecution.getEndTime() : null);
 
-        commandExecutionData.setCommandId(commandExecution.getCommandId());
-        commandExecutionData.setCommandSourceId(String.valueOf(commandExecution.getScriptSource().getId()));
-        commandExecutionData.setCommandSourceName(commandExecution.getScriptSource().getName());
+        commandExecutionData.setCommandId(commandExecution.getCommand().getScript());
+        commandExecutionData.setCommandSourceId(String.valueOf(commandExecution.getCommand().getCommandSource().getId()));
+        commandExecutionData.setCommandSourceName(commandExecution.getCommand().getCommandSource().getName());
         return commandExecutionData;
     }
 

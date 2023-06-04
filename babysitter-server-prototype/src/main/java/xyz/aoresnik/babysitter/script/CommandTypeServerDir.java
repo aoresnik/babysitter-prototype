@@ -49,7 +49,7 @@ public class CommandTypeServerDir extends AbstractCommandType {
 
     @Override
     public AbstractCommandRunner forInactiveScriptExecution(CommandExecution commandExecution) {
-        ServerDirCommandTypeRunner result = new ServerDirCommandTypeRunner(getScriptSource(), commandExecution.getCommandId(), Long.toString(commandExecution.getId()));
+        ServerDirCommandTypeRunner result = new ServerDirCommandTypeRunner(getScriptSource(), commandExecution.getCommand().getScript(), Long.toString(commandExecution.getId()));
         result.initFromScriptExecutionEntity(commandExecution);
         return result;
     }
