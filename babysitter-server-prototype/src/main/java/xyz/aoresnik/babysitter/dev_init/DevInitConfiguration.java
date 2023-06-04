@@ -4,7 +4,7 @@ import io.agroal.api.AgroalDataSource;
 import io.quarkus.runtime.ShutdownEvent;
 import io.quarkus.runtime.StartupEvent;
 import org.jboss.logging.Logger;
-import xyz.aoresnik.babysitter.entity.ScriptSourceSSHDir;
+import xyz.aoresnik.babysitter.entity.CommandSourceSSHDir;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
@@ -57,9 +57,9 @@ public class DevInitConfiguration {
         }
 
         // Read SSH config files for connecting to vagrant test VMs that have been prepared by scripts called from the Vagrantfile
-        List<ScriptSourceSSHDir> selectSssdFromScriptSourceSSHDirSssd = em.createQuery("select sssd from ScriptSourceSSHDir sssd").getResultList();
-        for (ScriptSourceSSHDir sssd : selectSssdFromScriptSourceSSHDirSssd) {
-            log.info("Found ScriptSourceSSHDir: " + sssd);
+        List<CommandSourceSSHDir> selectSssdFromCommandSourceSSHDirSssd = em.createQuery("select sssd from CommandSourceSSHDir sssd").getResultList();
+        for (CommandSourceSSHDir sssd : selectSssdFromCommandSourceSSHDirSssd) {
+            log.info("Found CommandSourceSSHDir: " + sssd);
             String name = sssd.getScriptSource().getName();
             String sshConfigNameBase = name.split("\\ ")[0];
             log.debug(String.format("For name %s the SSH config resource file name base is %s", name, sshConfigNameBase));

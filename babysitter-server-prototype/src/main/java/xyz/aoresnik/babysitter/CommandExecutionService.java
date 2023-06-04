@@ -1,6 +1,6 @@
 package xyz.aoresnik.babysitter;
 
-import xyz.aoresnik.babysitter.entity.ScriptExecution;
+import xyz.aoresnik.babysitter.entity.CommandExecution;
 import xyz.aoresnik.babysitter.script.AbstractCommandRunner;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -15,11 +15,11 @@ public class CommandExecutionService {
 
     @Transactional
     public void updateScriptExecution(AbstractCommandRunner scriptExecutionRunner) {
-        ScriptExecution scriptExecution = em.find(ScriptExecution.class, Long.parseLong(scriptExecutionRunner.getScriptExecutionID()));
-        scriptExecutionRunner.updateEntity(scriptExecution);
+        CommandExecution commandExecution = em.find(CommandExecution.class, Long.parseLong(scriptExecutionRunner.getScriptExecutionID()));
+        scriptExecutionRunner.updateEntity(commandExecution);
     }
 
-    public ScriptExecution getScriptExecution(String executionId) {
-        return em.find(ScriptExecution.class, Long.parseLong(executionId));
+    public CommandExecution getScriptExecution(String executionId) {
+        return em.find(CommandExecution.class, Long.parseLong(executionId));
     }
 }

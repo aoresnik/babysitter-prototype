@@ -3,8 +3,8 @@ package xyz.aoresnik.babysitter.entity;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "SCRIPT_SOURCE_SSH_DIR")
-public class ScriptSourceSSHDir {
+@Table(name = "COMMAND_SOURCE_SSH_DIR")
+public class CommandSourceSSHDir {
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
     Long id;
@@ -13,8 +13,8 @@ public class ScriptSourceSSHDir {
     String dirname;
 
     @OneToOne
-    @JoinColumn(name = "SCRIPT_SOURCE_ID")
-    ScriptSource scriptSource;
+    @JoinColumn(name = "COMMAND_SOURCE_ID")
+    CommandSource commandSource;
 
     @Column(name = "SSH_CONFIG")
     @Lob
@@ -36,12 +36,12 @@ public class ScriptSourceSSHDir {
         this.dirname = dirname;
     }
 
-    public ScriptSource getScriptSource() {
-        return scriptSource;
+    public CommandSource getScriptSource() {
+        return commandSource;
     }
 
-    public void setScriptSource(ScriptSource scriptSource) {
-        this.scriptSource = scriptSource;
+    public void setScriptSource(CommandSource commandSource) {
+        this.commandSource = commandSource;
     }
 
     public byte[] getSshConfig() {
@@ -54,7 +54,7 @@ public class ScriptSourceSSHDir {
 
     @Override
     public String toString() {
-        return "ScriptSourceServerDir{" +
+        return "CommandSourceServerDir{" +
                 "id=" + id +
                 ", dirname='" + dirname + '\'' +
                 '}';

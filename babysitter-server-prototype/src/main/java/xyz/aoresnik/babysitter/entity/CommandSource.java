@@ -3,8 +3,8 @@ package xyz.aoresnik.babysitter.entity;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "SCRIPT_SOURCE")
-public class ScriptSource {
+@Table(name = "COMMAND_SOURCE")
+public class CommandSource {
     // TODO: migrate to GUID for this and all IDs that are sent via REST (requires Quarkus 3 with JEE 10 and JPA 3.1)
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
@@ -13,11 +13,11 @@ public class ScriptSource {
     @Column(name = "NAME")
     private String name;
 
-    @OneToOne(mappedBy = "scriptSource", optional = true)
-    private ScriptSourceServerDir scriptSourceServerDir;
+    @OneToOne(mappedBy = "commandSource", optional = true)
+    private CommandSourceServerDir scriptSourceServerDir;
 
-    @OneToOne(mappedBy = "scriptSource", optional = true)
-    private ScriptSourceSSHDir scriptSourceSSHDir;
+    @OneToOne(mappedBy = "commandSource", optional = true)
+    private CommandSourceSSHDir commandSourceSSHDir;
 
     public Long getId() {
         return id;
@@ -35,25 +35,25 @@ public class ScriptSource {
         this.name = name;
     }
 
-    public ScriptSourceServerDir getScriptSourceServerDir() {
+    public CommandSourceServerDir getScriptSourceServerDir() {
         return scriptSourceServerDir;
     }
 
-    public void setScriptSourceServerDir(ScriptSourceServerDir scriptSourceServerDir) {
+    public void setScriptSourceServerDir(CommandSourceServerDir scriptSourceServerDir) {
         this.scriptSourceServerDir = scriptSourceServerDir;
     }
 
-    public ScriptSourceSSHDir getScriptSourceSSHDir() {
-        return scriptSourceSSHDir;
+    public CommandSourceSSHDir getScriptSourceSSHDir() {
+        return commandSourceSSHDir;
     }
 
-    public void setScriptSourceSSHDir(ScriptSourceSSHDir scriptSourceSSHDir) {
-        this.scriptSourceSSHDir = scriptSourceSSHDir;
+    public void setScriptSourceSSHDir(CommandSourceSSHDir commandSourceSSHDir) {
+        this.commandSourceSSHDir = commandSourceSSHDir;
     }
 
     @Override
     public String toString() {
-        return "ScriptSource{" +
+        return "CommandSource{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", scriptSourceServerDir=" + scriptSourceServerDir +

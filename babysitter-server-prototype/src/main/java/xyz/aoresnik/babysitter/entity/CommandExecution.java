@@ -4,18 +4,18 @@ import javax.persistence.*;
 import java.sql.Timestamp;
 
 @Entity
-@Table(name = "SCRIPT_EXECUTION")
-public class ScriptExecution {
+@Table(name = "COMMAND_EXECUTION")
+public class CommandExecution {
     // TODO: migrate to GUID for this and all IDs that are sent via REST (requires Quarkus 3 with JEE 10 and JPA 3.1)
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long id;
 
     @Column
-    private boolean scriptRun;
+    private boolean commandRun;
 
     @Column
-    private boolean scriptCompleted;
+    private boolean commandCompleted;
 
     @Column
     private Integer exitCode;
@@ -30,11 +30,11 @@ public class ScriptExecution {
     private Timestamp endTime;
 
     @ManyToOne
-    @JoinColumn(name = "SCRIPT_SOURCE_ID")
-    private ScriptSource scriptSource;
+    @JoinColumn(name = "COMMAND_SOURCE_ID")
+    private CommandSource commandSource;
 
-    @Column(name = "SCRIPT_ID")
-    private String scriptId;
+    @Column(name = "COMMAND_ID")
+    private String commandId;
 
     public Long getId() {
         return id;
@@ -44,20 +44,20 @@ public class ScriptExecution {
         this.id = id;
     }
 
-    public boolean isScriptRun() {
-        return scriptRun;
+    public boolean isCommandRun() {
+        return commandRun;
     }
 
-    public void setScriptRun(boolean scriptRun) {
-        this.scriptRun = scriptRun;
+    public void setCommandRun(boolean scriptRun) {
+        this.commandRun = scriptRun;
     }
 
-    public boolean isScriptCompleted() {
-        return scriptCompleted;
+    public boolean isCommandCompleted() {
+        return commandCompleted;
     }
 
-    public void setScriptCompleted(boolean scriptCompleted) {
-        this.scriptCompleted = scriptCompleted;
+    public void setCommandCompleted(boolean scriptCompleted) {
+        this.commandCompleted = scriptCompleted;
     }
 
     public Integer getExitCode() {
@@ -92,34 +92,34 @@ public class ScriptExecution {
         this.endTime = endTime;
     }
 
-    public ScriptSource getScriptSource() {
-        return scriptSource;
+    public CommandSource getScriptSource() {
+        return commandSource;
     }
 
-    public void setScriptSource(ScriptSource scriptSource) {
-        this.scriptSource = scriptSource;
+    public void setScriptSource(CommandSource commandSource) {
+        this.commandSource = commandSource;
     }
 
-    public String getScriptId() {
-        return scriptId;
+    public String getCommandId() {
+        return commandId;
     }
 
-    public void setScriptId(String scriptId) {
-        this.scriptId = scriptId;
+    public void setCommandId(String scriptId) {
+        this.commandId = scriptId;
     }
 
     @Override
     public String toString() {
-        return "ScriptExecution{" +
+        return "CommandExecution{" +
                 "id=" + id +
-                ", scriptRun=" + scriptRun +
-                ", scriptCompleted=" + scriptCompleted +
+                ", scriptRun=" + commandRun +
+                ", scriptCompleted=" + commandCompleted +
                 ", exitCode=" + exitCode +
                 ", errorText='" + errorText + '\'' +
                 ", startTime=" + startTime +
                 ", endTime=" + endTime +
-                ", scriptSource=" + scriptSource +
-                ", scriptId='" + scriptId + '\'' +
+                ", commandSource=" + commandSource +
+                ", scriptId='" + commandId + '\'' +
                 '}';
     }
 }

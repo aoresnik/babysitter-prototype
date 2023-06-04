@@ -2,7 +2,7 @@ package xyz.aoresnik.babysitter;
 
 import org.jboss.logging.Logger;
 import xyz.aoresnik.babysitter.data.CommandExecutionData;
-import xyz.aoresnik.babysitter.entity.ScriptExecution;
+import xyz.aoresnik.babysitter.entity.CommandExecution;
 import xyz.aoresnik.babysitter.script.AbstractCommandRunner;
 import xyz.aoresnik.babysitter.script.CommandTypes;
 
@@ -31,12 +31,12 @@ public class CommandExecutionResource {
     @Produces(MediaType.APPLICATION_JSON)
     public List<CommandExecutionData> getScripts() {
         log.info("Reading the list of scripts");
-        List<ScriptExecution> scriptExecutions = em.createQuery("select se from ScriptExecution se", ScriptExecution.class).getResultList();
+        List<CommandExecution> commandExecutions = em.createQuery("select se from CommandExecution se", CommandExecution.class).getResultList();
 
         List<CommandExecutionData> result = new ArrayList<>();
 
-        for (ScriptExecution scriptExecution : scriptExecutions) {
-            CommandExecutionData commandExecutionData = scriptExecutionDataFromEntity(scriptExecution);
+        for (CommandExecution commandExecution : commandExecutions) {
+            CommandExecutionData commandExecutionData = scriptExecutionDataFromEntity(commandExecution);
 
             result.add(commandExecutionData);
         }
@@ -48,25 +48,25 @@ public class CommandExecutionResource {
     @GET
     @Produces(MediaType.TEXT_PLAIN)
     public byte[] getRawTranscript(@PathParam("executionId") String executionId) {
-        ScriptExecution scriptExecution = commandExecutionService.getScriptExecution(executionId);
-        AbstractCommandRunner scriptRunner1 = CommandTypes.newForScriptSource(scriptExecution.getScriptSource()).forInactiveScriptExecution(scriptExecution);
+        CommandExecution commandExecution = commandExecutionService.getScriptExecution(executionId);
+        AbstractCommandRunner scriptRunner1 = CommandTypes.newForScriptSource(commandExecution.getScriptSource()).forInactiveScriptExecution(commandExecution);
         return scriptRunner1.getResult();
     }
 
-    private static CommandExecutionData scriptExecutionDataFromEntity(ScriptExecution scriptExecution) {
+    private static CommandExecutionData scriptExecutionDataFromEntity(CommandExecution commandExecution) {
         CommandExecutionData commandExecutionData = new CommandExecutionData();
-        commandExecutionData.setScriptExecutionId(String.valueOf(scriptExecution.getId()));
+        commandExecutionData.setScriptExecutionId(String.valueOf(commandExecution.getId()));
 
-        commandExecutionData.setScriptRun(scriptExecution.isScriptRun());
-        commandExecutionData.setScriptCompleted(scriptExecution.isScriptCompleted());
-        commandExecutionData.setExitCode(scriptExecution.getExitCode());
-        commandExecutionData.setErrorText(scriptExecution.getErrorText());
-        commandExecutionData.setStartTime(scriptExecution.getStartTime() != null ? scriptExecution.getStartTime() : null);
-        commandExecutionData.setEndTime(scriptExecution.getEndTime() != null ? scriptExecution.getEndTime() : null);
+        commandExecutionData.setScriptRun(commandExecution.isCommandRun());
+        commandExecutionData.setScriptCompleted(commandExecution.isCommandCompleted());
+        commandExecutionData.setExitCode(commandExecution.getExitCode());
+        commandExecutionData.setErrorText(commandExecution.getErrorText());
+        commandExecutionData.setStartTime(commandExecution.getStartTime() != null ? commandExecution.getStartTime() : null);
+        commandExecutionData.setEndTime(commandExecution.getEndTime() != null ? commandExecution.getEndTime() : null);
 
-        commandExecutionData.setScriptId(scriptExecution.getScriptId());
-        commandExecutionData.setScriptSourceId(String.valueOf(scriptExecution.getScriptSource().getId()));
-        commandExecutionData.setScriptSourceName(scriptExecution.getScriptSource().getName());
+        commandExecutionData.setScriptId(commandExecution.getCommandId());
+        commandExecutionData.setScriptSourceId(String.valueOf(commandExecution.getScriptSource().getId()));
+        commandExecutionData.setScriptSourceName(commandExecution.getScriptSource().getName());
         return commandExecutionData;
     }
 

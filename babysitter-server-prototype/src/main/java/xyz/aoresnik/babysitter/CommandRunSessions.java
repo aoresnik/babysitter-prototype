@@ -7,7 +7,7 @@ import org.jboss.logging.Logger;
 import xyz.aoresnik.babysitter.data.AbstractScriptExecutionRTData;
 import xyz.aoresnik.babysitter.data.CommandExecutionInitialStateRTData;
 import xyz.aoresnik.babysitter.data.CommandInputData;
-import xyz.aoresnik.babysitter.entity.ScriptExecution;
+import xyz.aoresnik.babysitter.entity.CommandExecution;
 import xyz.aoresnik.babysitter.script.AbstractCommandRunner;
 import xyz.aoresnik.babysitter.script.ActiveCommandRunners;
 import xyz.aoresnik.babysitter.script.CommandTypes;
@@ -95,8 +95,8 @@ public class CommandRunSessions {
             });
         } else {
             log.error("For session ID=%s the script runner has completed and is inactive - obtaining from database".formatted(sessionId));
-            ScriptExecution scriptExecution = commandExecutionService.getScriptExecution(sessionId);
-            AbstractCommandRunner scriptRunner1 = CommandTypes.newForScriptSource(scriptExecution.getScriptSource()).forInactiveScriptExecution(scriptExecution);
+            CommandExecution commandExecution = commandExecutionService.getScriptExecution(sessionId);
+            AbstractCommandRunner scriptRunner1 = CommandTypes.newForScriptSource(commandExecution.getScriptSource()).forInactiveScriptExecution(commandExecution);
             CommandExecutionInitialStateRTData initialStateData = scriptRunner1.getScriptExecutionInitialStateData();
             session.getAsyncRemote().sendObject(initialStateData, result -> {
                 if (result.getException() != null) {

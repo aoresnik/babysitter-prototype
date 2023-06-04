@@ -8,8 +8,8 @@ import xyz.aoresnik.babysitter.data.AbstractScriptExecutionRTData;
 import xyz.aoresnik.babysitter.data.CommandExecutionInitialStateRTData;
 import xyz.aoresnik.babysitter.data.CommandExecutionUpdateRTData;
 import xyz.aoresnik.babysitter.data.CommandInputData;
-import xyz.aoresnik.babysitter.entity.ScriptExecution;
-import xyz.aoresnik.babysitter.entity.ScriptSource;
+import xyz.aoresnik.babysitter.entity.CommandExecution;
+import xyz.aoresnik.babysitter.entity.CommandSource;
 
 import java.io.File;
 import java.io.IOException;
@@ -27,7 +27,7 @@ abstract public class AbstractCommandRunner {
     @Getter
     private final String scriptExecutionID;
 
-    private final ScriptSource scriptSource;
+    private final CommandSource commandSource;
     @Getter
     private final String scriptName;
 
@@ -59,8 +59,8 @@ abstract public class AbstractCommandRunner {
 
     private Set<Consumer<AbstractCommandRunner>> statusChangeListeners = new HashSet<>();
 
-    public AbstractCommandRunner(ScriptSource scriptSource, String scriptName, String executionId) {
-        this.scriptSource = scriptSource;
+    public AbstractCommandRunner(CommandSource commandSource, String scriptName, String executionId) {
+        this.commandSource = commandSource;
         this.scriptName = scriptName;
         this.scriptExecutionID = executionId;
         try {
@@ -159,26 +159,26 @@ abstract public class AbstractCommandRunner {
         statusChangeListeners.forEach(listener -> listener.accept(this));
     }
 
-    public void updateEntity(ScriptExecution scriptExecution) {
-        scriptExecution.setScriptCompleted(scriptCompleted);
-        scriptExecution.setScriptRun(scriptRun);
-        scriptExecution.setErrorText(errorText);
-        scriptExecution.setExitCode(exitCode);
-        scriptExecution.setStartTime(startTime != null ? new Timestamp(startTime.getTime()) : null);
-        scriptExecution.setEndTime(endTime != null ? new Timestamp(endTime.getTime()) : null);
+    public void updateEntity(CommandExecution commandExecution) {
+        commandExecution.setCommandCompleted(scriptCompleted);
+        commandExecution.setCommandRun(scriptRun);
+        commandExecution.setErrorText(errorText);
+        commandExecution.setExitCode(exitCode);
+        commandExecution.setStartTime(startTime != null ? new Timestamp(startTime.getTime()) : null);
+        commandExecution.setEndTime(endTime != null ? new Timestamp(endTime.getTime()) : null);
     }
 
     public void addStatusChangeListener(Consumer<AbstractCommandRunner> statusChangeListener) {
         this.statusChangeListeners.add(statusChangeListener);
     }
 
-    public void initFromScriptExecutionEntity(ScriptExecution scriptExecution)
+    public void initFromScriptExecutionEntity(CommandExecution commandExecution)
     {
-        setScriptCompleted(scriptExecution.isScriptCompleted());
-        setScriptRun(scriptExecution.isScriptRun());
-        setErrorText(scriptExecution.getErrorText());
-        setExitCode(scriptExecution.getExitCode());
-        setStartTime(scriptExecution.getStartTime());
-        setEndTime(scriptExecution.getEndTime());
+        setScriptCompleted(commandExecution.isCommandCompleted());
+        setScriptRun(commandExecution.isCommandRun());
+        setErrorText(commandExecution.getErrorText());
+        setExitCode(commandExecution.getExitCode());
+        setStartTime(commandExecution.getStartTime());
+        setEndTime(commandExecution.getEndTime());
     }
 }

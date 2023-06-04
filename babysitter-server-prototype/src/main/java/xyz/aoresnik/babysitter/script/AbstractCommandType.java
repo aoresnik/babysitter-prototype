@@ -1,8 +1,8 @@
 package xyz.aoresnik.babysitter.script;
 
 import org.jboss.logging.Logger;
-import xyz.aoresnik.babysitter.entity.ScriptExecution;
-import xyz.aoresnik.babysitter.entity.ScriptSource;
+import xyz.aoresnik.babysitter.entity.CommandExecution;
+import xyz.aoresnik.babysitter.entity.CommandSource;
 
 import java.util.List;
 
@@ -10,15 +10,15 @@ abstract public class AbstractCommandType {
 
     private static final Logger log = Logger.getLogger(AbstractCommandType.class);
 
-    private final ScriptSource scriptSource;
+    private final CommandSource commandSource;
 
-    public ScriptSource getScriptSource() {
-        return scriptSource;
+    public CommandSource getScriptSource() {
+        return commandSource;
     }
 
-    public AbstractCommandType(ScriptSource scriptSource) {
+    public AbstractCommandType(CommandSource commandSource) {
 
-        this.scriptSource = scriptSource;
+        this.commandSource = commandSource;
     }
 
     abstract public List<String> getScripts();
@@ -30,8 +30,8 @@ abstract public class AbstractCommandType {
      * Runners for active sessions must be returned from {@link ActiveCommandRunners}.
      * TODO: support sessions running in tmux or equivalent, that can detach and reattach
 
-     * @param scriptExecution
+     * @param commandExecution
      * @return
      */
-    abstract public AbstractCommandRunner forInactiveScriptExecution(ScriptExecution scriptExecution);
+    abstract public AbstractCommandRunner forInactiveScriptExecution(CommandExecution commandExecution);
 }

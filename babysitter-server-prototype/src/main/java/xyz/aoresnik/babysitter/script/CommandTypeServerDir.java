@@ -4,8 +4,8 @@ import com.pty4j.PtyProcess;
 import com.pty4j.PtyProcessBuilder;
 import org.jboss.logging.Logger;
 import xyz.aoresnik.babysitter.data.CommandInputData;
-import xyz.aoresnik.babysitter.entity.ScriptExecution;
-import xyz.aoresnik.babysitter.entity.ScriptSource;
+import xyz.aoresnik.babysitter.entity.CommandExecution;
+import xyz.aoresnik.babysitter.entity.CommandSource;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,8 +19,8 @@ public class CommandTypeServerDir extends AbstractCommandType {
 
     private static final Logger log = Logger.getLogger(CommandTypeServerDir.class);
 
-    public CommandTypeServerDir(ScriptSource scriptSource) {
-        super(scriptSource);
+    public CommandTypeServerDir(CommandSource commandSource) {
+        super(commandSource);
     }
 
     public List<String> getScripts() {
@@ -48,9 +48,9 @@ public class CommandTypeServerDir extends AbstractCommandType {
     }
 
     @Override
-    public AbstractCommandRunner forInactiveScriptExecution(ScriptExecution scriptExecution) {
-        ServerDirCommandTypeRunner result = new ServerDirCommandTypeRunner(getScriptSource(), scriptExecution.getScriptId(), Long.toString(scriptExecution.getId()));
-        result.initFromScriptExecutionEntity(scriptExecution);
+    public AbstractCommandRunner forInactiveScriptExecution(CommandExecution commandExecution) {
+        ServerDirCommandTypeRunner result = new ServerDirCommandTypeRunner(getScriptSource(), commandExecution.getCommandId(), Long.toString(commandExecution.getId()));
+        result.initFromScriptExecutionEntity(commandExecution);
         return result;
     }
 
@@ -58,8 +58,8 @@ public class CommandTypeServerDir extends AbstractCommandType {
 
         private OutputStream processStdin;
 
-        public ServerDirCommandTypeRunner(ScriptSource scriptSource, String scriptName, String scriptExecutionID) {
-            super(scriptSource, scriptName, scriptExecutionID);
+        public ServerDirCommandTypeRunner(CommandSource commandSource, String scriptName, String scriptExecutionID) {
+            super(commandSource, scriptName, scriptExecutionID);
         }
 
         @Override

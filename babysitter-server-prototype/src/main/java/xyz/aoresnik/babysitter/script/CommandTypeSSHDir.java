@@ -3,8 +3,8 @@ package xyz.aoresnik.babysitter.script;
 import com.jcraft.jsch.*;
 import org.jboss.logging.Logger;
 import xyz.aoresnik.babysitter.data.CommandInputData;
-import xyz.aoresnik.babysitter.entity.ScriptExecution;
-import xyz.aoresnik.babysitter.entity.ScriptSource;
+import xyz.aoresnik.babysitter.entity.CommandExecution;
+import xyz.aoresnik.babysitter.entity.CommandSource;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -17,8 +17,8 @@ public class CommandTypeSSHDir extends AbstractCommandType {
 
     private static final Logger log = Logger.getLogger(CommandTypeServerDir.class);
 
-    public CommandTypeSSHDir(ScriptSource scriptSource) {
-        super(scriptSource);
+    public CommandTypeSSHDir(CommandSource commandSource) {
+        super(commandSource);
     }
 
     @Override
@@ -108,9 +108,9 @@ public class CommandTypeSSHDir extends AbstractCommandType {
     }
 
     @Override
-    public AbstractCommandRunner forInactiveScriptExecution(ScriptExecution scriptExecution) {
-        SSHDirCommandTypeRunner result = new SSHDirCommandTypeRunner(getScriptSource(), scriptExecution.getScriptId(), Long.toString(scriptExecution.getId()));
-        result.initFromScriptExecutionEntity(scriptExecution);
+    public AbstractCommandRunner forInactiveScriptExecution(CommandExecution commandExecution) {
+        SSHDirCommandTypeRunner result = new SSHDirCommandTypeRunner(getScriptSource(), commandExecution.getCommandId(), Long.toString(commandExecution.getId()));
+        result.initFromScriptExecutionEntity(commandExecution);
         return result;
     }
 
@@ -118,8 +118,8 @@ public class CommandTypeSSHDir extends AbstractCommandType {
 
         private OutputStream processStdin;
 
-        public SSHDirCommandTypeRunner(ScriptSource scriptSource, String scriptName, String scriptExecutionID) {
-            super(scriptSource, scriptName, scriptExecutionID);
+        public SSHDirCommandTypeRunner(CommandSource commandSource, String scriptName, String scriptExecutionID) {
+            super(commandSource, scriptName, scriptExecutionID);
         }
 
         @Override

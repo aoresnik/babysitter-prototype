@@ -3,8 +3,8 @@ package xyz.aoresnik.babysitter.entity;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "SCRIPT_SOURCE_SERVER_DIR")
-public class ScriptSourceServerDir {
+@Table(name = "COMMAND_SOURCE_SERVER_DIR")
+public class CommandSourceServerDir {
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
     Long id;
@@ -13,8 +13,8 @@ public class ScriptSourceServerDir {
     String dirname;
 
     @OneToOne
-    @JoinColumn(name = "SCRIPT_SOURCE_ID")
-    ScriptSource scriptSource;
+    @JoinColumn(name = "COMMAND_SOURCE_ID")
+    CommandSource commandSource;
 
     public Long getId() {
         return id;
@@ -32,17 +32,17 @@ public class ScriptSourceServerDir {
         this.dirname = dirname;
     }
 
-    public ScriptSource getScriptSource() {
-        return scriptSource;
+    public CommandSource getScriptSource() {
+        return commandSource;
     }
 
-    public void setScriptSource(ScriptSource scriptSource) {
-        this.scriptSource = scriptSource;
+    public void setScriptSource(CommandSource commandSource) {
+        this.commandSource = commandSource;
     }
 
     @Override
     public String toString() {
-        return "ScriptSourceServerDir{" +
+        return "CommandSourceServerDir{" +
                 "id=" + id +
                 ", dirname='" + dirname + '\'' +
                 '}';
