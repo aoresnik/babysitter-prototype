@@ -29,7 +29,7 @@ public class CommandExecutionResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public List<CommandExecutionData> getScripts() {
+    public List<CommandExecutionData> getCommandExecutions() {
         log.info("Reading the list of scripts");
         List<CommandExecution> commandExecutions = em.createQuery("select ce from CommandExecution ce", CommandExecution.class).getResultList();
 
@@ -42,6 +42,14 @@ public class CommandExecutionResource {
         }
 
         return result;
+    }
+
+    @Path("/{executionId}")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public CommandExecutionData getCommandExecution(@PathParam("executionId") String executionId) {
+        CommandExecution commandExecution = em.find(CommandExecution.class, Long.parseLong(executionId));
+        return scriptExecutionDataFromEntity(commandExecution);
     }
 
     @Path("/{executionId}/transcript")

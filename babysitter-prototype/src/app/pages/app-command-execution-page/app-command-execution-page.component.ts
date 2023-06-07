@@ -6,6 +6,7 @@ import {NgTerminal} from "ng-terminal";
 import {ScriptWebsocketConnection} from "../../websocket-test.service";
 import {ScriptRunSessionService} from "../../script-run-session.service";
 import {environment} from "../../../environments/environment";
+import {ScriptExecutionsService} from "../../script-executions.service";
 
 @Component({
   selector: 'app-app-command-execution-page',
@@ -33,7 +34,13 @@ export class AppCommandExecutionPageComponent implements OnInit, AfterViewInit {
 
   private messages?: ScriptWebsocketConnection;
 
-  constructor(private route: ActivatedRoute, private scriptsService: ScriptsServiceService, private scriptRunSessionService: ScriptRunSessionService, private router: Router) {
+  commandId?: string;
+
+  constructor(private route: ActivatedRoute,
+              private scriptsService: ScriptsServiceService,
+              private scriptRunSessionService: ScriptRunSessionService,
+              private scriptExecutionsService: ScriptExecutionsService,
+              private router: Router) {
   }
 
   ngOnInit() {
@@ -72,6 +79,7 @@ export class AppCommandExecutionPageComponent implements OnInit, AfterViewInit {
 
   showRun(run: ScriptRun) {
     console.log("Show console of run " + run.scriptRunSessionId + " of script " + run.scriptName);
+
     this.activeRun = run;
     if (this.messages) {
       console.log("Unsubscribing from previous session");
@@ -106,6 +114,10 @@ export class AppCommandExecutionPageComponent implements OnInit, AfterViewInit {
       } else {
         this.scriptError = "";
       }
+    });
+
+    this.scriptExecutionsService.getCommandExecution(run.scriptRunSessionId).subscribe(response => {
+      this.commandId = response.commandId;
     });
   }
 

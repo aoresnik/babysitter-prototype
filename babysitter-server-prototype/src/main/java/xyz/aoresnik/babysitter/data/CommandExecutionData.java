@@ -17,6 +17,7 @@ public class CommandExecutionData {
 
     private String commandSourceName;
 
+    // TODO: change the frontend to use separate command name and command ID - it now uses command ID for both
     private String commandId;
 
     private boolean commandRun;

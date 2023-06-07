@@ -25,6 +25,13 @@ export class ScriptExecutionsService {
     );
   }
 
+  getCommandExecution(executionId: string): Observable<any> {
+    return this.http.get<string[]>(`${ this.serverRootUrl }/api/v1/executions/${ executionId }`, this.httpOptions ).pipe(
+      tap(res => console.log('Loaded command execution')),
+      catchError(this.handleError<any>('saveNewState'))
+    );
+  }
+
   /**
    * Handle Http operation that failed.
    * Let the app continue.
