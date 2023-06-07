@@ -18,7 +18,7 @@ export class ScriptExecutionsService {
     headers: new HttpHeaders({'Content-Type': 'application/json'})
   };
 
-  getScriptExecutions(): Observable<any[]> {
+  getCommandExecutions(): Observable<any[]> {
     return this.http.get<string[]>(`${ this.serverRootUrl }/api/v1/executions`, this.httpOptions ).pipe(
       tap(res => console.log('Loaded list of script executions')),
       catchError(this.handleError<any>('saveNewState'))

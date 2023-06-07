@@ -15,7 +15,7 @@ export class AppExecutionsListPaneComponent {
   }
 
   ngOnInit(): void {
-    this.scriptExecutionsService.getScriptExecutions().subscribe(res => {
+    this.scriptExecutionsService.getCommandExecutions().subscribe(res => {
       console.log(res);
       this.scriptExecutionsList = res;
     });
