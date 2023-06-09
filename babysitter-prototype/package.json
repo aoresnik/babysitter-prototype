@@ -6,7 +6,8 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "generate:api": "openapi-generator-cli generate -i ../babysitter-server-prototype/build/generated/openapi.yaml -g typescript-angular -o src/app/babysitter-server-api/api/v1"
   },
   "private": true,
   "dependencies": {
@@ -18,6 +19,7 @@
     "@angular/platform-browser": "^15.0.0",
     "@angular/platform-browser-dynamic": "^15.0.0",
     "@angular/router": "^15.0.0",
+    "@openapitools/openapi-generator-cli": "^2.6.0",
     "ng-terminal": "^5.5.0",
     "primeicons": "^6.0.1",
     "primeng": "^15.4.1",

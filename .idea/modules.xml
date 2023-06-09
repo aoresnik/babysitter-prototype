@@ -3,6 +3,8 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/Babysitter.iml" filepath="$PROJECT_DIR$/.idea/Babysitter.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/babysitter-server-prototype.main.iml" filepath="$PROJECT_DIR$/.idea/modules/babysitter-server-prototype.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/babysitter-server-prototype.test.iml" filepath="$PROJECT_DIR$/.idea/modules/babysitter-server-prototype.test.iml" />
     </modules>
   </component>
 </project>
