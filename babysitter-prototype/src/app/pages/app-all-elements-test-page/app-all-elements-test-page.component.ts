@@ -3,6 +3,7 @@ import {ScriptsServiceService} from "../../scripts-service.service";
 import {NgTerminal} from "ng-terminal";
 import {ScriptRunSessionService} from "../../script-run-session.service";
 import {ScriptWebsocketConnection} from "../../websocket-test.service";
+import {CommandsResourceService} from "../../babysitter-server-api/api/v1";
 
 export class ScriptRun {
   constructor(scriptName: string, scriptRunSessionId: string, date: Date = new Date() ) {
@@ -46,12 +47,12 @@ export class AppAllElementsTestPageComponent {
 
   private messages?: ScriptWebsocketConnection;
 
-  constructor(private scriptsService: ScriptsServiceService, private scriptRunSessionService: ScriptRunSessionService) {
+  constructor(private scriptsService: ScriptsServiceService, private commandsResourceService: CommandsResourceService, private scriptRunSessionService: ScriptRunSessionService) {
 
   }
 
   ngOnInit(): void {
-    this.scriptsService.getScripts().subscribe(res => {
+    this.commandsResourceService.apiV1CommandsGet().subscribe(res => {
       console.log(res);
       this.scriptsList = res;
     });

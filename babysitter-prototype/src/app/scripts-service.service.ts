@@ -39,13 +39,6 @@ export class ScriptsServiceService {
     headers: new HttpHeaders({'Content-Type': 'application/json'})
   };
 
-  getScripts(): Observable<any[]> {
-    return this.http.get<string[]>(`${ this.serverRootUrl }/api/v1/commands`, this.httpOptions ).pipe(
-      tap(res => console.log('Loaded list of scripts')),
-      catchError(this.handleError<any>('saveNewState'))
-    );
-  }
-
   runScriptAsync(commandSourceId: number, script: string): Observable<string> {
     return this.http.post<string>(`${ this.serverRootUrl }/api/v1/commands/sources/${commandSourceId}/${script}/run-async`, this.httpOptions ).pipe(
       tap(res => console.log(`Run script ${ script }`)),

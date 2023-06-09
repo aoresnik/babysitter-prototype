@@ -1,5 +1,4 @@
 import {Component} from '@angular/core';
-import {ScriptsServiceService} from "../../scripts-service.service";
 import {Router} from "@angular/router";
 import {CommandsResourceService} from "../../babysitter-server-api/api/v1";
 

@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
-import {ScriptsServiceService} from "../../scripts-service.service";
 import {Router} from "@angular/router";
+import {CommandsResourceService} from "../../babysitter-server-api/api/v1";
 
 @Component({
   selector: 'app-app-commands-list-pane',
@@ -20,12 +20,12 @@ export class AppCommandsListPaneComponent implements OnInit {
   // } ];
   scriptsList?: any[];
 
-  constructor(private scriptsService: ScriptsServiceService, private router: Router) {
+  constructor(private commandsResourceService: CommandsResourceService, private router: Router) {
 
   }
 
   ngOnInit(): void {
-    this.scriptsService.getScripts().subscribe(res => {
+    this.commandsResourceService.apiV1CommandsGet().subscribe(res => {
       console.log(res);
       this.scriptsList = res;
     });
