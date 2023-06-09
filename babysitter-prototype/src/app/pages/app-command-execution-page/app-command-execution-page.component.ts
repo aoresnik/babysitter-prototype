@@ -5,7 +5,7 @@ import {NgTerminal} from "ng-terminal";
 import {ScriptWebsocketConnection} from "../../websocket-test.service";
 import {ScriptRunSessionService} from "../../script-run-session.service";
 import {environment} from "../../../environments/environment";
-import {ScriptExecutionsService} from "../../script-executions.service";
+import {CommandExecutionResourceService} from "../../babysitter-server-api/api/v1";
 
 @Component({
   selector: 'app-app-command-execution-page',
@@ -37,7 +37,7 @@ export class AppCommandExecutionPageComponent implements OnInit, AfterViewInit {
 
   constructor(private route: ActivatedRoute,
               private scriptRunSessionService: ScriptRunSessionService,
-              private scriptExecutionsService: ScriptExecutionsService,
+              private commandExecutionResourceService: CommandExecutionResourceService,
               private router: Router) {
   }
 
@@ -114,7 +114,7 @@ export class AppCommandExecutionPageComponent implements OnInit, AfterViewInit {
       }
     });
 
-    this.scriptExecutionsService.getCommandExecution(run.scriptRunSessionId).subscribe(response => {
+    this.commandExecutionResourceService.apiV1ExecutionsExecutionIdGet(run.scriptRunSessionId).subscribe(response => {
       this.commandId = response.commandId;
     });
   }

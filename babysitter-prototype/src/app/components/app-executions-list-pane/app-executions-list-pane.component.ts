@@ -1,6 +1,6 @@
 import {Component} from '@angular/core';
 import {Router} from "@angular/router";
-import {ScriptExecutionsService} from "../../script-executions.service";
+import {CommandExecutionResourceService} from "../../babysitter-server-api/api/v1";
 
 @Component({
   selector: 'app-executions-list-pane',
@@ -10,12 +10,12 @@ import {ScriptExecutionsService} from "../../script-executions.service";
 export class AppExecutionsListPaneComponent {
   scriptExecutionsList?: any[];
 
-  constructor(private scriptExecutionsService: ScriptExecutionsService, private router: Router) {
+  constructor(private commandExecutionResourceService: CommandExecutionResourceService, private router: Router) {
 
   }
 
   ngOnInit(): void {
-    this.scriptExecutionsService.getCommandExecutions().subscribe(res => {
+    this.commandExecutionResourceService.apiV1ExecutionsGet().subscribe(res => {
       console.log(res);
       this.scriptExecutionsList = res;
     });
