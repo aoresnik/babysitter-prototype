@@ -1,5 +1,4 @@
 import {Component, ViewChild} from '@angular/core';
-import {ScriptsServiceService} from "../../scripts-service.service";
 import {NgTerminal} from "ng-terminal";
 import {ScriptRunSessionService} from "../../script-run-session.service";
 import {ScriptWebsocketConnection} from "../../websocket-test.service";
@@ -47,7 +46,7 @@ export class AppAllElementsTestPageComponent {
 
   private messages?: ScriptWebsocketConnection;
 
-  constructor(private scriptsService: ScriptsServiceService, private commandsResourceService: CommandsResourceService, private scriptRunSessionService: ScriptRunSessionService) {
+  constructor(private commandsResourceService: CommandsResourceService, private scriptRunSessionService: ScriptRunSessionService) {
 
   }
 
@@ -81,7 +80,7 @@ export class AppAllElementsTestPageComponent {
 
   runScript(script: any) {
     console.log(`Running script ${ script }`);
-    this.scriptsService.runScriptAsync(script.commandSourceId, script.commandId).subscribe(res => {
+    this.commandsResourceService.apiV1CommandsSourcesScriptSourceIdScriptNameRunAsyncPost(script.commandId, script.commandSourceId).subscribe(res => {
       let runSessionId = res;
       console.log(`Script run session ID: ${runSessionId}`);
       let scriptRun = new ScriptRun(script.commandId, runSessionId);

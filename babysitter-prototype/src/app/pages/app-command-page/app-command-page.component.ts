@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
 import {ScriptRun} from "../app-all-elements-test-page/app-all-elements-test-page.component";
-import {ScriptsServiceService} from "../../scripts-service.service";
+import {CommandsResourceService} from "../../babysitter-server-api/api/v1";
 
 /**
  * NOTE: The page must be able to be embedded in the router-outlet of the app-commands-page.component.html and also on
@@ -13,7 +13,7 @@ import {ScriptsServiceService} from "../../scripts-service.service";
   styleUrls: ['./app-command-page.component.css']
 })
 export class AppCommandPageComponent implements OnInit {
-  constructor(private route: ActivatedRoute, private scriptsService: ScriptsServiceService, private router: Router) {
+  constructor(private route: ActivatedRoute, private commandsResourceService: CommandsResourceService, private router: Router) {
   }
 
   commandSourceId?: number | null;
@@ -37,7 +37,7 @@ export class AppCommandPageComponent implements OnInit {
   runScript(script: any, openConsole: boolean) {
     console.log(`Running script ${ script }`);
     if (this.commandSourceId != null && this.scriptID != null) {
-      this.scriptsService.runScriptAsync(this.commandSourceId, this.scriptID).subscribe(res => {
+      this.commandsResourceService.apiV1CommandsSourcesScriptSourceIdScriptNameRunAsyncPost(this.scriptID, this.commandSourceId).subscribe(res => {
         let runSessionId = res;
         console.log(`Script run session ID: ${runSessionId}`);
         if (openConsole) {

@@ -1,6 +1,5 @@
 import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
-import {ScriptsServiceService} from "../../scripts-service.service";
 import {ScriptRun} from "../app-all-elements-test-page/app-all-elements-test-page.component";
 import {NgTerminal} from "ng-terminal";
 import {ScriptWebsocketConnection} from "../../websocket-test.service";
@@ -37,7 +36,6 @@ export class AppCommandExecutionPageComponent implements OnInit, AfterViewInit {
   commandId?: string;
 
   constructor(private route: ActivatedRoute,
-              private scriptsService: ScriptsServiceService,
               private scriptRunSessionService: ScriptRunSessionService,
               private scriptExecutionsService: ScriptExecutionsService,
               private router: Router) {
