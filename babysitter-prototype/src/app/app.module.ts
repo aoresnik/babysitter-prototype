@@ -23,6 +23,15 @@ import {
 } from './pages/app-command-execution-not-selected-subpage/app-command-execution-not-selected-subpage.component';
 import {AppExecutionsListPaneComponent} from './components/app-executions-list-pane/app-executions-list-pane.component';
 import {AppHomePageComponent} from './pages/app-home-page/app-home-page.component';
+import { ApiModule as BabysitterServerApiModule } from './babysitter-server-api/api/v1/api.module';
+import { Configuration as BabysitterServerConfiguration, ConfigurationParameters as BabysitterServerConfigurationParameters} from './babysitter-server-api/api/v1';
+
+export function babysitterServerConfiguration(): BabysitterServerConfiguration {
+  const params: BabysitterServerConfigurationParameters = {
+    basePath: 'http://localhost:8080',
+  };
+  return new BabysitterServerConfiguration(params);
+}
 
 @NgModule({
   declarations: [
@@ -44,7 +53,8 @@ import {AppHomePageComponent} from './pages/app-home-page/app-home-page.componen
     AppRoutingModule,
     TableModule,
     HttpClientModule,
-    TreeModule
+    TreeModule,
+    BabysitterServerApiModule.forRoot(babysitterServerConfiguration),
   ],
   providers: [],
   bootstrap: [AppComponent]

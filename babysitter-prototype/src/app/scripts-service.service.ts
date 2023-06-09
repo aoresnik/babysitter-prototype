@@ -46,20 +46,6 @@ export class ScriptsServiceService {
     );
   }
 
-  getMostUsedCommands(): Observable<any[]> {
-    return this.http.get<string[]>(`${ this.serverRootUrl }/api/v1/commands/most-used`, this.httpOptions ).pipe(
-      tap(res => console.log('Loaded list of scripts')),
-      catchError(this.handleError<any>('saveNewState'))
-    );
-  }
-
-  getLastUsedCommands(): Observable<any[]> {
-    return this.http.get<string[]>(`${ this.serverRootUrl }/api/v1/commands/last-used`, this.httpOptions ).pipe(
-      tap(res => console.log('Loaded list of scripts')),
-      catchError(this.handleError<any>('saveNewState'))
-    );
-  }
-
   runScriptAsync(commandSourceId: number, script: string): Observable<string> {
     return this.http.post<string>(`${ this.serverRootUrl }/api/v1/commands/sources/${commandSourceId}/${script}/run-async`, this.httpOptions ).pipe(
       tap(res => console.log(`Run script ${ script }`)),

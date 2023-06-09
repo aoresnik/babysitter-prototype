@@ -1,6 +1,7 @@
 import {Component} from '@angular/core';
 import {ScriptsServiceService} from "../../scripts-service.service";
 import {Router} from "@angular/router";
+import {CommandsResourceService} from "../../babysitter-server-api/api/v1";
 
 @Component({
   selector: 'app-app-home-page',
@@ -8,20 +9,20 @@ import {Router} from "@angular/router";
   styleUrls: ['./app-home-page.component.css']
 })
 export class AppHomePageComponent {
-  scriptsList?: any[];
+  mostUsedCommandsList?: any[];
   lastCommandsList?: any[];
 
-  constructor(private scriptsService: ScriptsServiceService, private router: Router) {
+  constructor(private commandsResourceService: CommandsResourceService, private router: Router) {
   }
 
   ngOnInit(): void {
-    this.scriptsService.getMostUsedCommands().subscribe(res => {
-      console.log(res);
-      this.scriptsList = res;
-    });
-    this.scriptsService.getLastUsedCommands().subscribe(res => {
+    this.commandsResourceService.apiV1CommandsLastUsedGet().subscribe(res => {
       console.log(res);
       this.lastCommandsList = res;
+    });
+    this.commandsResourceService.apiV1CommandsMostUsedGet().subscribe(res => {
+      console.log(res);
+      this.mostUsedCommandsList = res;
     });
   }
 
