@@ -13,7 +13,7 @@ import { CommandData } from './commandData';
 
 
 export interface CommandMostUsedData { 
-    commandData?: CommandData;
+    commandData: CommandData;
     usageCount?: number;
 }
 

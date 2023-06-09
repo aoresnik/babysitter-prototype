@@ -12,8 +12,9 @@
 
 
 export interface CommandData { 
-    commandSourceId?: number;
-    commandSourceName?: string;
-    commandId?: string;
+    commandSourceId: number;
+    commandSourceName: string;
+    commandId: string;
+    commandName: string;
 }
 

@@ -13,7 +13,7 @@ import { CommandData } from './commandData';
 
 
 export interface CommandLastUsedData { 
-    commandData?: CommandData;
+    commandData: CommandData;
     lastUsed?: string;
 }
 

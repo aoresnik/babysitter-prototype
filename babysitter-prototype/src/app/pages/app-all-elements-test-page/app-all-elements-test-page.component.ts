@@ -80,7 +80,7 @@ export class AppAllElementsTestPageComponent {
 
   runScript(script: any) {
     console.log(`Running script ${ script }`);
-    this.commandsResourceService.apiV1CommandsSourcesScriptSourceIdScriptNameRunAsyncPost(script.commandId, script.commandSourceId).subscribe(res => {
+    this.commandsResourceService.apiV1CommandsSourcesCommandSourceIdCommandIdRunAsyncPost(script.commandId, script.commandSourceId).subscribe(res => {
       let runSessionId = res;
       console.log(`Script run session ID: ${runSessionId}`);
       let scriptRun = new ScriptRun(script.commandId, runSessionId);

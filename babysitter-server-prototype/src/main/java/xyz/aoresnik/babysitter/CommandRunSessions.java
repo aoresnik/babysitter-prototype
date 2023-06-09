@@ -54,9 +54,9 @@ public class CommandRunSessions {
 
     }
 
-    public void createForActiveExecution(String scriptName, AbstractCommandRunner scriptRunner) {
+    public void createForActiveExecution(AbstractCommandRunner scriptRunner) {
         activeScriptRunners.addScriptExecution(scriptRunner);
-        log.debug("Created new script run session for script " + scriptName + " with session run ID: " + scriptRunner.getScriptExecutionID());
+        log.debug("Created new script run session for script " + scriptRunner.getScriptName() + " with session run ID: " + scriptRunner.getScriptExecutionID());
     }
 
     @OnOpen

@@ -15,7 +15,7 @@ import java.util.*;
 
 public class CommandTypeSSHDir extends AbstractCommandType {
 
-    private static final Logger log = Logger.getLogger(CommandTypeServerDir.class);
+    private static final Logger log = Logger.getLogger(CommandTypeSSHDir.class);
 
     public CommandTypeSSHDir(CommandSource commandSource) {
         super(commandSource);
@@ -23,7 +23,7 @@ public class CommandTypeSSHDir extends AbstractCommandType {
 
     @Override
     public List<String> getScripts() {
-        log.error("SSH script source script enumeration for " + getScriptSource());
+        log.info("SSH script source script enumeration for " + getScriptSource());
 
         if (getScriptSource().getScriptSourceSSHDir().getSshConfig() == null)
         {

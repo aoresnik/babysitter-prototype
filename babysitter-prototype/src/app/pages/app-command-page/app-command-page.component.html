@@ -1,10 +1,10 @@
-<div>Selected command: source id: <b>{{ commandSourceId }}</b> command id: <b>{{ scriptID }}</b></div>
+<div>Selected command: source id: <b>{{ commandSourceId }}</b> command id: <b>{{ commandId }}</b></div>
 
 <div>
   <div>
-    <a href="#" (click)="runScript(scriptID, false); false">run</a>
+    <a href="#" (click)="runScript(commandId, false); false">run</a>
   </div>
   <div>
-    <a href="#" (click)="runScript(scriptID, true); false">run and open console</a>
+    <a href="#" (click)="runScript(commandId, true); false">run and open console</a>
   </div>
 </div>

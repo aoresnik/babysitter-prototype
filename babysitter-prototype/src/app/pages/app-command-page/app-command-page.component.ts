@@ -17,27 +17,31 @@ export class AppCommandPageComponent implements OnInit {
   }
 
   commandSourceId?: number | null;
-  scriptID?: string | null;
+  commandId?: number | null;
 
   ngOnInit() {
     this.route.paramMap
       .subscribe(paramMap => {
-          console.log(paramMap);
-        let sourceIdStr = paramMap.get('source_id')
+        console.log(paramMap);
+        let sourceIdStr = paramMap.get('command_source_id')
         if (sourceIdStr != null) {
           this.commandSourceId = parseInt(sourceIdStr, 10);
         } else {
           this.commandSourceId = null;
         }
-        this.scriptID = paramMap.get('script_id');
+        let commandIdStr = paramMap.get('command_id');
+        if (commandIdStr != null) {
+          this.commandId = parseInt(commandIdStr, 10);
+        } else {
+          this.commandId = null;
         }
-      );
+      });
   }
 
   runScript(script: any, openConsole: boolean) {
     console.log(`Running script ${ script }`);
-    if (this.commandSourceId != null && this.scriptID != null) {
-      this.commandsResourceService.apiV1CommandsSourcesScriptSourceIdScriptNameRunAsyncPost(this.scriptID, this.commandSourceId).subscribe(res => {
+    if (this.commandSourceId != null && this.commandId != null) {
+      this.commandsResourceService.apiV1CommandsSourcesCommandSourceIdCommandIdRunAsyncPost(this.commandId, this.commandSourceId).subscribe(res => {
         let runSessionId = res;
         console.log(`Script run session ID: ${runSessionId}`);
         if (openConsole) {

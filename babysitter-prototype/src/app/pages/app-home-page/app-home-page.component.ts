@@ -1,6 +1,6 @@
 import {Component} from '@angular/core';
 import {Router} from "@angular/router";
-import {CommandsResourceService} from "../../babysitter-server-api/api/v1";
+import {CommandLastUsedData, CommandMostUsedData, CommandsResourceService} from "../../babysitter-server-api/api/v1";
 
 @Component({
   selector: 'app-app-home-page',
@@ -8,8 +8,8 @@ import {CommandsResourceService} from "../../babysitter-server-api/api/v1";
   styleUrls: ['./app-home-page.component.css']
 })
 export class AppHomePageComponent {
-  mostUsedCommandsList?: any[];
-  lastCommandsList?: any[];
+  mostUsedCommandsList?: CommandMostUsedData[];
+  lastCommandsList?: CommandLastUsedData[];
 
   constructor(private commandsResourceService: CommandsResourceService, private router: Router) {
   }

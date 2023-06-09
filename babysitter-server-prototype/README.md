@@ -1,5 +1,11 @@
 # babysitter-server-prototype
 
+To generate openapi.yaml, run quarkusBuild of quarkus plugin.
+
+NOTE: it seems that you need to manually run clean or remove build/generated/openapi.yaml to get it to regenerate.
+
+## Quarkus
+
 This project uses Quarkus, the Supersonic Subatomic Java Framework.
 
 If you want to learn more about Quarkus, please visit its website: https://quarkus.io/ .

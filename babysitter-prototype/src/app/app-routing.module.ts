@@ -25,7 +25,7 @@ const routes: Routes = [
     children: [
       {path: '', redirectTo: 'list', pathMatch: 'full'},
       {path: 'list', component: AppCommandNotSelectedSubpageComponent},
-      {path: 'command/:source_id/:script_id', component: AppCommandPageComponent},
+      {path: 'command/:command_source_id/:command_id', component: AppCommandPageComponent},
     ]
   },
 
@@ -40,7 +40,7 @@ const routes: Routes = [
   },
 
   // Show command without list of commands
-  {path: 'command/:source_id/:script_id', component: AppCommandPageComponent},
+  {path: 'command/:command_source_id/:command_id', component: AppCommandPageComponent},
   {path: 'execution/:execution_id', component: AppCommandExecutionPageComponent},
 
   // TEST Pages

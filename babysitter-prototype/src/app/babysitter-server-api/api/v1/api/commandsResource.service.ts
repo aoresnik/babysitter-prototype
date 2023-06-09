@@ -255,20 +255,20 @@ export class CommandsResourceService {
     }
 
     /**
-     * @param scriptName 
-     * @param scriptSourceId 
+     * @param commandId 
+     * @param commandSourceId 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public apiV1CommandsSourcesScriptSourceIdScriptNameRunAsyncPost(scriptName: string, scriptSourceId: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<string>;
-    public apiV1CommandsSourcesScriptSourceIdScriptNameRunAsyncPost(scriptName: string, scriptSourceId: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<string>>;
-    public apiV1CommandsSourcesScriptSourceIdScriptNameRunAsyncPost(scriptName: string, scriptSourceId: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<string>>;
-    public apiV1CommandsSourcesScriptSourceIdScriptNameRunAsyncPost(scriptName: string, scriptSourceId: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any> {
-        if (scriptName === null || scriptName === undefined) {
-            throw new Error('Required parameter scriptName was null or undefined when calling apiV1CommandsSourcesScriptSourceIdScriptNameRunAsyncPost.');
+    public apiV1CommandsSourcesCommandSourceIdCommandIdRunAsyncPost(commandId: number, commandSourceId: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<string>;
+    public apiV1CommandsSourcesCommandSourceIdCommandIdRunAsyncPost(commandId: number, commandSourceId: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<string>>;
+    public apiV1CommandsSourcesCommandSourceIdCommandIdRunAsyncPost(commandId: number, commandSourceId: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<string>>;
+    public apiV1CommandsSourcesCommandSourceIdCommandIdRunAsyncPost(commandId: number, commandSourceId: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any> {
+        if (commandId === null || commandId === undefined) {
+            throw new Error('Required parameter commandId was null or undefined when calling apiV1CommandsSourcesCommandSourceIdCommandIdRunAsyncPost.');
         }
-        if (scriptSourceId === null || scriptSourceId === undefined) {
-            throw new Error('Required parameter scriptSourceId was null or undefined when calling apiV1CommandsSourcesScriptSourceIdScriptNameRunAsyncPost.');
+        if (commandSourceId === null || commandSourceId === undefined) {
+            throw new Error('Required parameter commandSourceId was null or undefined when calling apiV1CommandsSourcesCommandSourceIdCommandIdRunAsyncPost.');
         }
 
         let localVarHeaders = this.defaultHeaders;
@@ -302,7 +302,7 @@ export class CommandsResourceService {
             }
         }
 
-        let localVarPath = `/api/v1/commands/sources/${this.configuration.encodeParam({name: "scriptSourceId", value: scriptSourceId, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: "int64"})}/${this.configuration.encodeParam({name: "scriptName", value: scriptName, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}/run-async`;
+        let localVarPath = `/api/v1/commands/sources/${this.configuration.encodeParam({name: "commandSourceId", value: commandSourceId, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: "int64"})}/${this.configuration.encodeParam({name: "commandId", value: commandId, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: "int64"})}/run-async`;
         return this.httpClient.request<string>('post', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,

@@ -110,7 +110,8 @@ public class CommandsResource {
                 CommandData commandData = new CommandData();
                 commandData.setCommandSourceId(command.getCommandSource().getId());
                 commandData.setCommandSourceName(command.getCommandSource().getName());
-                commandData.setCommandId(command.getScript());
+                commandData.setCommandId(String.valueOf(command.getId()));
+                commandData.setCommandName(command.getName());
                 result.add(commandData);
             });
 
@@ -122,7 +123,7 @@ public class CommandsResource {
     @Produces(MediaType.APPLICATION_JSON)
     public List<CommandMostUsedData> getMostUsedCommands() {
         log.info("Reading the list of most used commands");
-        List<Object[]> scripts = em.createQuery("select se.command.commandSource, se.command.script, COUNT(*) from CommandExecution se GROUP BY se.command ORDER BY COUNT(*) DESC")
+        List<Object[]> scripts = em.createQuery("select se.command.commandSource, se.command, COUNT(*) from CommandExecution se GROUP BY se.command ORDER BY COUNT(*) DESC")
                 .setMaxResults(10)
                 .getResultList();
 
@@ -130,14 +131,15 @@ public class CommandsResource {
 
         for (Object[] resultItem : scripts) {
             CommandSource commandSource = (CommandSource) resultItem[0];
-            String scriptId = (String) resultItem[1];
+            Command command = (Command) resultItem[1];
             Long count = (Long) resultItem[2];
-            log.info(String.format("Result: source %s, script %s, used %d times", commandSource.getName(), scriptId, count));
+            log.info(String.format("Result: source %s, script %s, used %d times", commandSource.getName(), command.getScript(), count));
 
             CommandData commandData = new CommandData();
             commandData.setCommandSourceId(commandSource.getId());
             commandData.setCommandSourceName(commandSource.getName());
-            commandData.setCommandId(scriptId);
+            commandData.setCommandId(command.getId().toString());
+            commandData.setCommandName(command.getName());
 
             CommandMostUsedData commandMostUsedData = new CommandMostUsedData();
             commandMostUsedData.setCommandData(commandData);
@@ -153,7 +155,7 @@ public class CommandsResource {
     @Produces(MediaType.APPLICATION_JSON)
     public List<CommandLastUsedData> getLastUsedCommands() {
         log.info("Reading the list of most used commands");
-        List<Object[]> scripts = em.createQuery("select se.command.commandSource, se.command.script, MAX(se.startTime) from CommandExecution se GROUP BY se.command ORDER BY MAX(se.startTime) DESC")
+        List<Object[]> scripts = em.createQuery("select se.command.commandSource, se.command, MAX(se.startTime) from CommandExecution se GROUP BY se.command ORDER BY MAX(se.startTime) DESC")
                 .setMaxResults(10)
                 .getResultList();
 
@@ -161,14 +163,15 @@ public class CommandsResource {
 
         for (Object[] resultItem : scripts) {
             CommandSource commandSource = (CommandSource) resultItem[0];
-            String scriptId = (String) resultItem[1];
+            Command command = (Command) resultItem[1];
             Timestamp lastUsage = (Timestamp) resultItem[2];
-            log.info(String.format("Result: source %s, script %s, last used %s", commandSource.getName(), scriptId, lastUsage));
+            log.info(String.format("Result: source %s, script %s, last used %s", commandSource.getName(), commandSource.getName(), lastUsage));
 
             CommandData commandData = new CommandData();
             commandData.setCommandSourceId(commandSource.getId());
             commandData.setCommandSourceName(commandSource.getName());
-            commandData.setCommandId(scriptId);
+            commandData.setCommandId(command.getId().toString());
+            commandData.setCommandName(command.getName());
 
             CommandLastUsedData commandLastUsedData = new CommandLastUsedData();
             commandLastUsedData.setCommandData(commandData);
@@ -181,22 +184,22 @@ public class CommandsResource {
 
     /**
      * Returns the script session ID
-     * @param scriptName
+     * @param commandId
      * @return
      */
-    @Path("/sources/{scriptSourceId}/{scriptName}/run-async")
+    @Path("/sources/{commandSourceId}/{commandId}/run-async")
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Transactional
-    public String runAsync(@PathParam("scriptSourceId") Long scriptSourceId, @PathParam("scriptName") String scriptName) {
-        Command command = em.createQuery("select c from Command c where c.commandSource.id = :id AND c.script = :scriptName", Command.class)
-                .setParameter("id", scriptSourceId)
-                .setParameter("scriptName", scriptName)
+    public String runAsync(@PathParam("commandSourceId") Long commandSourceId, @PathParam("commandId") Long commandId) {
+        Command command = em.createQuery("select c from Command c where c.commandSource.id = :id AND c.id = :commandId", Command.class)
+                .setParameter("id", commandSourceId)
+                .setParameter("commandId", commandId)
                 .getSingleResult();
 
         CommandSource commandSource = command.getCommandSource();
 
-        log.info(String.format("Running script %s from script source ID=%d, NAME=%s async", scriptName, commandSource.getId(), commandSource.getName()));
+        log.info(String.format("Running script %s from script source ID=%d, NAME=%s async", command.getScript(), commandSource.getId(), commandSource.getName()));
 
         AbstractCommandType scriptType = CommandTypes.newForScriptSource(commandSource);
 
@@ -207,14 +210,13 @@ public class CommandsResource {
         log.debug("Started execution as SCRIPT_EXECUTION.ID=%d".formatted(commandExecution.getId()));
 
         // Just trigger here, return immediately
-        AbstractCommandRunner scriptExecutionRunner = scriptType.createScriptExecution(scriptName, Long.toString(commandExecution.getId()));
+        AbstractCommandRunner scriptExecutionRunner = scriptType.createScriptExecution(command.getScript(), Long.toString(commandExecution.getId()));
         scriptExecutionRunner.updateEntity(commandExecution);
         scriptExecutionRunner.addStatusChangeListener(scriptExecutionRunner1 -> {
             log.debug(String.format("Script execution ID=%s status changed - updating in DB", scriptExecutionRunner1.getScriptExecutionID()));
             commandExecutionService.updateScriptExecution(scriptExecutionRunner1);
         });
-        commandRunSessions.createForActiveExecution(scriptName, scriptExecutionRunner);
-
+        commandRunSessions.createForActiveExecution(scriptExecutionRunner);
         runAsyncInExecutor(scriptExecutionRunner);
 
         // Explicitly wrap as JSON string (I don't know yet why it's not done automatically)
