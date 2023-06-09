@@ -107,15 +107,20 @@ public class CommandsResource {
         List<CommandData> result = new ArrayList<>();
 
         commands.forEach(command -> {
-                CommandData commandData = new CommandData();
-                commandData.setCommandSourceId(command.getCommandSource().getId());
-                commandData.setCommandSourceName(command.getCommandSource().getName());
-                commandData.setCommandId(String.valueOf(command.getId()));
-                commandData.setCommandName(command.getName());
-                result.add(commandData);
-            });
+            CommandData commandData = commandDataFromCommandEntity(command);
+            result.add(commandData);
+        });
 
         return result;
+    }
+
+    private static CommandData commandDataFromCommandEntity(Command command) {
+        CommandData commandData = new CommandData();
+        commandData.setCommandSourceId(command.getCommandSource().getId());
+        commandData.setCommandSourceName(command.getCommandSource().getName());
+        commandData.setCommandId(command.getId().toString());
+        commandData.setCommandName(command.getName());
+        return commandData;
     }
 
     @Path("/most-used")
@@ -123,23 +128,18 @@ public class CommandsResource {
     @Produces(MediaType.APPLICATION_JSON)
     public List<CommandMostUsedData> getMostUsedCommands() {
         log.info("Reading the list of most used commands");
-        List<Object[]> scripts = em.createQuery("select se.command.commandSource, se.command, COUNT(*) from CommandExecution se GROUP BY se.command ORDER BY COUNT(*) DESC")
+        List<Object[]> scripts = em.createQuery("select se.command, COUNT(*) from CommandExecution se GROUP BY se.command ORDER BY COUNT(*) DESC")
                 .setMaxResults(10)
                 .getResultList();
 
         List<CommandMostUsedData> result = new ArrayList<>();
 
         for (Object[] resultItem : scripts) {
-            CommandSource commandSource = (CommandSource) resultItem[0];
-            Command command = (Command) resultItem[1];
-            Long count = (Long) resultItem[2];
-            log.info(String.format("Result: source %s, script %s, used %d times", commandSource.getName(), command.getScript(), count));
+            Command command = (Command) resultItem[0];
+            Long count = (Long) resultItem[1];
+            log.info(String.format("Result: source %s, script %s, used %d times", command.getCommandSource().getName(), command.getScript(), count));
 
-            CommandData commandData = new CommandData();
-            commandData.setCommandSourceId(commandSource.getId());
-            commandData.setCommandSourceName(commandSource.getName());
-            commandData.setCommandId(command.getId().toString());
-            commandData.setCommandName(command.getName());
+            CommandData commandData = commandDataFromCommandEntity(command);
 
             CommandMostUsedData commandMostUsedData = new CommandMostUsedData();
             commandMostUsedData.setCommandData(commandData);
@@ -155,23 +155,18 @@ public class CommandsResource {
     @Produces(MediaType.APPLICATION_JSON)
     public List<CommandLastUsedData> getLastUsedCommands() {
         log.info("Reading the list of most used commands");
-        List<Object[]> scripts = em.createQuery("select se.command.commandSource, se.command, MAX(se.startTime) from CommandExecution se GROUP BY se.command ORDER BY MAX(se.startTime) DESC")
+        List<Object[]> scripts = em.createQuery("select se.command, MAX(se.startTime) from CommandExecution se GROUP BY se.command ORDER BY MAX(se.startTime) DESC")
                 .setMaxResults(10)
                 .getResultList();
 
         List<CommandLastUsedData> result = new ArrayList<>();
 
         for (Object[] resultItem : scripts) {
-            CommandSource commandSource = (CommandSource) resultItem[0];
-            Command command = (Command) resultItem[1];
-            Timestamp lastUsage = (Timestamp) resultItem[2];
-            log.info(String.format("Result: source %s, script %s, last used %s", commandSource.getName(), commandSource.getName(), lastUsage));
+            Command command = (Command) resultItem[0];
+            Timestamp lastUsage = (Timestamp) resultItem[1];
+            log.info(String.format("Result: source %s, script %s, last used %s", command.getCommandSource().getName(), command.getName(), lastUsage));
 
-            CommandData commandData = new CommandData();
-            commandData.setCommandSourceId(commandSource.getId());
-            commandData.setCommandSourceName(commandSource.getName());
-            commandData.setCommandId(command.getId().toString());
-            commandData.setCommandName(command.getName());
+            CommandData commandData = commandDataFromCommandEntity(command);
 
             CommandLastUsedData commandLastUsedData = new CommandLastUsedData();
             commandLastUsedData.setCommandData(commandData);
