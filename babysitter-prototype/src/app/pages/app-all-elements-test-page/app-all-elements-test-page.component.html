@@ -9,7 +9,7 @@
 
 <div>
   <div style="font-weight: bold">Command execution:</div>
-  <div *ngFor="let run of runsList; index as i"><span style="background-color: #eff3f6">at {{ run.date }}: {{ run.scriptName }} session ID: {{ run.scriptRunSessionId }}</span>&nbsp;<a href="#" (click)="showRun(run); false">show console</a></div>
+  <div *ngFor="let run of runsList; index as i"><span style="background-color: #eff3f6">at {{ run.date }}: {{ run.commandScript }} session ID: {{ run.commandExecutionId }}</span>&nbsp;<a href="#" (click)="showRun(run); false">show console</a></div>
 </div>
 
 <br/>

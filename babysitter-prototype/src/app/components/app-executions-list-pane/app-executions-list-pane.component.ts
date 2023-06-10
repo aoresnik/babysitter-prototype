@@ -1,6 +1,6 @@
 import {Component} from '@angular/core';
 import {Router} from "@angular/router";
-import {CommandExecutionResourceService} from "../../babysitter-server-api/api/v1";
+import {CommandExecutionData, CommandExecutionResourceService} from "../../babysitter-server-api/api/v1";
 
 @Component({
   selector: 'app-executions-list-pane',
@@ -8,7 +8,7 @@ import {CommandExecutionResourceService} from "../../babysitter-server-api/api/v
   styleUrls: ['./app-executions-list-pane.component.css']
 })
 export class AppExecutionsListPaneComponent {
-  scriptExecutionsList?: any[];
+  commandExecutionsList?: CommandExecutionData[];
 
   constructor(private commandExecutionResourceService: CommandExecutionResourceService, private router: Router) {
 
@@ -17,11 +17,11 @@ export class AppExecutionsListPaneComponent {
   ngOnInit(): void {
     this.commandExecutionResourceService.apiV1ExecutionsGet().subscribe(res => {
       console.log(res);
-      this.scriptExecutionsList = res;
+      this.commandExecutionsList = res;
     });
   }
 
-  selectExecution(execution: any) {
+  selectExecution(execution: CommandExecutionData) {
     this.router.navigateByUrl(`/executions/execution/${execution.commandExecutionId}`)
       .then(r => console.log(`Navigation successful: ${r}`));
   }

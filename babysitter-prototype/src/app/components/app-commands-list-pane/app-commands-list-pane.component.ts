@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {Router} from "@angular/router";
-import {CommandsResourceService} from "../../babysitter-server-api/api/v1";
+import {CommandData, CommandsResourceService} from "../../babysitter-server-api/api/v1";
 
 @Component({
   selector: 'app-app-commands-list-pane',
@@ -18,7 +18,7 @@ export class AppCommandsListPaneComponent implements OnInit {
   //     { key: '0-0-1', label: 'test2.sh', icon: 'pi pi-fw pi-file', data: 'Resume Document' }
   //   ]
   // } ];
-  scriptsList?: any[];
+  commandsList?: CommandData[];
 
   constructor(private commandsResourceService: CommandsResourceService, private router: Router) {
 
@@ -27,12 +27,12 @@ export class AppCommandsListPaneComponent implements OnInit {
   ngOnInit(): void {
     this.commandsResourceService.apiV1CommandsGet().subscribe(res => {
       console.log(res);
-      this.scriptsList = res;
+      this.commandsList = res;
     });
   }
 
-  selectCommand(script: any) {
-    this.router.navigateByUrl(`/commands/command/${script.commandSourceId}/${script.commandId}`)
+  selectCommand(command: CommandData) {
+    this.router.navigateByUrl(`/commands/command/${command.commandSourceId}/${command.commandId}`)
       .then(r => console.log(`Navigation successful: ${r}`));
   }
 }

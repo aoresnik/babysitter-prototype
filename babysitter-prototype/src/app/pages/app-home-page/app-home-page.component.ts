@@ -1,6 +1,11 @@
 import {Component} from '@angular/core';
 import {Router} from "@angular/router";
-import {CommandLastUsedData, CommandMostUsedData, CommandsResourceService} from "../../babysitter-server-api/api/v1";
+import {
+  CommandData,
+  CommandLastUsedData,
+  CommandMostUsedData,
+  CommandsResourceService
+} from "../../babysitter-server-api/api/v1";
 
 @Component({
   selector: 'app-app-home-page',
@@ -25,8 +30,8 @@ export class AppHomePageComponent {
     });
   }
 
-  selectCommand(script: any) {
-    this.router.navigateByUrl(`/commands/command/${script.commandSourceId}/${script.commandId}`)
+  selectCommand(command: CommandData) {
+    this.router.navigateByUrl(`/commands/command/${command.commandSourceId}/${command.commandId}`)
       .then(r => console.log(`Navigation successful: ${r}`));
   }
 }

@@ -1,6 +1,6 @@
 import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
-import {ScriptRun} from "../app-all-elements-test-page/app-all-elements-test-page.component";
+import {CommandExecution} from "../app-all-elements-test-page/app-all-elements-test-page.component";
 import {NgTerminal} from "ng-terminal";
 import {CommandBabysittingWebsocketConnection} from "../../command-babysitting-websocket.service";
 import {CommandRunSessionService} from "../../command-run-session.service";
@@ -25,9 +25,9 @@ export class AppCommandExecutionPageComponent implements OnInit, AfterViewInit {
 
   exitCode?: number;
 
-  runsList: ScriptRun[] = [];
+  runsList: CommandExecution[] = [];
 
-  activeRun?: ScriptRun;
+  activeRun?: CommandExecution;
 
   @ViewChild('term', {static: false}) terminal!: NgTerminal;
 
@@ -47,7 +47,7 @@ export class AppCommandExecutionPageComponent implements OnInit, AfterViewInit {
           console.log(paramMap);
           this.executionID = paramMap.get('execution_id');
           if (this.executionID) {
-            let scriptRun = new ScriptRun('TODO:obtain script ID', this.executionID);
+            let scriptRun = new CommandExecution('TODO:obtain script ID', this.executionID);
             this.showRun(scriptRun);
           }
         }
@@ -75,8 +75,8 @@ export class AppCommandExecutionPageComponent implements OnInit, AfterViewInit {
     });
   }
 
-  showRun(run: ScriptRun) {
-    console.log("Show console of run " + run.scriptRunSessionId + " of script " + run.scriptName);
+  showRun(run: CommandExecution) {
+    console.log("Show console of run " + run.commandExecutionId + " of script " + run.commandScript);
 
     this.activeRun = run;
     if (this.messages) {
@@ -84,7 +84,7 @@ export class AppCommandExecutionPageComponent implements OnInit, AfterViewInit {
       this.messages.ws.close();
     }
 
-    this.messages = this.scriptRunSessionService.messagesForSession(run.scriptRunSessionId);
+    this.messages = this.scriptRunSessionService.messagesForSession(run.commandExecutionId);
     this.messages.subject.subscribe(response => {
       let msg = JSON.parse(response.data);
       console.log("Response from websocket: " + msg);
@@ -114,7 +114,7 @@ export class AppCommandExecutionPageComponent implements OnInit, AfterViewInit {
       }
     });
 
-    this.commandExecutionResourceService.apiV1ExecutionsExecutionIdGet(run.scriptRunSessionId).subscribe(response => {
+    this.commandExecutionResourceService.apiV1ExecutionsExecutionIdGet(run.commandExecutionId).subscribe(response => {
       this.commandId = response.commandId;
     });
   }

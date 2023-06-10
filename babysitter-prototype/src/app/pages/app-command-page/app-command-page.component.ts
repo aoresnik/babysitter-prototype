@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
-import {ScriptRun} from "../app-all-elements-test-page/app-all-elements-test-page.component";
+import {CommandExecution} from "../app-all-elements-test-page/app-all-elements-test-page.component";
 import {CommandsResourceService} from "../../babysitter-server-api/api/v1";
 
 /**
@@ -38,24 +38,24 @@ export class AppCommandPageComponent implements OnInit {
       });
   }
 
-  runScript(script: any, openConsole: boolean) {
-    console.log(`Running script ${ script }`);
+  runCommand(command: any, openConsole: boolean) {
+    console.log(`Running command ${ command }`);
     if (this.commandSourceId != null && this.commandId != null) {
       this.commandsResourceService.apiV1CommandsSourcesCommandSourceIdCommandIdRunAsyncPost(this.commandId, this.commandSourceId).subscribe(res => {
-        let runSessionId = res;
-        console.log(`Script run session ID: ${runSessionId}`);
+        let commandExecutionId = res;
+        console.log(`Command run session ID: ${commandExecutionId}`);
         if (openConsole) {
-          console.log(`Opening command execution console for: ${runSessionId}`);
-          let scriptRun = new ScriptRun(script.commandId, runSessionId);
-          this.showRun(scriptRun);
+          console.log(`Opening command execution console for: ${commandExecutionId}`);
+          let commandExecution = new CommandExecution(command.commandId, commandExecutionId);
+          this.showRun(commandExecution);
         }
       });
     }
   }
 
-  showRun(run: ScriptRun) {
-    console.log("Show console of run " + run.scriptRunSessionId + " of script " + run.scriptName);
-    this.router.navigateByUrl(`/execution/${run.scriptRunSessionId}`)
+  showRun(run: CommandExecution) {
+    console.log("Show console of run " + run.commandExecutionId + " of command script " + run.commandScript);
+    this.router.navigateByUrl(`/execution/${run.commandExecutionId}`)
       .then(r => console.log(`Navigation successful: ${r}`));
   }
 }

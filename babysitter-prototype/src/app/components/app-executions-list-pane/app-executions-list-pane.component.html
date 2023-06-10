@@ -1,7 +1,7 @@
 <div style="font-weight: bold">Command executions:</div>
-<div *ngFor="let script of scriptExecutionsList; index as i">
-  <div><span style="background-color: #eff3f6"><a href="#" (click)="selectExecution(script); false">{{ script.commandExecutionId }},&nbsp;command: {{ script.commandId }}</a></span></div>
-  <div>{{ script.startTime }}</div>
-  <div>- {{ script.endTime }}</div>
-  <div>({{ script.commandSourceName }})</div>
+<div *ngFor="let commandExecution of commandExecutionsList; index as i">
+  <div><span style="background-color: #eff3f6"><a href="#" (click)="selectExecution(commandExecution); false">{{ commandExecution.commandExecutionId }},&nbsp;command: {{ commandExecution.commandId }}</a></span></div>
+  <div>{{ commandExecution.startTime }}</div>
+  <div>- {{ commandExecution.endTime }}</div>
+  <div>({{ commandExecution.commandSourceName }})</div>
 </div>

@@ -4,15 +4,15 @@ import {CommandRunSessionService} from "../../command-run-session.service";
 import {CommandBabysittingWebsocketConnection} from "../../command-babysitting-websocket.service";
 import {CommandsResourceService} from "../../babysitter-server-api/api/v1";
 
-export class ScriptRun {
-  constructor(scriptName: string, scriptRunSessionId: string, date: Date = new Date() ) {
-    this.scriptName = scriptName;
-    this.scriptRunSessionId = scriptRunSessionId;
+export class CommandExecution {
+  constructor(commandScript: string, commandExecutionId: string, date: Date = new Date() ) {
+    this.commandScript = commandScript;
+    this.commandExecutionId = commandExecutionId;
     this.date = date;
   }
   date: Date;
-  scriptName: string;
-  scriptRunSessionId: string;
+  commandScript: string;
+  commandExecutionId: string;
 }
 
 /**
@@ -38,9 +38,9 @@ export class AppAllElementsTestPageComponent {
 
   exitCode?: number;
 
-  runsList: ScriptRun[] = [];
+  runsList: CommandExecution[] = [];
 
-  activeRun?: ScriptRun;
+  activeRun?: CommandExecution;
 
   @ViewChild('term', {static: false}) terminal!: NgTerminal;
 
@@ -83,21 +83,21 @@ export class AppAllElementsTestPageComponent {
     this.commandsResourceService.apiV1CommandsSourcesCommandSourceIdCommandIdRunAsyncPost(script.commandId, script.commandSourceId).subscribe(res => {
       let runSessionId = res;
       console.log(`Script run session ID: ${runSessionId}`);
-      let scriptRun = new ScriptRun(script.commandId, runSessionId);
+      let scriptRun = new CommandExecution(script.commandId, runSessionId);
       this.runsList.push(scriptRun);
       this.showRun(scriptRun);
     });
   }
 
-  showRun(run: ScriptRun) {
-    console.log("Show console of run " + run.scriptRunSessionId + " of script " + run.scriptName);
+  showRun(run: CommandExecution) {
+    console.log("Show console of run " + run.commandExecutionId + " of script " + run.commandScript);
     this.activeRun = run;
     if (this.messages) {
       console.log("Unsubscribing from previous session");
       this.messages.ws.close();
     }
 
-    this.messages = this.scriptRunSessionService.messagesForSession(run.scriptRunSessionId);
+    this.messages = this.scriptRunSessionService.messagesForSession(run.commandExecutionId);
     this.messages.subject.subscribe(response => {
       let msg = JSON.parse(response.data);
       console.log("Response from websocket: " + msg);

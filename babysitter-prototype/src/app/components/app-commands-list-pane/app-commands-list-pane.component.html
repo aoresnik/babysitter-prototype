@@ -1,5 +1,5 @@
 <div style="font-weight: bold">Available commands:</div>
-<div *ngFor="let script of scriptsList; index as i"><span style="background-color: #eff3f6">({{ script.commandSourceName }})</span>&nbsp;<a href="#" (click)="selectCommand(script); false">{{ script.commandName }}</a></div>
+<div *ngFor="let command of commandsList; index as i"><span style="background-color: #eff3f6">({{ command.commandSourceName }})</span>&nbsp;<a href="#" (click)="selectCommand(command); false">{{ command.commandName }}</a></div>
 
 <!--<p-tree class="w-full md:w-30rem" [value]="commandsAsTree"></p-tree>-->
 
