@@ -1,7 +1,7 @@
 import {Component, ViewChild} from '@angular/core';
 import {NgTerminal} from "ng-terminal";
-import {ScriptRunSessionService} from "../../script-run-session.service";
-import {ScriptWebsocketConnection} from "../../websocket-test.service";
+import {CommandRunSessionService} from "../../command-run-session.service";
+import {CommandBabysittingWebsocketConnection} from "../../command-babysitting-websocket.service";
 import {CommandsResourceService} from "../../babysitter-server-api/api/v1";
 
 export class ScriptRun {
@@ -44,9 +44,9 @@ export class AppAllElementsTestPageComponent {
 
   @ViewChild('term', {static: false}) terminal!: NgTerminal;
 
-  private messages?: ScriptWebsocketConnection;
+  private messages?: CommandBabysittingWebsocketConnection;
 
-  constructor(private commandsResourceService: CommandsResourceService, private scriptRunSessionService: ScriptRunSessionService) {
+  constructor(private commandsResourceService: CommandsResourceService, private scriptRunSessionService: CommandRunSessionService) {
 
   }
 

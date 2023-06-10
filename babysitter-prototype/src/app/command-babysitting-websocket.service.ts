@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {Observable, Observer, Subject} from "rxjs";
 
-export class ScriptWebsocketConnection {
+export class CommandBabysittingWebsocketConnection {
   ws: WebSocket;
 
   subject: Subject<any>;
@@ -34,9 +34,9 @@ export class ScriptWebsocketConnection {
 @Injectable({
   providedIn: 'root'
 })
-export class WebsocketTestService {
+export class CommandBabysittingWebsocketService {
 
-  public connect(url: string): ScriptWebsocketConnection {
-    return new ScriptWebsocketConnection(url);
+  public connect(url: string): CommandBabysittingWebsocketConnection {
+    return new CommandBabysittingWebsocketConnection(url);
   }
 }

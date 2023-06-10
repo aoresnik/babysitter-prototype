@@ -2,8 +2,8 @@ import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
 import {ScriptRun} from "../app-all-elements-test-page/app-all-elements-test-page.component";
 import {NgTerminal} from "ng-terminal";
-import {ScriptWebsocketConnection} from "../../websocket-test.service";
-import {ScriptRunSessionService} from "../../script-run-session.service";
+import {CommandBabysittingWebsocketConnection} from "../../command-babysitting-websocket.service";
+import {CommandRunSessionService} from "../../command-run-session.service";
 import {environment} from "../../../environments/environment";
 import {CommandExecutionResourceService} from "../../babysitter-server-api/api/v1";
 
@@ -31,12 +31,12 @@ export class AppCommandExecutionPageComponent implements OnInit, AfterViewInit {
 
   @ViewChild('term', {static: false}) terminal!: NgTerminal;
 
-  private messages?: ScriptWebsocketConnection;
+  private messages?: CommandBabysittingWebsocketConnection;
 
   commandId?: string;
 
   constructor(private route: ActivatedRoute,
-              private scriptRunSessionService: ScriptRunSessionService,
+              private scriptRunSessionService: CommandRunSessionService,
               private commandExecutionResourceService: CommandExecutionResourceService,
               private router: Router) {
   }
