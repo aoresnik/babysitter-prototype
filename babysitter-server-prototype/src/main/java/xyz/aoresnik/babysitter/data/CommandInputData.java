@@ -13,5 +13,8 @@ import org.eclipse.microprofile.openapi.annotations.media.Schema;
 @NoArgsConstructor
 @Schema(description = "Data used via websocket for sending interaction coomands from user from frontend to backend")
 public class CommandInputData {
+    /**
+     * Base64 encoded binary stream of input data.
+     */
     private String inputData;
 }

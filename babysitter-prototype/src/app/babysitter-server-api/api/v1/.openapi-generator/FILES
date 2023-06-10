@@ -11,6 +11,9 @@ git_push.sh
 index.ts
 model/commandData.ts
 model/commandExecutionData.ts
+model/commandExecutionInitialStateRTData.ts
+model/commandExecutionUpdateRTData.ts
+model/commandInputData.ts
 model/commandLastUsedData.ts
 model/commandMostUsedData.ts
 model/models.ts
