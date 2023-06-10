@@ -15,19 +15,13 @@ import {CommandExecutionResourceService} from "../../babysitter-server-api/api/v
 export class AppCommandExecutionPageComponent implements OnInit, AfterViewInit {
   executionID?: string | null;
 
-  scriptRun: string = "";
+  commandRun: string = "";
 
-  scriptResult: string = "";
+  errorText: string = "";
 
-  scriptError: string = "";
-
-  scriptCompleted?: boolean;
+  commandCompleted?: boolean;
 
   exitCode?: number;
-
-  runsList: CommandExecution[] = [];
-
-  activeRun?: CommandExecution;
 
   @ViewChild('term', {static: false}) terminal!: NgTerminal;
 
@@ -36,7 +30,7 @@ export class AppCommandExecutionPageComponent implements OnInit, AfterViewInit {
   commandId?: string;
 
   constructor(private route: ActivatedRoute,
-              private scriptRunSessionService: CommandRunSessionService,
+              private commandRunSessionService: CommandRunSessionService,
               private commandExecutionResourceService: CommandExecutionResourceService,
               private router: Router) {
   }
@@ -46,9 +40,8 @@ export class AppCommandExecutionPageComponent implements OnInit, AfterViewInit {
       .subscribe(paramMap => {
           console.log(paramMap);
           this.executionID = paramMap.get('execution_id');
-          if (this.executionID) {
-            let scriptRun = new CommandExecution('TODO:obtain script ID', this.executionID);
-            this.showRun(scriptRun);
+          if (this.executionID != null) {
+            this.showExecution(this.executionID);
           }
         }
       );
@@ -56,7 +49,7 @@ export class AppCommandExecutionPageComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit(){
     this.terminal.onData().subscribe((input) => {
-      if (this.activeRun && this.messages) {
+      if (this.commandRun && !this.commandCompleted && this.messages) {
         // if (input === '\r') { // Carriage Return (When Enter is pressed)
         //   this.terminal.write('prompt>');
         // } else if (input === '\u007f') { // Delete (When Backspace is pressed)
@@ -75,16 +68,15 @@ export class AppCommandExecutionPageComponent implements OnInit, AfterViewInit {
     });
   }
 
-  showRun(run: CommandExecution) {
-    console.log("Show console of run " + run.commandExecutionId + " of script " + run.commandScript);
+  showExecution(executionId: string) {
+    console.log("Show console of execution " + executionId);
 
-    this.activeRun = run;
     if (this.messages) {
       console.log("Unsubscribing from previous session");
       this.messages.ws.close();
     }
 
-    this.messages = this.scriptRunSessionService.messagesForSession(run.commandExecutionId);
+    this.messages = this.commandRunSessionService.messagesForSession(executionId);
     this.messages.subject.subscribe(response => {
       let msg = JSON.parse(response.data);
       console.log("Response from websocket: " + msg);
@@ -99,22 +91,22 @@ export class AppCommandExecutionPageComponent implements OnInit, AfterViewInit {
         this.terminal.write(atob(msg.incrementalConsoleData));
       }
       if (msg.commandRun !== undefined) {
-        this.scriptRun = msg.commandRun;
+        this.commandRun = msg.commandRun;
       }
       if (msg.commandCompleted !== undefined) {
-        this.scriptCompleted = msg.commandCompleted;
+        this.commandCompleted = msg.commandCompleted;
       }
       if (msg.exitCode !== undefined) {
         this.exitCode = msg.exitCode;
       }
       if (msg.errorText) {
-        this.scriptError = msg.errorText;
+        this.errorText = msg.errorText;
       } else {
-        this.scriptError = "";
+        this.errorText = "";
       }
     });
 
-    this.commandExecutionResourceService.apiV1ExecutionsExecutionIdGet(run.commandExecutionId).subscribe(response => {
+    this.commandExecutionResourceService.apiV1ExecutionsExecutionIdGet(executionId).subscribe(response => {
       this.commandId = response.commandId;
     });
   }

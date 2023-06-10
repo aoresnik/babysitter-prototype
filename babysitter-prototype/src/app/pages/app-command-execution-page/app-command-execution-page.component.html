@@ -1,13 +1,9 @@
 <p>Execution ID: {{executionID}} of command:  <span style="background-color: #eff3f6">{{commandId}}</span></p>
 
-<div style="font-weight: bold">Command execution console: <span style="background-color: #eff3f6"> Started: {{scriptRun}} Completed {{scriptCompleted}} <span *ngIf="scriptCompleted">Exit code: {{exitCode}}</span></span></div>
+<div style="font-weight: bold">Command execution console: <span style="background-color: #eff3f6"> Started: {{commandRun}} Completed {{commandCompleted}} <span *ngIf="commandCompleted">Exit code: {{exitCode}}</span></span></div>
 <div><a target="_blank" href="{{ environment.serverRootURL }}/api/v1/executions/{{executionID}}/transcript">Open RAW transcript</a></div>
 <div style="width: fit-content">
-  <div class="error-pane" *ngIf="scriptError">{{ scriptError }}</div>
-  <!--
-  <pre class="terminal" style="padding: 0px">
-  {{scriptResult}}
-  </pre>
-  -->
+  <div class="error-pane" *ngIf="errorText">{{ errorText }}</div>
+
   <ng-terminal #term></ng-terminal>
 </div>
