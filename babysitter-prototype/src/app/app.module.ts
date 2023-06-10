@@ -25,10 +25,11 @@ import {AppExecutionsListPaneComponent} from './components/app-executions-list-p
 import {AppHomePageComponent} from './pages/app-home-page/app-home-page.component';
 import { ApiModule as BabysitterServerApiModule } from './babysitter-server-api/api/v1/api.module';
 import { Configuration as BabysitterServerConfiguration, ConfigurationParameters as BabysitterServerConfigurationParameters} from './babysitter-server-api/api/v1';
+import {environment} from "../environments/environment";
 
 export function babysitterServerConfiguration(): BabysitterServerConfiguration {
   const params: BabysitterServerConfigurationParameters = {
-    basePath: 'http://localhost:8080',
+    basePath: environment.serverRootURL,
   };
   return new BabysitterServerConfiguration(params);
 }
