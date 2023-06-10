@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AbstractScriptExecutionRTData {
-    private String scriptExecutionID;
+    private String commandExecutionId;
 
     private boolean commandRun;
 
