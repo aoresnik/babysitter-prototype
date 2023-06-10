@@ -26,7 +26,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * TODO: At the time of this writing, scripts are identified by name, not ID - hard to add endpoionts under the /{scriptSourceId} paths
+ * TODO: At the time of this writing, scripts are identified by name, not ID - hard to add endpoints under the /{scriptSourceId} paths
  * TODO: also change the format of /api/v1/scripts/{scriptSourceId}/executions/{scriptExecutionId} to /api/v1/command-sources/{commandSourceId}/commands/{commandId}
  */
 @Path("/api/v1/commands")
@@ -184,6 +184,7 @@ public class CommandsResource {
      */
     @Path("/sources/{commandSourceId}/{commandId}/run-async")
     @POST
+    @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Transactional
     public String runAsync(@PathParam("commandSourceId") Long commandSourceId, @PathParam("commandId") Long commandId) {
