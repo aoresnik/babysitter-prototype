@@ -54,7 +54,7 @@ export class AppCommandPageComponent implements OnInit {
   }
 
   showRun(run: CommandExecution) {
-    console.log("Show console of run " + run.commandExecutionId + " of command script " + run.commandScript);
+    console.log("Show console of run " + run.commandExecutionId + " of command command name " + run.commandName);
     this.router.navigateByUrl(`/execution/${run.commandExecutionId}`)
       .then(r => console.log(`Navigation successful: ${r}`));
   }

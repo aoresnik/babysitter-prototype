@@ -2,21 +2,21 @@
 
 <div>
 <div style="font-weight: bold">Available commands:</div>
-  <div *ngFor="let script of scriptsList; index as i"><span style="background-color: #eff3f6">({{ script.commandSourceName }}) {{ script.commandName }}</span>&nbsp;<a href="#" (click)="runScript(script); false">run</a></div>
+  <div *ngFor="let command of commandsList; index as i"><span style="background-color: #eff3f6">({{ command.commandSourceName }}) {{ command.commandName }}</span>&nbsp;<a href="#" (click)="runCommand(command); false">run</a></div>
 </div>
 
 <br/>
 
 <div>
   <div style="font-weight: bold">Command execution:</div>
-  <div *ngFor="let run of runsList; index as i"><span style="background-color: #eff3f6">at {{ run.date }}: {{ run.commandScript }} session ID: {{ run.commandExecutionId }}</span>&nbsp;<a href="#" (click)="showRun(run); false">show console</a></div>
+  <div *ngFor="let run of runsList; index as i"><span style="background-color: #eff3f6">at {{ run.date }}: {{ run.commandName }} session ID: {{ run.commandExecutionId }}</span>&nbsp;<a href="#" (click)="showRun(run); false">show console</a></div>
 </div>
 
 <br/>
 
-  <div style="font-weight: bold">Command execution console: <span style="background-color: #eff3f6"> Started: {{scriptRun}} Completed {{scriptCompleted}} <span *ngIf="scriptCompleted">Exit code: {{exitCode}}</span></span></div>
+  <div style="font-weight: bold">Command execution console: <span style="background-color: #eff3f6"> Started: {{commandRun}} Completed {{commandCompleted}} <span *ngIf="commandCompleted">Exit code: {{exitCode}}</span></span></div>
 <div>
-  <div class="error-pane" *ngIf="scriptError != null">{{ scriptError }}</div>
+  <div class="error-pane" *ngIf="commandError != null">{{ commandError }}</div>
   <!--
   <pre class="terminal" style="padding: 0px">
   {{scriptResult}}

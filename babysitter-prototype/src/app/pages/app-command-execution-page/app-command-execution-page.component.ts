@@ -1,6 +1,5 @@
 import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
-import {CommandExecution} from "../app-all-elements-test-page/app-all-elements-test-page.component";
 import {NgTerminal} from "ng-terminal";
 import {CommandBabysittingWebsocketConnection} from "../../command-babysitting-websocket.service";
 import {CommandRunSessionService} from "../../command-run-session.service";

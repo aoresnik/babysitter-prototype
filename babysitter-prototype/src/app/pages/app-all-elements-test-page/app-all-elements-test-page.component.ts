@@ -2,16 +2,16 @@ import {Component, ViewChild} from '@angular/core';
 import {NgTerminal} from "ng-terminal";
 import {CommandRunSessionService} from "../../command-run-session.service";
 import {CommandBabysittingWebsocketConnection} from "../../command-babysitting-websocket.service";
-import {CommandsResourceService} from "../../babysitter-server-api/api/v1";
+import {CommandData, CommandInputData, CommandsResourceService} from "../../babysitter-server-api/api/v1";
 
 export class CommandExecution {
   constructor(commandScript: string, commandExecutionId: string, date: Date = new Date() ) {
-    this.commandScript = commandScript;
+    this.commandName = commandScript;
     this.commandExecutionId = commandExecutionId;
     this.date = date;
   }
   date: Date;
-  commandScript: string;
+  commandName: string;
   commandExecutionId: string;
 }
 
@@ -26,15 +26,15 @@ export class CommandExecution {
 export class AppAllElementsTestPageComponent {
   commands: any;
 
-  scriptsList: any[] = [];
+  commandsList: CommandData[] = [];
 
-  scriptRun: string = "";
+  commandRun: string = "";
 
-  scriptResult: string = "";
+  // scriptResult: string = "";
 
-  scriptError: string = "";
+  commandError: string = "";
 
-  scriptCompleted?: boolean;
+  commandCompleted?: boolean;
 
   exitCode?: number;
 
@@ -46,14 +46,14 @@ export class AppAllElementsTestPageComponent {
 
   private messages?: CommandBabysittingWebsocketConnection;
 
-  constructor(private commandsResourceService: CommandsResourceService, private scriptRunSessionService: CommandRunSessionService) {
+  constructor(private commandsResourceService: CommandsResourceService, private commandRunSessionService: CommandRunSessionService) {
 
   }
 
   ngOnInit(): void {
     this.commandsResourceService.apiV1CommandsGet().subscribe(res => {
       console.log(res);
-      this.scriptsList = res;
+      this.commandsList = res;
     });
   }
 
@@ -71,33 +71,35 @@ export class AppAllElementsTestPageComponent {
         //   this.terminal.write('prompt>');
         // }else
         //   this.terminal.write(input);
-        this.messages.subject.next({inputData: btoa(input)});
+        let commandInputData: CommandInputData = {inputData: btoa(input)};
+        this.messages.subject.next(commandInputData);
       } else {
         console.log("No active run, ignoring input");
       }
     });
   }
 
-  runScript(script: any) {
-    console.log(`Running script ${ script }`);
-    this.commandsResourceService.apiV1CommandsSourcesCommandSourceIdCommandIdRunAsyncPost(script.commandId, script.commandSourceId).subscribe(res => {
+  runCommand(command: CommandData) {
+    console.log(`Running command ${ command.commandId }, name ${ command.commandName }`);
+    // FIXME: change API to string ID and convert on server side
+    this.commandsResourceService.apiV1CommandsSourcesCommandSourceIdCommandIdRunAsyncPost(parseInt(command.commandId, 10), command.commandSourceId).subscribe(res => {
       let runSessionId = res;
       console.log(`Script run session ID: ${runSessionId}`);
-      let scriptRun = new CommandExecution(script.commandId, runSessionId);
-      this.runsList.push(scriptRun);
-      this.showRun(scriptRun);
+      let commandExecution = new CommandExecution(command.commandName, runSessionId);
+      this.runsList.push(commandExecution);
+      this.showRun(commandExecution);
     });
   }
 
   showRun(run: CommandExecution) {
-    console.log("Show console of run " + run.commandExecutionId + " of script " + run.commandScript);
+    console.log("Show console of run " + run.commandExecutionId + " of name " + run.commandName);
     this.activeRun = run;
     if (this.messages) {
       console.log("Unsubscribing from previous session");
       this.messages.ws.close();
     }
 
-    this.messages = this.scriptRunSessionService.messagesForSession(run.commandExecutionId);
+    this.messages = this.commandRunSessionService.messagesForSession(run.commandExecutionId);
     this.messages.subject.subscribe(response => {
       let msg = JSON.parse(response.data);
       console.log("Response from websocket: " + msg);
@@ -109,19 +111,19 @@ export class AppAllElementsTestPageComponent {
       } else if (msg.incrementalConsoleData !== undefined && msg.incrementalConsoleData) {
         this.terminal.write(atob(msg.incrementalConsoleData));
       }
-      if (msg.scriptRun !== undefined) {
-        this.scriptRun = msg.scriptRun;
+      if (msg.commandRun !== undefined) {
+        this.commandRun = msg.commandRun;
       }
-      if (msg.scriptCompleted !== undefined) {
-        this.scriptCompleted = msg.scriptCompleted;
+      if (msg.commandCompleted !== undefined) {
+        this.commandCompleted = msg.commandCompleted;
       }
       if (msg.exitCode !== undefined) {
         this.exitCode = msg.exitCode;
       }
       if (msg.errorText) {
-        this.scriptError = msg.errorText;
+        this.commandError = msg.errorText;
       } else {
-        this.scriptError = "";
+        this.commandError = "";
       }
     });
   }
