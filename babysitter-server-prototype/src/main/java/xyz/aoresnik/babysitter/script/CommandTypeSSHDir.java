@@ -36,6 +36,7 @@ public class CommandTypeSSHDir extends AbstractCommandType {
         String command1="ls " + getScriptSource().getScriptSourceSSHDir().getDirname();
         try{
             Session session = createSSHSession();
+            session.setTimeout(10000);
             session.connect();
             log.debug("SSH session: Connected");
 
@@ -74,7 +75,7 @@ public class CommandTypeSSHDir extends AbstractCommandType {
                 return new ArrayList<>();
             }
         }catch(Exception e){
-            log.error("Error while trying to run commands over SSH to get a list of script", e);
+            log.error("Error while trying to run commands over SSH to get a list of script; SSH commands from source " + getScriptSource().getName() + " - will not be enumerated", e);
         }
 
         return new ArrayList<>();
