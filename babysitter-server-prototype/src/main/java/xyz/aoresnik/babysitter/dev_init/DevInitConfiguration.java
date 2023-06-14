@@ -42,6 +42,8 @@ public class DevInitConfiguration {
     void onStart(@Observes StartupEvent ev) {
         log.info("The application is starting: initializing the dev environment database");
 
+        // Initialize the database with the dev-database-init.sql file here
+        // Why not use dev.quarkus.hibernate-orm.sql-load-script? Because it gets loaded after this handler is called, so this hanlder sees an empty DB
         String contents;
         try (InputStream inputStream = getClass().getResourceAsStream(DEV_DATABASE_INIT_SQL);
              BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
