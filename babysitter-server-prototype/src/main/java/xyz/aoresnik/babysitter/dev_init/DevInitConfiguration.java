@@ -1,6 +1,7 @@
 package xyz.aoresnik.babysitter.dev_init;
 
 import io.agroal.api.AgroalDataSource;
+import io.quarkus.runtime.LaunchMode;
 import io.quarkus.runtime.ShutdownEvent;
 import io.quarkus.runtime.StartupEvent;
 import org.jboss.logging.Logger;
@@ -40,7 +41,17 @@ public class DevInitConfiguration {
 
     @Transactional
     void onStart(@Observes StartupEvent ev) {
-        log.info("The application is starting: initializing the dev environment database");
+        log.info("The application is starting");
+        if (LaunchMode.current().isDevOrTest()) {
+            log.info("dev or test mode active - initializing dev mode ad-hoc database");
+            initDevModeDatabase();
+        } else {
+            log.info("prod or other mode active - relying on external, persistent database");
+        }
+    }
+
+    private void initDevModeDatabase() {
+        log.debug("Initializing dev mode H2 database");
 
         // Initialize the database with the dev-database-init.sql file here
         // Why not use dev.quarkus.hibernate-orm.sql-load-script? Because it gets loaded after this handler is called, so this hanlder sees an empty DB
