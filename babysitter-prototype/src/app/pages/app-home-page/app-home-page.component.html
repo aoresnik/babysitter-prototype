@@ -2,21 +2,32 @@
 
   <div *ngIf="lastCommandsList !== undefined">
     <div style="font-weight: bold">Last run commands (<a href="/commands/list">see all commands</a>):</div>
-    <div *ngFor="let command of lastCommandsList, index as i"><span
-      style="background-color: #eff3f6">({{ command.commandData.commandSourceName }})</span>&nbsp;<a href="#"
-                                                                                                     (click)="selectCommand(command.commandData); false">{{ command.commandData.commandName }}</a>,
-      last used {{command.lastUsed}}</div>
+    <div *ngIf="lastCommandsList.length>0; else noCommands">
+      <div *ngFor="let command of lastCommandsList, index as i">
+        <span style="background-color: #eff3f6">({{ command.commandData.commandSourceName }})</span>
+        &nbsp;
+        <a href="#" (click)="selectCommand(command.commandData); false">{{ command.commandData.commandName }}</a>,
+        last used {{command.lastUsed}}</div>
+    </div>
   </div>
 
   <br>
 
-  <div *ngIf="mostUsedCommandsList !== undefined">
+  <div *ngIf="mostUsedCommandsList !== undefined; else noCommands">
     <div style="font-weight: bold">Most used commands (<a href="/commands/list">see all commands</a>):</div>
-    <div *ngFor="let command of mostUsedCommandsList; index as i"><span
-      style="background-color: #eff3f6">({{ command.commandData.commandSourceName }})</span>&nbsp;<a href="#"
-                                                                                                     (click)="selectCommand(command.commandData); false">{{ command.commandData.commandName }}</a>,
-      used {{ command.usageCount}} times
+    <div *ngIf="mostUsedCommandsList.length>0; else noCommands">
+      <div *ngFor="let command of mostUsedCommandsList; index as i">
+        <span style="background-color: #eff3f6">({{ command.commandData.commandSourceName }})</span>&nbsp;
+        &nbsp;
+        <a href="#" (click)="selectCommand(command.commandData); false">{{ command.commandData.commandName }}</a>,
+        used {{ command.usageCount}} times
+      </div>
     </div>
   </div>
 
 </div>
+
+<ng-template #noCommands>
+  <div>(no commands run yet)</div>
+</ng-template>
+
