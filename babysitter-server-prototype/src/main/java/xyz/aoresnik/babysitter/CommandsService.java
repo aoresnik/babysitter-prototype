@@ -29,6 +29,7 @@ public class CommandsService {
         log.info("Refreshing the list of commands in the database from the sources.");
         List<CommandSource> commandSources = em.createQuery("select ss from CommandSource ss", CommandSource.class).getResultList();
 
+        // TODO: replace existing commands list with the new detected one
         for (CommandSource commandSource : commandSources) {
             log.info(String.format("Detecting commands in source: %s", commandSource));
             AbstractCommandType scriptType = CommandTypes.newForScriptSource(commandSource);

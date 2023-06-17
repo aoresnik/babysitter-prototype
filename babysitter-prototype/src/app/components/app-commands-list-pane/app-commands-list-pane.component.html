@@ -1,5 +1,16 @@
 <div style="font-weight: bold">Available commands:</div>
-<div *ngFor="let command of commandsList; index as i"><span style="background-color: #eff3f6">({{ command.commandSourceName }})</span>&nbsp;<a href="#" (click)="selectCommand(command); false">{{ command.commandName }}</a></div>
+<div *ngIf="commandsList !== undefined; else commandsListError">
+  <div *ngFor="let command of commandsList; index as i"><span
+    style="background-color: #eff3f6">({{ command.commandSourceName }})</span>
+    &nbsp;
+    <a href="#" (click)="selectCommand(command); false">{{ command.commandName }}</a>
+  </div>
+</div>
+<ng-template #commandsListError>
+  <div style="color: red;">
+    Error obtaining commands list
+  </div>
+</ng-template>
 
 <!--<p-tree class="w-full md:w-30rem" [value]="commandsAsTree"></p-tree>-->
 
