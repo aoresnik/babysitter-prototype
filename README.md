@@ -13,6 +13,8 @@ maintaining configuration them with consistent security is time-consuming and er
 
 The most important parts - permissions and parameters - are not implemented yet.
 
+[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+
 ## UI
 
 Run bash scripts or other programs via a web interface and "babysit" their execution.
